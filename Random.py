@@ -29,7 +29,7 @@ for prij in prijmeni:
     elif jmeno [1] == 'žena':
         prijmeni_Z = prijmeni_Z + [prij [0]]
     else:
-        print('CYBA!!!')
+        print('CHYBA!!!')
         end
 
 tabulka_uzivatel = []
