@@ -33,7 +33,6 @@ CREATE TABLE SENIORE."USERS" (
 	FIRST_NAME           varchar(100) NOT NULL  ,
 	SURNAME              varchar(100) NOT NULL  ,
 	EMAIL                varchar(100) NOT NULL  ,
-	PASSWORD             varchar(20) NOT NULL  ,
 	TELEPHONE            varchar(20) NOT NULL  ,
 	ADDRESS              varchar(100) NOT NULL  ,
 	CONSTRAINT PK_TABLE_ID PRIMARY KEY ( ID ),
