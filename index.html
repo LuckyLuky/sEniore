@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Seniore aplikace</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    
+<!-- this is header-->
+    <header class="hlavicka">
+      <h1>Aplikace</h1>
+    </header>
+  
+  <ul class="menu">
+    <li><a href="#registrace"> Registrace </a></li>
+    <li><a href="#sluzby"> Služby </a></li>
+    <li><a href="#prehled"> Přehled </a></li>
+  </ul>
+  
+  <!-- Registration -->
+
+  <section class="registrace" id="registrace">
+    
+    <h2>Registrace</h2>
+  
+    <p>Prosím, vyplňte tabulku níže.</p>
+
+    <table>
+     <!-- to be replaced by fillin form -->
+     <!-- data goes to users table -->
+      <tr>
+        <th> User table info</th> <th class="sloupec">  Vyplnit</th>
+      </tr>
+      <tr> <td>Jméno</td> <td class="sloupec"> xxx </td>
+      </tr> 
+      <tr>
+        <td>Příjmení</td> <td class="sloupec"> xxx </td> 
+      </tr>
+      </table>
+
+</section>
+
+  <!-- Services -->
+  <section class="sluzby" id="sluzby">
+
+  <h2>Služby</h2>
+
+  <p>Prosím, vyberte službu a zda jí chcete nabízet či poskytovat. Je možné vybrat více služeb.</p>
+
+  <table>
+    <!-- to be replaced by services form -->
+    <!-- data goes to users_services table -->
+    <tr>
+        <th> Nabídka </th> <th class="sloupec"> Poptávka </th>
+      </tr>
+    <tr>
+      <th> Service list table</th> <th class="sloupec"> tick button </th>
+    </tr>
+    <tr> <td>Vaření</td> <td class="sloupec"> ano/ne </td>
+    </tr> 
+    <tr>
+      <td>Šachy</td> <td class="sloupec"> ano/ne </td> 
+    </tr>
+    </table>
+
+
+
+</section>
+  <!-- Match -->
+  <section class="prehled" id="prehled">
+  
+  <h2>Přehled</h2> 
+  
+  <p>Níže je přehled zadaných služeb a jejich poptávka / nabídka. </p>
+
+    <table>
+     <!-- to be replaced by users_services table -->
+     <!-- ideally add filter on this table -->
+      <tr>
+        <th> Jméno </th> <th class="sloupec"> Příjmení </th> <th class="sloupec"> Služba </th> <th class="sloupec"> Nabídka/Poptávka </th> <th class="sloupec"> Lokalita </th>
+      </tr>
+      <tr> <td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td>
+        </tr> 
+      </table>
+
+</section>
+
+  <!-- Footer -->
+
+  <footer class="paticka"> 
+  <p> © 2019, Seniore </p> 
+</footer>
+
+</body>
+</html>
