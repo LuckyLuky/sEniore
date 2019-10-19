@@ -1,12 +1,12 @@
 import random
 import unicodedata
 # open documents for name and sirname generator
-input_file = open('names.txt', encoding = 'utf-8')
-names = [line.strip().split('\t') for line in input_file]
+input_file = open('names.csv', encoding = 'utf-8')
+names = [line.strip().split(';') for line in input_file]
 input_file.close()
 
-input_file = open('surnames.txt', encoding = 'utf-8')
-surnames = [line.strip().split('\t') for line in input_file]
+input_file = open('surnames.csv', encoding = 'utf-8')
+surnames = [line.strip().split(';') for line in input_file]
 input_file.close()
 
 # Creat 2 list for names and sirnames devided according to gender
@@ -90,7 +90,7 @@ while line < 1000:
     line = line + 1
 
 # download data to new file / overwrite in existing file
-new_data = open ('user_table.txt', 'w', encoding = 'utf-8')
+new_data = open ('user_table.csv', 'w', encoding = 'utf-8')
 new_data.write('id; name; surname; email; password; telephone'+'\n')
 for x in user_table:
     for y in x:
