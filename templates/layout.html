@@ -16,14 +16,17 @@
   </header>
   
   <ul class="menu">
-    <li><a href="{{ url_for('registrace.show_registrace') }}"> Registrace </a></li>
-    <li><a href="#sluzby"> Služby </a></li>
-    <li><a href="#prehled"> Přehled </a></li>
+    <li><a href="/"> Úvod </a></li>
+    <li><a href="/registrace"> Registrace </a></li>
+    <li><a href="/sluzby"> Služby </a></li>
+    <li><a href="/prehled"> Přehled </a></li>
   </ul>
 
    
   {% block body %} 
   
+<p>Toto je úvodní stránka aplikace :-) </p>
+
   {% endblock %}
 
 
