@@ -4,7 +4,7 @@ from flask import render_template
 from jinja2 import exceptions  
 import psycopg2
 
-app = Flask('seniore')
+app = Flask(__main__)
 
 def get_db():
   
