@@ -9,14 +9,20 @@
     
     <p>Níže je přehled zadaných služeb a jejich poptávka / nabídka. </p>
   
-      <table>
-       <!-- to be replaced by users_services table -->
-       <!-- ideally add filter on this table -->
+    <table>
+        <!-- ideally add filter on this table -->
         <tr>
           <th> Jméno </th> <th class="sloupec"> Příjmení </th> <th class="sloupec"> Služba </th> <th class="sloupec"> Nabídka/Poptávka </th> <th class="sloupec"> Lokalita </th>
         </tr>
-        <tr> <td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td><td class="sloupec"> xxx </td>
+        {% for user in entries %}
+        <tr> 
+         <td class="sloupec"> {{ user[0] }} </td>
+         <td class="sloupec"> {{ user[1] }} </td>
+         <td class="sloupec"> {{ user[2] }} </td>
+         <td class="sloupec"> {{ user[3] }} </td>
+         <td class="sloupec"> {{ user[4] }} </td>
           </tr> 
+         {% endfor %}
         </table>
   
   </section>
