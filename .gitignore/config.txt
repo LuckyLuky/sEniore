@@ -1,6 +1,0 @@
-[my-config]
-user = ayvtcoefijxrsj
-password = 73f03618a6a46c8a824985cea8c1505b734966ffcd706ac0f3771f1be7ae8180
-host = ec2-54-220-0-91.eu-west-1.compute.amazonaws.com
-port = 5432
-database = db1p1337108g5s

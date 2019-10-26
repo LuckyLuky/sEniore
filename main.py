@@ -8,7 +8,7 @@ import configparser
 app = Flask('seniore')
 
 configParser = configparser.RawConfigParser()   
-configFilePath = r'.gitignore/config.txt'
+configFilePath = r'config.txt'
 configParser.read(configFilePath)
 
 def get_db():
@@ -39,10 +39,6 @@ def prehled():
 @app.route('/sluzby')
 def sluzby():
     return render_template ('sluzby.html')
-
-@app.route('/registrace2')
-def registrace2():
-    return render_template ('registrace2.html')
 
 @app.route('/succes')
 def success():
