@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Seniore aplikace</title>
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-
+  <link rel="stylesheet" href="/static/bootstrap.css" type="text/css"/>
 </head>
 <body>
 
@@ -20,12 +20,12 @@
     <li><a href="/registrace"> Registrace </a></li>
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
-  </ul>
+    </ul>
 
    
   {% block body %} 
   
-<p>Toto je úvodní stránka aplikace :-) </p>
+    <p align="center" > Toto je úvodní stránka aplikace :-) </p>
 
   {% endblock %}
 

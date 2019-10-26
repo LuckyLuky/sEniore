@@ -8,20 +8,28 @@
     
     <h2>Registrace</h2>
   
-    <p>Prosím, vyplňte tabulku níže.</p>
+    <p>Prosím, vyplňte registrační formulař níže.</p>
 
-    <table>
-     <!-- to be replaced by fillin form -->
-     <!-- data goes to users table -->
-      <tr>
-        <th> User table info</th> <th class="sloupec">  Vyplnit</th>
-      </tr>
-      <tr> <td>Jméno</td> <td class="sloupec"> xxx </td>
-      </tr> 
-      <tr>
-        <td>Příjmení</td> <td class="sloupec"> xxx </td> 
-      </tr>
-      </table>
+    <p>
+        <form method="POST" action='/add_name' >
+            <label> ID </label>
+            <input type="integer" name="id" placeholder="ID">  
+            <label> Jméno </label>
+            <input type="text" name="first_name" placeholder="Jméno">
+            <label> Příjmení </label>
+            <input type="text" name="surname" placeholder="Příjmení">
+            <label> E-mail </label>
+            <input type="text" name="email" placeholder="e-mail">
+            <label> Adresa </label>
+            <input type="text" name="address" placeholder="adresa">
+            <label> Telefon </label>
+            <input type="text" name="telephone" placeholder="telefon">
+            <label> Heslo </label>
+            <input type="text" name="password" placeholder="heslo">
+            <input type="submit" class="btn btn-default" value="Registrovat se">
+        </form>
+    </p>
+    
 
 </section>
 
