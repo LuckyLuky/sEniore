@@ -5,7 +5,7 @@ from jinja2 import exceptions
 import psycopg2
 import configparser 
 
-app = Flask(__main__)
+app = Flask('seniore')
 
 configParser = configparser.RawConfigParser()   
 configFilePath = r'config.txt'
