@@ -11,21 +11,25 @@
 <body>
 
 <!-- this is header-->
+
+<img class=logo src="static/obrazky/logoSeniore.png" alt="logoSeniore">  
+
+  <ul class="menu">
+  <li><a href="/"> Úvod </a></li>
+  <li><a href="/registrace"> Registrace </a></li>
+  <li><a href="/sluzby"> Služby </a></li>
+  <li><a href="/prehled"> Přehled </a></li>
+  </ul>
+
+
   <header class="hlavicka">
   <h1>Aplikace</h1>
   </header>
   
-  <ul class="menu">
-    <li><a href="/"> Úvod </a></li>
-    <li><a href="/registrace"> Registrace </a></li>
-    <li><a href="/sluzby"> Služby </a></li>
-    <li><a href="/prehled"> Přehled </a></li>
-    </ul>
-
-   
+  
   {% block body %} 
   
-    <p align="center" > Toto je úvodní stránka aplikace :-) </p>
+    <h2 align="center" > Toto je úvodní stránka aplikace :-) </h2>
 
   {% endblock %}
 

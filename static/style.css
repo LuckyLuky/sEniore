@@ -2,6 +2,11 @@ head {
   width: 150px;
 }
 
+.logo{ 
+  width: 5%;
+  float: left;
+  margin: 0px 0px 0px 0px;
+}
 
 body {color: #282425;
   background-color: whitesmoke;
@@ -40,9 +45,9 @@ h2{
 
 .menu {
   padding: 0;
-  margin: 0;
-  text-align: center;
-  background-color: #3090C7;
+  margin: 0px;
+  text-align: right;
+  background-color: whitesmoke;
 }
 
 .menu li {
@@ -51,20 +56,16 @@ h2{
 
 .menu a {
   display: inline-block;
-  color: white;
+  color: rgb(36, 27, 27);
   text-decoration: none;
-  padding: 20px 30px;
+  padding: 10px 30px;
 }
 
 .menu a:hover, 
 .menu a:focus 
 .menu a:active {
-  background-color: #756158;
+  background-color: #bebec2;
 }
-
-.sluzby {
-  background-color: #E5E4E2;
- }
 
 .paticka {
   background-color: #000080;
