@@ -17,6 +17,28 @@ configParser = configparser.RawConfigParser()
 configFilePath = r'config.txt'
 configParser.read(configFilePath)
 
+class LoginForm(FlaskForm):
+    user = StringField("Uživatel", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Přihlašovací jméno
+    password = PasswordField("Heslo", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Heslo
+    submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
+
+@app.route('/login/', methods = ["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = form.user.data
+        password = form.password.data
+        if password == "letmein":
+            session["user"] = user
+    return render_template('login.html', form = form)
+
+
+
+@app.route('/logout/', methods = ["GET", "POST"])
+def odhlasit():
+    session.pop("user", None)
+    return redirect(url_for('login'))
+
 def get_db():
   con = psycopg2.connect(user = configParser.get('my-config', 'user'),
                       password = configParser.get('my-config', 'password'),

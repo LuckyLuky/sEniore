@@ -5,26 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Seniore aplikace</title>
-  <!-- <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}"> -->
-  <link rel="stylesheet" href="static/style.css" type="text/css"/>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+  <!-- <link rel="stylesheet" href="static/style.css" type="text/css"/> -->
 </head>
 
 <body>
 
-  <img class=logo src="static/obrazky/logoSeniore.png" alt="logoSeniore">
+  <!-- <img class=logo src="static/obrazky/logoSeniore.png" alt="logoSeniore"> -->
+
+<header>
+{% block header %}
+{% set user = session["user"] %}
+Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
+<a href = "{{ url_for('odhlasit') }}">Odhlásit</a>
+{% endblock %}
+</header>
 
 <ul class="menu">
-      <li><a href="/"> Úvod </a></li>
-      <li><a href="/registrace"> Registrace </a></li>
-      <li><a href="/sluzby"> Služby </a></li>
-      <li><a href="/prehled"> Přehled </a></li>
-      </ul>
+    <li><a href="/"> Úvod </a></li>
+    <li><a href="/registrace"> Registrace </a></li>
+    <li><a href="/sluzby"> Služby </a></li>
+    <li><a href="/prehled"> Přehled </a></li>
+    <li><a href="/login"> Login </a></li>
+    </ul>
+
 
   <header class="hlavicka">
   <h1>Aplikace</h1>
   </header>
+
   
   
+
   {% block body %} 
   
     <h2 align="center" > Toto je úvodní stránka aplikace :-) </h2>
