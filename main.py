@@ -1,11 +1,13 @@
 import os
-from flask import Flask, g, request, url_for, render_template, redirect
-from flask import render_template
+from flask import Flask, g, request, url_for, render_template, redirect, session
 from jinja2 import exceptions
 import psycopg2
 import configparser 
 from flask_wtf import FlaskForm
-from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators
+from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
+from flask_wtf.file import FileRequired
+from werkzeug.utils import secure_filename
+from wtforms.validators import InputRequired
 
 app = Flask('seniore')
 
@@ -32,13 +34,23 @@ def index():
 def registrace():
     return render_template ('registrace.html')
 
-@app.route('/prehled')
-def prehled():
-  db_connection = get_db()
-  cursor = db_connection.cursor()
-  cursor.execute('select u.first_name as first_name, u.surname as surname, s.category as category, d.demand_offer as demand_offer, u.address as address from users u left join users_services us on us.id_users = u.id left join services s on s.id = us.id_services left join demand_offer d on d.id = us.id_demand_offer order by u.id desc limit 10')
-  entries = cursor.fetchall()
-  return render_template ('prehled.html', entries = entries)
+@app.route('/prehled', methods=['POST', 'GET'])
+def prehled_filtr():
+    if request.method == 'GET':
+      return render_template('prehled.html')
+    elif request.method == 'POST':
+        user = {
+            'demand_offer': request.form['demand_offer'],
+            'category': request.form['category'],
+            'address': request.form['address'],
+            'secret_key': request.form['SECRET_KEY'],
+            'submit_value': request.form['submit'],
+          }
+        db_connection = get_db()
+        cursor = db_connection.cursor()
+        cursor.execute('select u.first_name as first_name, u.surname as surname, s.category as category, d.demand_offer as demand_offer, u.address as address from users u left join users_services us on us.id_users = u.id left join services s on s.id = us.id_services left join demand_offer d on d.id = us.id_demand_offer where d.id = %s and s.id = %s and lower(u.address) = lower(%s) limit 10', (request.form['demand_offer'], request.form['category'], request.form['address']))
+        entries = cursor.fetchall()
+        return render_template ('prehled_success.html', entries = entries)
 
 @app.route('/sluzby', methods=['POST', 'GET'])
 def sluzby_upload():
