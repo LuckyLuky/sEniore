@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Match -->
+<section class="prehled" id="prehled">
+  
+    <h2>Přehled</h2> 
+    
+    <p>Níže je přehled služeb dle vámi zvoleného filtru. </p>
+  
+    <table>
+        <tr>
+          <th> Jméno </th> <th class="sloupec"> Příjmení </th> <th class="sloupec"> Služba </th> <th class="sloupec"> Nabídka / Poptávka </th> <th class="sloupec"> Lokalita </th>
+        </tr>
+        {% for user in entries %}
+        <tr> 
+         <td class="sloupec"> {{ user[0] }} </td>
+         <td class="sloupec"> {{ user[1] }} </td>
+         <td class="sloupec"> {{ user[2] }} </td>
+         <td class="sloupec"> {{ user[3] }} </td>
+         <td class="sloupec"> {{ user[4] }} </td>
+          </tr> 
+         {% endfor %}
+        </table>
+  
+  </section>
+
+{% endblock %}
