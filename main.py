@@ -1,13 +1,14 @@
 import os
-from flask import Flask, g, request, url_for, render_template, redirect, session
+from flask import Flask, g, request, url_for, render_template, redirect, session, flash
 from jinja2 import exceptions
-import psycopg2
-import configparser 
 from flask_wtf import FlaskForm
 from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
 from flask_wtf.file import FileRequired
-from werkzeug.utils import secure_filename
 from wtforms.validators import InputRequired
+from dbaccess import DBAccess
+import psycopg2
+import configparser 
+import hashlib
 
 app = Flask('seniore')
 
@@ -27,12 +28,20 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = form.user.data
-        password = form.password.data
-        if password == "letmein":
-            session["user"] = user
-    return render_template('login.html', form = form)
-
-
+        userRow = DBAccess.ExecuteSQL('select email,password, first_name, surname from users where email like %s',(user,))
+        
+        if(userRow == None):
+          flash('Uživatel nenalezen')
+          return render_template("login.html", form = form)
+        
+        md5Pass = hashlib.md5(str(form.password.data).encode()).hexdigest()
+        if(userRow[1]!=md5Pass):
+          flash('Špatné heslo')
+          return render_template("login.html", form = form)
+              
+        session["user"] = user
+        flash('Uživatel {0} {1} přihlášen'.format(userRow[2], userRow[3]))
+    return render_template("login.html", form = form)
 
 @app.route('/logout/', methods = ["GET", "POST"])
 def odhlasit():
@@ -108,18 +117,18 @@ def success():
 
 @app.route('/add_name', methods=['POST'])
 def add_name():
-    # Získá připojení k databází
     db_connection = get_db()
     cursor = db_connection.cursor()
-    unique_number = request.form['id']
     first_name = request.form['first_name']
     surname = request.form['surname']
     email = request.form['email']
     address = request.form['address']
     telephone = request.form['telephone']
     password = request.form['password']
-    cursor.execute('insert into users (id, first_name, surname, email, address, telephone, password) values (%s, %s, %s, %s, %s, %s, %s)',
-    (unique_number, first_name, surname, email, address, telephone, password))
+    cursor.execute('SELECT nextval(\'users_id_seq\')')
+    unique_number_users = cursor.fetchone()
+    cursor.execute('insert into users (id, first_name, surname, email, address, telephone, password) values (%s, %s, %s, %s, %s, %s, md5(%s))',
+    (unique_number_users, first_name, surname, email, address, telephone, password))
     db_connection.commit()
     return render_template ('/success.html')
 

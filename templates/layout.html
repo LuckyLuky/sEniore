@@ -23,10 +23,13 @@ Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
 
 <ul class="menu">
     <li><a href="/"> Úvod </a></li>
+    <li><a href="/login"> Login </a></li>
     <li><a href="/registrace"> Registrace </a></li>
+    {% set user = session["user"] %}
+    {% if user %}
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
-    <li><a href="/login"> Login </a></li>
+    {% endif %}
     </ul>
 
 
@@ -34,7 +37,15 @@ Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
   <h1>Aplikace</h1>
   </header>
 
-  
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
   
 
   {% block body %} 
