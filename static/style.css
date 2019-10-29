@@ -13,7 +13,7 @@ body {color: #282425;
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
   line-height: 1.5;
-  margin: 0;
+  margin:0;
  }
 
 h1{
@@ -33,6 +33,21 @@ h2{
   color:  #2B1B17;
   font-family: 'Playfair Display', serif;
   font-style: italic; 
+}
+
+h3 {
+  font-size: 30px;
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 30px;
+  color:  #2B1B17;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; 
+}
+
+p {
+  margin-left: 30px;
+  font-family: 'Playfair Display', serif;
 }
 
 .hlavicka {
@@ -94,6 +109,6 @@ section {
 }
 
 .sloupec {
-  text-align: right;
+  text-align: center;
   padding-left: 50px;
 }

@@ -25,11 +25,11 @@ class DBAccess:
       else:
           cursor.execute(sql,vars)
       
-      if(cursor.rowcount==1):
-          return cursor.fetchone()
-      elif(cursor.rowcount>1):
+      # if(cursor.rowcount==1):
+      #     return cursor.fetchone()
+      if(cursor.rowcount>0):
           entries = cursor.fetchall()
-          return entries
+          return entries 
       else:
               db_connection.commit()
       return None

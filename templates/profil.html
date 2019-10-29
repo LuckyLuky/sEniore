@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h3>Můj profil</h3> 
+
+<!-- Přidat možnost úpravy profilu - změna jména, města... -->
+    
+<p>Toto je přehled mých zaregistrovaných služeb:</p>
+
+<table>
+  <tr>
+    <th class="sloupec"> Služba </th>
+    <th class="sloupec"> Nabídka / Poptávka </th>
+  </tr>
+  {% for service in entries %}
+  <tr> 
+   <td class="sloupec"> {{ service[0] }} </td>
+   <td class="sloupec"> {{ service[1] }} </td>
+  </tr> 
+   {% endfor %}
+  </table>
+
+
+
+<p>Chci přidat novou službu? Stačí kliknout <a href="/sluzby"> zde </a>. </p>
+<p>Hledám či poptávám službu? Stačí kliknout na celkový <a href="/prehled"> prehled </a>. </p>
+
+{% endblock %}

@@ -27,6 +27,7 @@ Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
     <li><a href="/registrace"> Registrace </a></li>
     {% set user = session["user"] %}
     {% if user %}
+    <li><a href="/profil"> Profil </a></li>
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
     {% endif %}
@@ -50,7 +51,14 @@ Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
 
   {% block body %} 
   
-    <h2 align="center" > Toto je úvodní stránka aplikace :-) </h2>
+    <h3>Vítejte v aplikaci Seniore!</h3>
+
+    <p>Stále pracujeme na zdokonalení aplikace.</p>
+      
+    <p>Už teď ale hledáme lidi, kteří se připojí. Potřebujete pomoc, nebo máte v okolí seniora, který pomoc potřebuje? Nebo můžete pomoci? Váš příběh nás zajímá. Budeme rádi, když se ozvete. Pomůžete nám tím nastavit službu co nejlépe.</p>
+
+    <p>Jste již zaregistrováni? Skvělé, jen pojďte <a href="/login">dále </a>.</p>
+    <p>Nejste? <a href="/registrace">Pojďme na to</a>.</p>
 
   {% endblock %}
 

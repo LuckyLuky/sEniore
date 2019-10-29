@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Match -->
+<section>
+  
+    <h2>Registrace proběhla úspěšně, děkujeme.</h2> 
+
+    <p>Vámi zadané údaje jsou následující:</p>
+
+    <ul>
+      <li><strong>Jméno: </strong> {{ first_name }}</li>
+      <li><strong>Příjmení:</strong> {{ surname }}</li>
+      <li><strong>Email:</strong> {{ email }}</li>
+      <li><strong>Telefon:</strong> {{ telephone }}</li>
+      <li><strong>Adresa:</strong> {{ address }}</li>
+    </ul>
+
+
+    
+    <p>Šup na <a href="/login">login </a>.</p>
+</section>
+
+{% endblock %}  
