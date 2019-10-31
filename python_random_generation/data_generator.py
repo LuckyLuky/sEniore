@@ -10,6 +10,11 @@ input_file = open('surnames.csv', encoding = 'utf-8')
 surnames = [line.strip().split(';') for line in input_file]
 input_file.close()
 
+# Open file for location generator
+input_file = open('location.csv', encoding = 'utf-8')
+location = [line.strip().split(';') for line in input_file]
+input_file.close()
+
 # Create 4 empty lists (for now empty)
 names_M = []        # Male Names
 names_F = []        # Female Names
@@ -38,12 +43,18 @@ for sur in surnames:
         exit ()
 
 
+# Create a list of ZIP codes
+zip_codes = []
+
+for x in location:
+    zip_codes = zip_codes + [x[0]]
+
 # Create table Users (now empty)
 user_table = []
 line = 1
 
 while line < 1000: 
-    gender = random.randint(1, 2) # random generator to coose gender: 1 = men, 2 = women
+    gender = random.randint(1, 2) # random generator to choose gender: 1 = men, 2 = women
 
     # For male:
     if gender == 1: 
@@ -61,6 +72,9 @@ while line < 1000:
         # Telephone number generator
         telephone = '775'+ str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))
         
+        # Random number for ZIP code generator
+        z = random.randint(1, 2690)
+
         # Adding data to user table
         user_table = user_table + [ 
             [
@@ -69,7 +83,8 @@ while line < 1000:
             surnames_M [sur],                   # SURNAME
             f'{email}@gmail.com',               # EMAIL
             'password',                         # PASSWORD
-            telephone]                          # TELEPHONE
+            telephone,                          # TELEPHONE
+            zip_codes[z]]                       # ZIP CODE
             ]
     
     # For female:
@@ -88,22 +103,26 @@ while line < 1000:
         # Telephone number generator
         telephone = '775'+ str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))+str(random.randint(0, 9))
         
+        # Random number for ZIP code generator
+        z = random.randint(1, 2690)
+
         # Adding data to user table
         user_table = user_table + [
             [ 
             int(1000 + line),                   # ID
             names_F [name],                     # NAME
-            surnames_F [sur],                # SURNAME
+            surnames_F [sur],                   # SURNAME
             f'{email}@gmail.com',               # EMAIL
             'password',                         # PASSWORD
-            telephone]                          # TELEPHONE
+            telephone,                          # TELEPHONE
+            zip_codes[z]]                       # ZIP CODE
             ]
     line = line + 1
 
 
 # download data to new file / overwrite in existing file
 new_data = open ('user_table.csv', 'w', encoding = 'utf-8')
-new_data.write('id; name; surname; email; password; telephone'+'\n')
+new_data.write('id; name; surname; email; password; telephone; ZIP;'+'\n')
 for x in user_table:
     for y in x:
         new_data.write(str(y) + ';')
