@@ -1,20 +1,26 @@
+import os
 import psycopg2
 import configparser
 
-configParser = configparser.RawConfigParser()   
-configFilePath = r'config.txt'
-configParser.read(configFilePath)
 
 class DBAccess:
 
+
+  @staticmethod
+  def Get_DB_URL():
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+      configParser = configparser.RawConfigParser()   
+      configFilePath = r'config.txt'
+      configParser.read(configFilePath)
+      database_url = configParser.get('my-config', 'database_url')
+    if not database_url:
+      raise Exception('Could not find database url configuration.')
+    return database_url
+
   @staticmethod
   def Get_DB():
-      con = psycopg2.connect(user = configParser.get('my-config', 'user'),
-                              password = configParser.get('my-config', 'password'),
-                              host = configParser.get('my-config', 'host'),
-                              port = configParser.get('my-config', 'port'),
-                              database = configParser.get('my-config', 'database'))
-      return con
+      return psycopg2.connect(DBAccess.Get_DB_URL())
   
   @staticmethod
   def ExecuteSQL(sql, vars=None):
