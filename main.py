@@ -9,6 +9,8 @@ from dbaccess import DBAccess
 import psycopg2
 import configparser 
 import hashlib
+import sendgrid
+from sendgrid.helpers.mail import *
 
 app = Flask('seniore')
 
@@ -116,8 +118,47 @@ def add_name():
 
 @app.route('/email_sent/')
 def email_sent():
+  user = session["user"]
+  session["id_user"]
+  message = {
+      'personalizations': [
+          {
+              'to': [
+                  {
+                      'email': 'katacek@gmail.com'
+                  }
+              ],
+              'subject': 'Seniore'
+          }
+      ],
+      'from': {
+          'email': 'noreply@seniore.org'
+      },
+      'content': [
+          {
+              'type': 'text/plain',
+              'value': f'Uživatel {user} se s Vámi chce spojit.'
+          }
+      ]
+  }
   
-    return render_template ('email_sent.html')
+  sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
+  response = sg.send(message)
+  print(response.status_code)
+  print(response.body)
+  print(response.headers)
+  return render_template ('email_sent.html')
+
+def getEmailAPIKey():
+  API_Key = os.environ.get('SENDGRID_API_KEY')
+  if not API_Key:
+    configParser = configparser.RawConfigParser()   
+    configFilePath = r'config.txt'
+    configParser.read(configFilePath)
+    API_Key = configParser.get('my-config', 'sendgrid_api_key')
+  if not API_Key:
+    raise Exception('Could not find API_Key value.')
+  return API_Key
 
 if __name__ == '__main__':
     app.debug = True
