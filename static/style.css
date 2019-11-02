@@ -1,9 +1,19 @@
+head {
+  width: 150px;
+}
+
+.logo{ 
+  width: 5%;
+  float: left;
+  margin: 0px 0px 0px 0px;
+}
+
 body {color: #282425;
   background-color: whitesmoke;
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
   line-height: 1.5;
-  margin: 0;
+  margin:0;
  }
 
 h1{
@@ -25,15 +35,60 @@ h2{
   font-style: italic; 
 }
 
-.sluzby {
-  background-color: #E5E4E2;
- }
+h3 {
+  font-size: 30px;
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 30px;
+  color:  #2B1B17;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; 
+}
+
+p {
+  margin-left: 30px;
+  font-family: 'Playfair Display', serif;
+}
+
+.hlavicka {
+  background-image: url(obrazky/background-1.png);
+  padding: 50px 30%; 
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.menu {
+  padding: 0;
+  margin: 0px;
+  text-align: right;
+  background-color: whitesmoke;
+}
+
+.menu li {
+  display: inline-block;
+}
+
+.menu a {
+  display: inline-block;
+  color: rgb(36, 27, 27);
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+.menu a:hover, 
+.menu a:focus 
+.menu a:active {
+  background-color: #bebec2;
+}
 
 .paticka {
   background-color: #000080;
   color: white;
   text-align: center;
   padding: 10 px 0;
+  margin-top: 0px;
+  bottom: 0
 }
 
 
@@ -53,39 +108,7 @@ section {
   overflow: auto;
 }
 
-.hlavicka {
-  background-image: url(obrazky/background-1.png);
-  padding: 150px 30%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-}
-
-.menu {
-  padding: 0;
-  margin: 0;
-  text-align: center;
-  background-color: #3090C7;
-}
-
-.menu li {
-  display: inline-block;
-}
-
-.menu a {
-  display: inline-block;
-  color: white;
-  text-decoration: none;
-  padding: 20px 30px;
-}
-
-.menu a:hover, 
-.menu a:focus 
-.menu a:active {
-  background-color: #756158;
-}
-
 .sloupec {
-  text-align: right;
+  text-align: center;
   padding-left: 50px;
 }

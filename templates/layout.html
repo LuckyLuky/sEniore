@@ -6,32 +6,65 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Seniore aplikace</title>
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-  <link rel="stylesheet" href="/static/bootstrap.css" type="text/css"/>
+  <!-- <link rel="stylesheet" href="static/style.css" type="text/css"/> -->
 </head>
+
 <body>
 
-<!-- this is header-->
+  <!-- <img class=logo src="static/obrazky/logoSeniore.png" alt="logoSeniore"> -->
+
+<header>
+{% block header %}
+{% set user = session["user"] %}
+Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
+<a href = "{{ url_for('odhlasit') }}">Odhlásit</a>
+{% endblock %}
+</header>
+
+<ul class="menu">
+    <li><a href="/"> Úvod </a></li>
+    <li><a href="/login"> Login </a></li>
+    <li><a href="/registrace"> Registrace </a></li>
+    {% set user = session["user"] %}
+    {% if user %}
+    <li><a href="/profil"> Profil </a></li>
+    <li><a href="/sluzby"> Služby </a></li>
+    <li><a href="/prehled"> Přehled </a></li>
+    {% endif %}
+    </ul>
+
+
   <header class="hlavicka">
   <h1>Aplikace</h1>
   </header>
-  
-  <ul class="menu">
-    <li><a href="/"> Úvod </a></li>
-    <li><a href="/registrace"> Registrace </a></li>
-    <li><a href="/sluzby"> Služby </a></li>
-    <li><a href="/prehled"> Přehled </a></li>
-    </ul>
 
-   
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  
+
   {% block body %} 
   
-    <p align="center" > Toto je úvodní stránka aplikace :-) </p>
+    <h3>Vítejte v aplikaci Seniore!</h3>
+
+    <p>Stále pracujeme na zdokonalení aplikace.</p>
+      
+    <p>Už teď ale hledáme lidi, kteří se připojí. Potřebujete pomoc, nebo máte v okolí seniora, který pomoc potřebuje? Nebo můžete pomoci? Váš příběh nás zajímá. Budeme rádi, když se ozvete. Pomůžete nám tím nastavit službu co nejlépe.</p>
+
+    <p>Jste již zaregistrováni? Skvělé, jen pojďte <a href="/login">dále </a>.</p>
+    <p>Nejste? <a href="/registrace">Pojďme na to</a>.</p>
 
   {% endblock %}
 
 
-  <!-- Footer -->
   <footer class="paticka"> 
+  
   <p> © 2019, Seniore </p> 
   </footer>
 

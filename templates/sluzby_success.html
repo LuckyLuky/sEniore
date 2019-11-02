@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Services -->
+<section id="sluzby">
+
+    <h2>Děkujeme. Vámi zadané údaje jsou:</h2>
+
+    <ul>
+      <li><strong>Nabídka / Poptávka:</strong> {{ demand_offer }}</li>
+      <li><strong>Služba:</strong> {{ category }}</li>
+    </ul>
+
+    <p>Zpět na můj <a href="/profil">profil </a>.</p>
+
+
+{% endblock %}

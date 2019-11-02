@@ -3,27 +3,40 @@
 {% block body %}
 
 <!-- Services -->
-<section class="sluzby" id="sluzby">
+<section id="sluzby">
 
     <h2>Služby</h2>
   
     <p>Prosím, vyberte službu a zda jí chcete nabízet či poskytovat. Je možné vybrat více služeb.</p>
    
-    <table>
-      <!-- to be replaced by services form -->
-      <!-- data goes to users_services table -->
-      <tr>
-          <th> Nabídka </th> <th class="sloupec"> Poptávka </th>
-        </tr>
-      <tr>
-        <th> Service list table</th> <th class="sloupec"> tick button </th>
-      </tr>
-      <tr> <td>Vaření</td> <td class="sloupec"> ano/ne </td>
-      </tr> 
-      <tr>
-        <td>Šachy</td> <td class="sloupec"> ano/ne </td> 
-      </tr>
-      </table>
+        <div class="row" style="margin-top:20px">
+        <div class="col-md-12">
+            <form role="form" action="" method="POST">
+              <div class="form-group">
+                <label>Nabídka / Poptávka</label>
+                <select class="form-control" name="demand_offer">
+                    <option value="1">Poptávka</option>
+                    <option value="2">Nabídka</option>
+                </select><div class="form-group">
+                  <label>Služby</label>
+                  <select class="form-control" name="category">
+                      <option value="1">Vaření</option>
+                      <option value="2">Šachy</option>
+                      <option value="3">Karty</option>
+                      <option value="4">Čtení</option>
+                      <option value="5">Umění</option>
+                      <option value="6">Ruční výroba</option>
+                      <option value="7">Procházka</option>
+                      <option value="8">Káva / čaj</option>
+                      <option value="9">Vyprávění</option>
+                      <option value="10">Pletení</option>
+                  </select>
+              </div>
+              <input type="hidden" name="SECRET_KEY" value="super tajny klic">
+              <button type="submit" name='submit' class="btn btn-default" value="Form sent!">Submit</button>
+            </form>
+        </div>
+    </div>
   
   
   
