@@ -10,7 +10,7 @@ import psycopg2
 import configparser 
 import hashlib
 import sendgrid
-from sendgrid.helpers.mail import *
+from lookup import DemandOffer, Services
 
 app = Flask('seniore')
 
@@ -83,19 +83,14 @@ def sluzby_upload():
     if request.method == 'GET':
         return render_template('sluzby.html')
     elif request.method == 'POST':
-
-      if request.form['demand_offer']==2:
-        textDemandOffer = 'nabidka'
-      else:
-        textDemandOffer = 'poptavka'
-        kwargs = {
-            'demand_offer': textDemandOffer,
-            'category': request.form['category'],
-            'secret_key': request.form['SECRET_KEY'],
-            'submit_value': request.form['submit'],
-        }
-        DBAccess.ExecuteInsert('insert into users_services (id_demand_offer, id_services, id_users) values (%s, %s, %s)', (request.form['demand_offer'], request.form['category'], session["id_user"]))
-        return render_template('sluzby_success.html', **kwargs)
+      kwargs = {
+          'demand_offer': DemandOffer.get(request.form['demand_offer'], 'unknown'),
+          'category': Services.get(request.form['category'], 'unknown'),
+          'secret_key': request.form['SECRET_KEY'],
+          'submit_value': request.form['submit'],
+      }
+      DBAccess.ExecuteInsert('insert into users_services (id_demand_offer, id_services, id_users) values (%s, %s, %s)', (request.form['demand_offer'], request.form['category'], session["id_user"]))
+      return render_template('sluzby_success.html', **kwargs)
 
 @app.route('/registrace')
 def registrace():
@@ -117,11 +112,14 @@ def add_name():
     (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'], request.form['telephone'], request.form['password']))
     return render_template ('/registrace_success.html', **kwargs)
 
-@app.route('/email_sent/')
+@app.route('/email_sent/', methods=['POST'])
 def email_sent():
   user = session["user"]
   session["id_user"]
-  # id_users_services = request.args.get('id', type=int)
+  id_users_services = request.form.get('id', type=int)
+  date = request.form.get('date', type=str)
+  time = request.form.get('time', type=str)
+  place = request.form.get('place', type=str)
   email_user_long = DBAccess.ExecuteSQL('''
         SELECT u.email
         FROM users u
@@ -129,7 +127,7 @@ def email_sent():
         LEFT JOIN services s on s.id = us.id_services
         LEFT JOIN demand_offer d on d.id = us.id_demand_offer
         WHERE us.id = %s
-        ''', (request.args.get('id', type=int), ))
+        ''', (id_users_services, ))
   email_user = email_user_long[0][0]
   message = {
       'personalizations': [
@@ -148,7 +146,7 @@ def email_sent():
       'content': [
           {
               'type': 'text/plain',
-              'value': f'Uživatel {user} se s Vámi chce spojit.'
+              'value': f'Uživatel {user} se s Vámi chce setkat dne {date} v {time} v {place}. Prosím, potvrďte svůj zájem odpovědí na zobrazený e-mail.'
           }
       ]
   }
@@ -170,6 +168,24 @@ def getEmailAPIKey():
   if not API_Key:
     raise Exception('Could not find API_Key value.')
   return API_Key
+
+@app.route('/match/', methods = ["GET"])
+def match():
+  id_users_services = request.args.get('id', type=int)
+  user_service_requested = DBAccess.ExecuteSQL('''
+      SELECT d.demand_offer, s.category
+      FROM users u
+      LEFT JOIN users_services us on us.id_users = u.id 
+      LEFT JOIN services s on s.id = us.id_services
+      LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+      WHERE us.id = %s
+      ''', (id_users_services, ))[0]
+  kwargs = {
+  'demand_offer': user_service_requested[0],
+  'services': user_service_requested[1],
+  'id': id_users_services,
+  }
+  return render_template('/match.html', **kwargs)
 
 if __name__ == '__main__':
     app.debug = True
