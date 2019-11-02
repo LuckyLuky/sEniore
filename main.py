@@ -141,6 +141,7 @@ def add_name():
 
 @app.route('/email_sent/')
 def email_sent():
+  
     return render_template ('email_sent.html')
 
 if __name__ == '__main__':
