@@ -41,6 +41,17 @@ class DBAccess:
       return None
 
   @staticmethod
+  def ExecuteInsert(sql, vars=None):
+      db_connection = DBAccess.Get_DB()
+      cursor = db_connection.cursor()
+      if(vars == None):
+          cursor.execute(sql)
+      else:
+          cursor.execute(sql,vars)
+      db_connection.commit()
+      return None
+
+  @staticmethod
   def GetSequencerNextVal(seq):
       db_connection = DBAccess.Get_DB()
       cursor = db_connection.cursor()
