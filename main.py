@@ -114,6 +114,10 @@ def add_name():
     (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'], request.form['telephone'], request.form['password']))
     return render_template ('/registrace_success.html', **kwargs)
 
+@app.route('/email_sent/')
+def email_sent():
+  
+    return render_template ('email_sent.html')
 
 if __name__ == '__main__':
     app.debug = True
