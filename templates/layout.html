@@ -15,21 +15,29 @@
 
 <header>
 {% block header %}
+
 {% set user = session["user"] %}
-Login - {% if user %} {{ user }} {% else %} Nejsi přihlášen {% endif %}<br>
-<a href = "{{ url_for('odhlasit') }}">Odhlásit</a>
+Login -
+{% if user %}
+  {{ user }}
+{% else %}
+  Nejsi přihlášen
+{% endif %}
+
 {% endblock %}
 </header>
 
 <ul class="menu">
     <li><a href="/"> Úvod </a></li>
-    <li><a href="/login"> Login </a></li>
-    <li><a href="/registrace"> Registrace </a></li>
     {% set user = session["user"] %}
     {% if user %}
     <li><a href="/profil"> Profil </a></li>
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
+    <li><a href="/logout"> Odhlásit </a></li>
+    {% else %}
+    <li><a href="/login"> Login </a></li>
+    <li><a href="/registrace"> Registrace </a></li>
     {% endif %}
     </ul>
 

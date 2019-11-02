@@ -119,7 +119,7 @@ def email_sent():
   id_users_services = request.form.get('id', type=int)
   date = request.form.get('date', type=str)
   time = request.form.get('time', type=str)
-  place = request.form.get('place', type=str)
+  info = request.form.get('info', type=str)
   email_user_long = DBAccess.ExecuteSQL('''
         SELECT u.email
         FROM users u
@@ -146,7 +146,7 @@ def email_sent():
       'content': [
           {
               'type': 'text/plain',
-              'value': f'Uživatel {user} se s Vámi chce setkat dne {date} v {time} v {place}. Prosím, potvrďte svůj zájem odpovědí na zobrazený e-mail.'
+              'value': f'Uživatel {user} se s Vámi chce setkat dne {date} v {time}. Doplňující informace: {info}. Prosím, potvrďte svůj zájem odpovědí na zobrazený e-mail.'
           }
       ]
   }
