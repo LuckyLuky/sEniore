@@ -66,12 +66,13 @@ def prehled_filtr():
       return render_template('prehled.html')
     elif request.method == 'POST':
         vysledekselectu = DBAccess.ExecuteSQL('''
-        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.address, u.email
+        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.address, us.id
         FROM users u
         LEFT JOIN users_services us on us.id_users = u.id 
         LEFT JOIN services s on s.id = us.id_services
         LEFT JOIN demand_offer d on d.id = us.id_demand_offer
         WHERE d.id = %s and s.id = %s and lower(u.address) = lower(%s)
+        ORDER BY us.id desc
         LIMIT 10
         ''', (request.form['demand_offer'], request.form['category'], request.form['address']))
         return render_template ('prehled_success.html', entries = vysledekselectu)
@@ -120,12 +121,22 @@ def add_name():
 def email_sent():
   user = session["user"]
   session["id_user"]
+  # id_users_services = request.args.get('id', type=int)
+  email_user_long = DBAccess.ExecuteSQL('''
+        SELECT u.email
+        FROM users u
+        LEFT JOIN users_services us on us.id_users = u.id 
+        LEFT JOIN services s on s.id = us.id_services
+        LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+        WHERE us.id = %s
+        ''', (request.args.get('id', type=int), ))
+  email_user = email_user_long[0][0]
   message = {
       'personalizations': [
           {
               'to': [
                   {
-                      'email': 'katacek@gmail.com'
+                      'email': f'{email_user}'
                   }
               ],
               'subject': 'Seniore'
