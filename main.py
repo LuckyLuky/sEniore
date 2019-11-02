@@ -80,7 +80,15 @@ def prehled_filtr():
     if request.method == 'GET':
       return render_template('prehled.html')
     elif request.method == 'POST':
-        vysledekselectu = DBAccess.ExecuteSQL('select u.first_name as first_name, u.surname as surname, s.category as category, d.demand_offer as demand_offer, u.address as address from users u left join users_services us on us.id_users = u.id left join services s on s.id = us.id_services left join demand_offer d on d.id = us.id_demand_offer where d.id = %s and s.id = %s and lower(u.address) = lower(%s) limit 10', (request.form['demand_offer'], request.form['category'], request.form['address']))
+        vysledekselectu = DBAccess.ExecuteSQL('''
+        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.address, u.email
+        FROM users u
+        LEFT JOIN users_services us on us.id_users = u.id 
+        LEFT JOIN services s on s.id = us.id_services
+        LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+        WHERE d.id = %s and s.id = %s and lower(u.address) = lower(%s)
+        LIMIT 10
+        ''', (request.form['demand_offer'], request.form['category'], request.form['address']))
         return render_template ('prehled_success.html', entries = vysledekselectu)
 
 @app.route('/sluzby', methods=['POST', 'GET'])
