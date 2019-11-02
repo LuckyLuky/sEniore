@@ -139,6 +139,9 @@ def add_name():
     db_connection.commit()
     return render_template ('/registrace_success.html', **kwargs)
 
+@app.route('/email_sent/')
+def email_sent():
+    return render_template ('email_sent.html')
 
 if __name__ == '__main__':
     app.debug = True
