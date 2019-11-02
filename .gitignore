@@ -8,3 +8,4 @@ python_random_generation/r_d_table.csv
 python_random_generation/test.py
 python_random_generation/user_table.csv
 __pycache__
+*.pyc
