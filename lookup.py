@@ -1,4 +1,4 @@
-DemandOffer={
+DictionaryDemandOffer={
   '1': 'Poptávám',
   '2': 'Nabízím',
 }

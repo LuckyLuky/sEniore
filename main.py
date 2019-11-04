@@ -3,6 +3,7 @@ from flask import Flask, g, request, url_for, render_template, redirect, session
 from jinja2 import exceptions
 from flask_wtf import FlaskForm
 from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
+from wtforms import RadioField
 from flask_wtf.file import FileRequired
 from wtforms.validators import InputRequired
 from dbaccess import DBAccess
@@ -10,7 +11,7 @@ import psycopg2
 import configparser 
 import hashlib
 import sendgrid
-from lookup import DemandOffer, Services
+from lookup import DictionaryDemandOffer, Services
 
 app = Flask('seniore')
 
@@ -20,6 +21,40 @@ class LoginForm(FlaskForm):
     user = StringField("Uživatel", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Přihlašovací jméno
     password = PasswordField("Heslo", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Heslo
     submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
+
+class RegistrationFormBase(FlaskForm):
+    # firstName     = StringField('First Name',[(validators.length(min=2, max=50))], widget = widgets.Input(input_type = "string"))
+    # surname     = StringField('Surname' )
+    # email     = StringField('email')
+    # address   = StringField('adress')
+    # telephone     = StringField('telephone')
+    # password     = StringField('password')
+    # password2   = StringField('password2')
+    demandOffer = RadioField('Nabídka/Poptávka', choices=[('2','nabídka'),('1','poptávka')], default = '2')
+    # accept_rules = BooleanField('I accept the site rules')
+    checkBoxes = [] # adding dynamically, created in relevant fcn
+    checkBoxIndexes = [] 
+    # def __init__(self):
+    #   self.checkBoxes = []
+    #   self.checkBoxIndexes = []
+
+class OverviewFormBase(FlaskForm):
+  demandOffer = RadioField('Nabídka/Poptávka', choices=[('2','nabídka'),('1','poptávka')], default = '2')
+
+def regFormBuilder(services):
+    class RegistrationForm(RegistrationFormBase):
+        pass
+
+    checkBoxIndexes = []
+    for (service) in enumerate(services): # get list of services in relevant fcn, all services in db
+      setattr(RegistrationForm, 'checkbox%d' % service[1][0],BooleanField(label=service[1][1],id=service[1][0])) # adding to reg. form checkbox for each service (instead of %d put id_service). In services, I get list with fcn row_id, id_services, services_text, thus for id_services I need services [1][0], and for service name I need services [1][1]
+      checkBoxIndexes.append(service[1][0])
+    
+    setattr(RegistrationForm, 'checkBoxIndexes',checkBoxIndexes)
+    
+    return RegistrationForm()
+
+
 
 @app.route('/login/', methods = ["GET", "POST"])
 def login():
@@ -40,7 +75,7 @@ def login():
               
         session["user"] = user
         session["id_user"] = userRow[4]
-        flash('Uživatel {0} {1} přihlášen'.format(userRow[2], userRow[3]))
+        flash('Uživatel session["user"]{0} {1} přihlášen'.format(userRow[2], userRow[3]))
         return redirect(url_for('profil'))
     return render_template("login.html", form = form)
 
@@ -62,8 +97,12 @@ def profil():
 
 @app.route('/prehled', methods=['POST', 'GET'])
 def prehled_filtr():
+    form = OverviewFormBase()
+    services = DBAccess.ExecuteSQL('select * from services')
+    addresses = DBAccess.ExecuteSQL('select distinct address from users')
     if request.method == 'GET':
-      return render_template('prehled.html')
+      return render_template('prehled.html', form = form, services = services, addresses = addresses)
+
     elif request.method == 'POST':
         vysledekselectu = DBAccess.ExecuteSQL('''
         SELECT u.first_name, u.surname, s.category, d.demand_offer, u.address, us.id
@@ -74,23 +113,40 @@ def prehled_filtr():
         WHERE d.id = %s and s.id = %s and lower(u.address) = lower(%s)
         ORDER BY us.id desc
         LIMIT 10
-        ''', (request.form['demand_offer'], request.form['category'], request.form['address']))
+        ''', (form.demandOffer.data, request.form['category'], request.form['address']))
+        if vysledekselectu == None:
+          vysledekselectu = []
         return render_template ('prehled_success.html', entries = vysledekselectu)
 
 @app.route('/sluzby', methods=['POST', 'GET'])
-def sluzby_upload(): 
-  # kdyz vyberu demand, ulozi se do db dvakrat??
-    if request.method == 'GET':
-        return render_template('sluzby.html')
-    elif request.method == 'POST':
-      kwargs = {
-          'demand_offer': DemandOffer.get(request.form['demand_offer'], 'unknown'),
-          'category': Services.get(request.form['category'], 'unknown'),
-          'secret_key': request.form['SECRET_KEY'],
-          'submit_value': request.form['submit'],
+def sluzby_upload():
+  services = DBAccess.ExecuteSQL('select * from services')
+  form = regFormBuilder(services) # put all services to form, but I need to display it - by for cycle below
+  form.checkBoxes.clear() # not to have duplicates on website
+
+  for index in form.checkBoxIndexes:
+    form.checkBoxes.append(getattr(form,'checkbox%d' % index))  # displaying checkboxes on website
+
+  if form.validate_on_submit(): # if validated, save in db
+    nextId = session["id_user"]
+    services_checked = []
+    for index in form.checkBoxIndexes:
+      checkbox = getattr(form,'checkbox%d' % index)
+      if(checkbox.data): # for every checked services in form, save..
+        existing_combination = DBAccess.ExecuteScalar('select count(*) from users_services where id_users=%s and id_services=%s and id_demand_offer=%s', (nextId,checkbox.id, form.demandOffer.data))
+        text = DictionaryDemandOffer.get(form.demandOffer.data,'unknown').lower()
+        if existing_combination > 0:
+          flash( f'Zadaná kombinace {session["user"]}, {text} a {checkbox.label.text} již existuje.')
+        else:
+          DBAccess.ExecuteInsert('insert into users_services (id_users, id_services, id_demand_offer) values (%s, %s, %s)', ( nextId,checkbox.id, form.demandOffer.data ))
+        services_checked.append(checkbox.label)
+    kwargs = {
+      'demand_offer': DictionaryDemandOffer.get(form.demandOffer.data, 'unknown'),
+      'category': services_checked,
       }
-      DBAccess.ExecuteInsert('insert into users_services (id_demand_offer, id_services, id_users) values (%s, %s, %s)', (request.form['demand_offer'], request.form['category'], session["id_user"]))
-      return render_template('sluzby_success.html', **kwargs)
+    return render_template('sluzby_success.html', **kwargs)
+    
+  return render_template('sluzby.html', form = form)
 
 @app.route('/registrace')
 def registrace():

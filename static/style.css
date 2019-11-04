@@ -112,3 +112,15 @@ section {
   text-align: center;
   padding-left: 50px;
 }
+
+.service_item{
+  margin-left: 30px;
+}
+
+.sluzbyTable {
+  color: rgb(7, 7, 7);
+  text-align: right;
+  padding: 10 px 0;
+  font-size: 4mm;
+  font-weight: bold;
+}

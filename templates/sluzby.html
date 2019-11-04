@@ -7,7 +7,7 @@
 
     <h2>Služby</h2>
   
-    <p>Prosím, vyberte službu a zda jí chcete nabízet či poskytovat. Je možné vybrat více služeb.</p>
+    <!-- <p>Prosím, vyberte službu a zda jí chcete nabízet či poskytovat. Je možné vybrat více služeb.</p>
    
         <div class="row" style="margin-top:20px">
         <div class="col-md-12">
@@ -33,11 +33,31 @@
                   </select>
               </div>
               <input type="hidden" name="SECRET_KEY" value="super tajny klic">
-              <button type="submit" name='submit' class="btn btn-default" value="Form sent!">Submit</button>
+              <button type="submit" name='submit' class="btn btn-default" value="Form sent!">Poslat</button>
             </form>
         </div>
-    </div>
+    </div> -->
   
+<p>Zaškrtněte činnost které nabízíte, či poptáváte.</p>
+
+<form method="POST">
+    {{ form.csrf_token }}
+    
+
+    {% for subfield in form.demandOffer %}
+          <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
+    {% endfor %}
+
+    <table class = "sluzbyTable">
+   
+       {% for checkBox in form.checkBoxes %}
+       <tr><td>{{ checkBox.label }} {{ checkBox }}</td></tr>
+       {% endfor %}
+    </table>
+   
+    <input type="submit" class="btn btn-default" value="Registrovat se">
+    
+</form>
   
   
   </section>

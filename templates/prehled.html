@@ -13,34 +13,36 @@
       <div class="col-md-12">
           <form role="form" action="" method="POST">
               <div class="form-group">
-              <label>Nabídka / Poptávka</label>
+
+              <!-- <label>Nabídka / Poptávka</label>
               <select class="form-control" name="demand_offer">
                   <option value="1">Nabízím</option>
                   <option value="2">Poptávám</option>
               </select>
-              </div>
-              <div class="form-group">
-                <label>Služby</label>
+              </div> -->
+              
+            {% for subfield in form.demandOffer %}
+            <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
+            {% endfor %}
+
+                <div class="form-group">
+                <label>Služby</label> 
                 <select class="form-control" name="category">
-                    <option value="1">Vaření</option>
-                    <option value="2">Šachy</option>
-                    <option value="3">Karty</option>
-                    <option value="4">Čtení</option>
-                    <option value="5">Umění</option>
-                    <option value="6">Ruční výroba</option>
-                    <option value="7">Procházka</option>
-                    <option value="8">Káva / čaj</option>
-                    <option value="9">Vyprávění</option>
-                    <option value="10">Pletení</option>
-                </select>
+                    {% for service in services %}
+                    <option value= {{ service[0] }} > {{ service[1]}} </option>
+                    {% endfor %}
+                  </select>
                 </div>
                 <div class="form-group">
                 <label>Město</label>
                 <select class="form-control" name="address">
-                  <option value="Praha">Praha</option>
+                    {% for address in addresses %}
+                    <option value= {{ address[0] }} > {{ address[0]}} </option>
+                    {% endfor %}
+                  <!-- <option value="Praha">Praha</option>
                   <option value="Olomouc">Olomouc</option>
                   <option value="Varnsdorf">Varnsdorf</option>
-                  <option value="Kladno">Kladno</option>
+                  <option value="Kladno">Kladno</option> -->
                 </select>
               </div>
               <input type="hidden" name="SECRET_KEY" value="super tajny klic">

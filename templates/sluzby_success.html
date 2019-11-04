@@ -8,8 +8,11 @@
     <h2>Děkujeme. Vámi zadané údaje jsou:</h2>
 
     <ul>
-      <li><strong>Nabídka / Poptávka:</strong> {{ demand_offer }}</li>
-      <li><strong>Služba:</strong> {{ category }}</li>
+      <strong>Nabídka / Poptávka:</strong> {{ demand_offer }} <br>
+      <strong>Služby:</strong>
+      {% for service in category %}
+      <li class='service_item'> {{ service }}</li>
+      {% endfor %}
     </ul>
 
     <p>Zpět na můj <a href="/profil">profil </a>.</p>

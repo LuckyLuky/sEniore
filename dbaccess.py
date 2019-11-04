@@ -39,6 +39,18 @@ class DBAccess:
       else:
               db_connection.commit()
       return None
+  
+  @staticmethod
+  def ExecuteScalar(sql, vars=None):
+      db_connection = DBAccess.Get_DB()
+      cursor = db_connection.cursor()
+      if(vars == None):
+          cursor.execute(sql)
+      else:
+          cursor.execute(sql,vars)
+      if(cursor.rowcount>0):
+        return cursor.fetchone()[0]
+      return None
 
   @staticmethod
   def ExecuteInsert(sql, vars=None):
