@@ -61,21 +61,25 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = form.user.data
-        userRow = DBAccess.ExecuteSQL('select email, password, first_name, surname, id from users where email like %s',(user,))
+        userRow = DBAccess.ExecuteSQL('select email, password, first_name, surname, id, level,salt from users where email like %s',(user,))
         
         if(userRow == None):
           flash('Uživatel nenalezen')
           return render_template("login.html", form = form)
         
         userRow = userRow[0] # execute sql gets list with one item, ie:[(email, password, first_name, surname, id)], we need just (), ie tuple
-        md5Pass = hashlib.md5(str(form.password.data).encode()).hexdigest()
+        salt = userRow[6]
+        def addSalt(passwordArg):
+          return passwordArg+salt
+        
+        md5Pass = hashlib.md5(addSalt(str(form.password.data)).encode()).hexdigest()
         if(userRow[1]!=md5Pass): # check if second item is equal to hashed password
           flash('Špatné heslo')
           return render_template("login.html", form = form)
               
         session["user"] = user
         session["id_user"] = userRow[4]
-        flash('Uživatel session["user"]{0} {1} přihlášen'.format(userRow[2], userRow[3]))
+        flash('Uživatel/ka {0} {1} přihlášen/a'.format(userRow[2], userRow[3]))
         return redirect(url_for('profil'))
     return render_template("login.html", form = form)
 
@@ -164,8 +168,8 @@ def add_name():
     }
     unique_number_users_long = DBAccess.ExecuteSQL('SELECT nextval(\'users_id_seq\')')
     unique_number_users = unique_number_users_long[0]
-    DBAccess.ExecuteInsert ('insert into users (id, first_name, surname, email, address, telephone, password) values (%s, %s, %s, %s, %s, %s, md5(%s))',
-    (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'], request.form['telephone'], request.form['password']))
+    salt = DBAccess.ExecuteScalar('select salt()')
+    DBAccess.ExecuteInsert('insert into users (id, first_name, surname, email, address, telephone, password, salt, level) values (%s, %s, %s, %s, %s, %s, md5(%s),%s,%s)', (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'],request.form['telephone'], request.form['password']+salt,salt, 1))
     return render_template ('/registrace_success.html', **kwargs)
 
 @app.route('/email_sent/', methods=['POST'])
