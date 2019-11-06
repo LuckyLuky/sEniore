@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Services -->
+<!-- <section id="zadosti"> -->
+
+    <h2>Detail žádosti</h2>
+
+
+    <table class="table_requests_detail"> 
+     
+        <tr class="table_requests_detail_header">
+            <th colspan=2>Údaje o službě</th>
+            <th colspan=2>Poskytující</th>
+            <th colspan=2>Žadatel</th>
+        </tr>
+        <tr>
+            <td>Čas</td><td >{{ entries[11] }}</td>
+            <td>Jméno</td><td >{{ entries[0] }}</td>
+            <td>Jméno</td><td >{{ entries[5] }}</td>
+        </tr>
+        <tr><td>Poslední změna</td><td >{{ entries[13] }}</td>
+            <td>Příjmení</td><td >{{ entries[1] }}</td>
+            <td>Příjmení</td><td >{{ entries[6] }}</td>
+        </tr>
+        <tr>
+            <td>Typ služby</td><td >{{ entries[10] }}</td>
+            <td>Adresa</td><td >{{ entries[2] }}</td>
+            <td>Adresa</td><td >{{ entries[7] }}</td>
+        </tr>
+        <tr>
+            <td>Info</td><td>{{ entries[12] }}</td>
+            <td>Email</td><td >{{ entries[3] }}</td>
+            <td>Email</td><td >{{ entries[8] }}</td>
+        </tr>
+        <tr>
+            <td>Stav</td><td >{{ entries[14] }}</td>
+            <td>Telefon</td><td >{{ entries[4] }}</td>
+            <td>Telefon</td><td >{{ entries[9] }}</td>
+        </tr>
+        
+    </table>
+    <br>
+    <form method="POST">
+    <table class="table_requests_detail">
+            <tr><th colspan=4>Změnit stav</th></tr>
+            <tr> 
+                <td><input type="submit" name="submit_button" value = '1' id="1" class="btn btn-default" value="Žádá se"></td>
+                <td><input type="submit" name="submit_button" value = '2'  class="btn btn-default" value="Schváleno"></td>
+                <td><input type="submit" name="submit_button" value = '3'  class="btn btn-default" value="Odmítnuto"></td>
+                <td><input type="submit" name="submit_button" value = '4'  class="btn btn-default" value="Splněno"></td>
+            </tr>
+
+    </table> 
+    </form>   
+{% endblock %}

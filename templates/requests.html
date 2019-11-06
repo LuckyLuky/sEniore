@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Services -->
+<!-- <section id="zadosti"> -->
+
+    <h2>Žádosti</h2>
+    <p class="p_requests">(p) poptávající, (n) nabízející</p>
+
+    <!-- <table class="table_requests"> -->
+            <table>
+        <tr>
+          <th class="sloupec"> Jméno (p) </th> 
+          <th class="sloupec"> Příjmení (p)</th>
+          <!-- <th class="sloupec"> Adresa (p)</th>
+          <th class="sloupec"> Email (p)</th>
+          <th class="sloupec"> Telefon (p)</th> -->
+          <th class="sloupec"> Jméno (n) </th> 
+          <th class="sloupec"> Příjmení (n)</th>
+          <!-- <th class="sloupec"> Adresa (n)</th>
+          <th class="sloupec"> Email (n)</th>
+          <th class="sloupec"> Telefon (n)</th> -->
+          <th class="sloupec"> Služba</th>
+          <th class="sloupec"> Datum a čas setkání</th>
+          <!-- <th class="sloupec"> Info</th> -->
+          <!-- <th class="sloupec"> Vytvořeno</th> -->
+          <th class="sloupec"> Status</th>
+          <th class="sloupec"></th> 
+        </tr>
+        {% for request in entries %}
+        <tr> 
+         <td class="sloupec"> {{ request[0] }} </td>
+         <td class="sloupec"> {{ request[1] }} </td>
+         <!-- <td class="sloupec"> {{ request[2] }} </td>
+         <td class="sloupec"> {{ request[3] }} </td>
+         <td class="sloupec"> {{ request[4] }} </td> -->
+         <td class="sloupec"> {{ request[5] }} </td>
+         <td class="sloupec"> {{ request[6] }} </td>
+         <!-- <td class="sloupec"> {{ request[7] }} </td>
+         <td class="sloupec"> {{ request[8] }} </td>
+         <td class="sloupec"> {{ request[9] }} </td> -->
+         <td class="sloupec"> {{ request[10] }} </td>
+         <td class="sloupec"> {{ request[11] }} </td>
+         <!-- <td class="sloupec"> {{ request[12] }} </td>
+         <td class="sloupec"> {{ request[13] }} </td> -->
+         <td class="sloupec"> {{ request[14] }} </td>
+         <td class="sloupec"> <a href="/requests_detail?id={{ request[15] }}">detail</a> </td>
+         </tr> 
+         {% endfor %}
+        </table>
+    <!-- </section> -->
+
+
+{% endblock %}

@@ -12,6 +12,7 @@ import configparser
 import hashlib
 import sendgrid
 from lookup import DictionaryDemandOffer, Services
+from datetime import datetime, date, time
 
 app = Flask('seniore')
 
@@ -76,9 +77,14 @@ def login():
         if(userRow[1]!=md5Pass): # check if second item is equal to hashed password
           flash('Špatné heslo')
           return render_template("login.html", form = form)
-              
+        
+        if(userRow[5] == 0):
+          flash('Uživatel není ověřen, počkejte prosím na ověření administrátorem stránek.')
+          return render_template("login.html", form = form)
+
         session["user"] = user
         session["id_user"] = userRow[4]
+        session["level_user"] = userRow[5]
         flash('Uživatel/ka {0} {1} přihlášen/a'.format(userRow[2], userRow[3]))
         return redirect(url_for('profil'))
     return render_template("login.html", form = form)
@@ -87,6 +93,7 @@ def login():
 def odhlasit():
     session.pop("user", None)
     session.pop("id_user", None)
+    session.pop("level_user",None)
     return redirect(url_for('login'))
 
 @app.route('/')
@@ -179,9 +186,12 @@ def email_sent():
   id_users_services = request.form.get('id', type=int)
   date = request.form.get('date', type=str)
   time = request.form.get('time', type=str)
+  strDateTime = f'{date} {time}'
+  dt = datetime.strptime(strDateTime, '%Y-%m-%d %H:%M')
+
   info = request.form.get('info', type=str)
   email_user_long = DBAccess.ExecuteSQL('''
-        SELECT u.email
+        SELECT u.email, u.id, s.id
         FROM users u
         LEFT JOIN users_services us on us.id_users = u.id 
         LEFT JOIN services s on s.id = us.id_services
@@ -189,6 +199,9 @@ def email_sent():
         WHERE us.id = %s
         ''', (id_users_services, ))
   email_user = email_user_long[0][0]
+  offeringUserId = email_user_long[0][1]
+  services_id = email_user_long[0][2]
+
   message = {
       'personalizations': [
           {
@@ -212,6 +225,8 @@ def email_sent():
   }
   
   sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
+
+  DBAccess.ExecuteInsert('INSERT INTO requests (id_users_demand, id_users_offer, id_services, timestamp, date_time, add_information, id_requests_status) values (%s,%s,%s,now(),%s,%s,%s)', (session['id_user'],offeringUserId, services_id,dt,info,1 ))
   response = sg.send(message)
   print(response.status_code)
   print(response.body)
@@ -246,6 +261,69 @@ def match():
   'id': id_users_services,
   }
   return render_template('/match.html', **kwargs)
+
+@app.route('/requests', methods = ["GET", "POST"])
+def requests():
+  requests = DBAccess.ExecuteSQL(
+    '''select
+          ud.first_name,
+          ud.surname,
+          ud.address,
+          ud.email,
+          ud.telephone,
+          uo.first_name,
+          uo.surname,
+          uo.address,
+          uo.email,
+          uo.telephone,
+          s.category,
+          r.date_time,
+          r.add_information,
+          r.timestamp,
+          rs.status,
+          r.id
+        from requests r
+        inner join services s on r.id_services = s.id 
+        inner join users ud on r.id_users_demand = ud.id
+        inner join users uo on r.id_users_offer = uo.id
+        inner join requests_status rs on r.id_requests_status = rs.id''')
+  return render_template('requests.html', entries = requests)
+
+@app.route('/requests_detail', methods = ["GET", "POST"])
+def requests_detail():
+  rid = request.args.get('id', type=int)
+  
+  if request.method == 'POST':
+    status = request.form['submit_button']
+    DBAccess.ExecuteUpdate('UPDATE requests SET id_requests_status= %s where id= %s',(status,rid))
+  rid = request.args.get('id', type=int)
+  requests = DBAccess.ExecuteSQL(
+    '''select
+          ud.first_name,
+          ud.surname,
+          ud.address,
+          ud.email,
+          ud.telephone,
+          uo.first_name,
+          uo.surname,
+          uo.address,
+          uo.email,
+          uo.telephone,
+          s.category,
+          r.date_time,
+          r.add_information,
+          	to_char(r.timestamp, 'YYYY-mm-DD HH12:MI:SS'),
+          rs.status,
+          r.id
+        from requests r
+        inner join services s on r.id_services = s.id 
+        inner join users ud on r.id_users_demand = ud.id
+        inner join users uo on r.id_users_offer = uo.id
+        inner join requests_status rs on r.id_requests_status = rs.id
+        where r.id =%s''',(rid,))
+  return render_template('requests_detail.html', entries = requests[0])
+
+
 
 if __name__ == '__main__':
     app.debug = True

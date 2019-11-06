@@ -30,10 +30,14 @@ Login -
 <ul class="menu">
     <li><a href="/"> Úvod </a></li>
     {% set user = session["user"] %}
+    {% set level = session["level_user"] %}
     {% if user %}
     <li><a href="/profil"> Profil </a></li>
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
+    {% if level == 2 %}
+    <li><a href="/requests"> Žádosti </a></li>
+    {% endif %}
     <li><a href="/logout"> Odhlásit </a></li>
     {% else %}
     <li><a href="/login"> Login </a></li>
