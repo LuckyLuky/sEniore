@@ -1,0 +1,85 @@
+import os
+from flask import Flask, Blueprint, g, request, url_for, render_template, redirect, session, flash
+from jinja2 import exceptions
+from flask_wtf import FlaskForm
+from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
+from wtforms import RadioField
+from flask_wtf.file import FileRequired
+from wtforms.validators import InputRequired
+from dbaccess import DBAccess
+import psycopg2
+import configparser 
+import hashlib
+import sendgrid
+from lookup import DictionaryDemandOffer, Services
+from datetime import datetime, date, time
+
+blueprint = Blueprint('login_bp', __name__, template_folder='templates')
+
+class LoginForm(FlaskForm):
+    user = StringField("Uživatel", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Přihlašovací jméno
+    password = PasswordField("Heslo", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Heslo
+    submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
+
+@blueprint.route('/login/', methods = ["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = form.user.data
+        userRow = DBAccess.ExecuteSQL('select email, password, first_name, surname, id, level,salt from users where email like %s',(user,))
+        
+        if(userRow == None):
+          flash('Uživatel nenalezen')
+          return render_template("login.html", form = form)
+        
+        userRow = userRow[0] # execute sql gets list with one item, ie:[(email, password, first_name, surname, id)], we need just (), ie tuple
+        salt = userRow[6]
+        def addSalt(passwordArg):
+          return passwordArg+salt
+        
+        md5Pass = hashlib.md5(addSalt(str(form.password.data)).encode()).hexdigest()
+        if(userRow[1]!=md5Pass): # check if second item is equal to hashed password
+          flash('Špatné heslo')
+          return render_template("login.html", form = form)
+        
+        if(userRow[5] == 0):
+          flash('Uživatel není ověřen, počkejte prosím na ověření administrátorem stránek.')
+          return render_template("login.html", form = form)
+
+        session["user"] = user
+        session["id_user"] = userRow[4]
+        session["level_user"] = userRow[5]
+        flash('Uživatel/ka {0} {1} přihlášen/a'.format(userRow[2], userRow[3]))
+        return redirect(url_for('profile_bp.profil'))
+    return render_template("login.html", form = form)
+
+@blueprint.route('/logout/', methods = ["GET", "POST"])
+def odhlasit():
+    session.pop("user", None)
+    session.pop("id_user", None)
+    session.pop("level_user",None)
+    return redirect(url_for('login_bp.login'))
+
+@blueprint.route('/')
+def index():
+    return render_template ('layout.html')
+
+@blueprint.route('/registrace')
+def registrace():
+    return render_template ('registrace.html')
+
+@blueprint.route('/add_name', methods=['POST'])
+def add_name():
+    kwargs = {
+      'first_name': request.form['first_name'],
+      'surname': request.form['surname'],
+      'email': request.form['email'],
+      'address': request.form['address'],
+      'telephone': request.form['telephone'],
+      'password': request.form['password']
+    }
+    unique_number_users_long = DBAccess.ExecuteSQL('SELECT nextval(\'users_id_seq\')')
+    unique_number_users = unique_number_users_long[0]
+    salt = DBAccess.ExecuteScalar('select salt()')
+    DBAccess.ExecuteInsert('insert into users (id, first_name, surname, email, address, telephone, password, salt, level) values (%s, %s, %s, %s, %s, %s, md5(%s),%s,%s)', (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'],request.form['telephone'], request.form['password']+salt,salt, 1))
+    return render_template ('/registrace_success.html', **kwargs)
