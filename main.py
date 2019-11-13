@@ -41,25 +41,6 @@ from request_user import request_bp
 app.register_blueprint(request_bp.blueprint)
 
 
-
-
-class FileFormular(FlaskForm):
-    soubor = FileField("Vlož obrázek", validators = [FileRequired()])
-    submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
-
-@app.route("/foto/", methods = ["GET", "POST"])
-def photo():
-    form = FileFormular()
-    nazev = f'{str(session["id_user"])}.jpg'
-    if form.validate_on_submit():
-        soubor = form.soubor.data
-        typ_soubor_seznam = secure_filename(soubor.filename).split('.')
-        typ_soubor = typ_soubor_seznam[1]
-        nazev = f'{str(session["id_user"])}.{typ_soubor}'
-        soubor.save(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
-    #obrazek = app.static_folder + f"/images/{nazev}"
-    return render_template("foto.html", form = form, nazev = nazev)
-
 if __name__ == '__main__':
     app.debug = True
     host = os.environ.get('IP', '127.0.0.1')

@@ -23,6 +23,11 @@ class LoginForm(FlaskForm):
     password = PasswordField("Heslo", validators = [InputRequired()], render_kw = dict(class_ = "form-control")) #Heslo
     submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
 
+class FileFormular(FlaskForm):
+    soubor = FileField("Vlož obrázek", validators = [FileRequired()])
+    submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
+
+
 @blueprint.route('/login/', methods = ["GET", "POST"])
 def login():
     form = LoginForm()
@@ -57,9 +62,10 @@ def login():
 
 @blueprint.route('/logout/', methods = ["GET", "POST"])
 def odhlasit():
-    session.pop("user", None)
-    session.pop("id_user", None)
-    session.pop("level_user",None)
+    # session.pop("user", None)
+    # session.pop("id_user", None)
+    # session.pop("level_user",None)
+    session.clear()
     return redirect(url_for('login_bp.login'))
 
 @blueprint.route('/')
@@ -84,4 +90,23 @@ def add_name():
     unique_number_users = unique_number_users_long[0]
     salt = DBAccess.ExecuteScalar('select salt()')
     DBAccess.ExecuteInsert('insert into users (id, first_name, surname, email, address, telephone, password, salt, level) values (%s, %s, %s, %s, %s, %s, md5(%s),%s,%s)', (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'],request.form['telephone'], request.form['password']+salt,salt, 1))
+    user = request.form['email']
+    userRow = DBAccess.ExecuteSQL('select email, password, first_name, surname, id, level,salt from users where email like %s',(user,))
+    userRow = userRow[0]
+    session["id_user"] = userRow[4]
     return render_template ('/registrace_success.html', **kwargs)
+
+@blueprint.route("/registrace_2/", methods = ["GET", "POST"])
+def photo():
+  form = FileFormular()
+  nazev = f'{str(session["id_user"])}.jpg'
+  if form.validate_on_submit():
+    soubor = form.soubor.data
+    typ_soubor_seznam = secure_filename(soubor.filename).split('.')
+    typ_soubor = typ_soubor_seznam[1]
+    nazev = f'{str(session["id_user"])}.{typ_soubor}'
+    soubor.save(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
+    return redirect(url_for('login_bp.login'))
+  return render_template("/registrace_2.html", form = form)
+
+
