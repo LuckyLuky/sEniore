@@ -106,6 +106,7 @@ def photo():
     typ_soubor = typ_soubor_seznam[1]
     nazev = f'{str(session["id_user"])}.{typ_soubor}'
     soubor.save(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
+    flash('Foto uloženo, přihlaste se, prosím.')
     return redirect(url_for('login_bp.login'))
   return render_template("/registrace_2.html", form = form)
 
