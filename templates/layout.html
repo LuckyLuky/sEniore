@@ -11,7 +11,7 @@
 
 <body>
 
-  <!-- <img class=logo src="static/obrazky/logoSeniore.png" alt="logoSeniore"> -->
+  <!-- <img class=logo src="static/images/logoSeniore.png" alt="logoSeniore"> -->
 
 <header>
 {% block header %}
@@ -35,6 +35,7 @@ Login -
     <li><a href="/profil"> Profil </a></li>
     <li><a href="/sluzby"> Služby </a></li>
     <li><a href="/prehled"> Přehled </a></li>
+    <li><a href="/foto"> Foto </a></li>
     {% if level == 2 %}
     <li><a href="/requests"> Žádosti </a></li>
     {% endif %}
@@ -47,7 +48,7 @@ Login -
 
 
   <header class="hlavicka">
-  <h1>Aplikace</h1>
+  <h1>sEniore</h1>
   </header>
 
   {% with messages = get_flashed_messages() %}

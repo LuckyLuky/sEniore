@@ -1,4 +1,5 @@
 config.txt
+static/users_images
 python_random_generation/Format.py
 python_random_generation/Regions.txt
 python_random_generation/ZIP.py

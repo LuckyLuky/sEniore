@@ -2,10 +2,10 @@ import os
 from flask import Flask, Blueprint, g, request, url_for, render_template, redirect, session, flash
 from jinja2 import exceptions
 from flask_wtf import FlaskForm
-from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
-from wtforms import RadioField
+from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField, RadioField, FileField
 from flask_wtf.file import FileRequired
 from wtforms.validators import InputRequired
+from werkzeug.utils import secure_filename
 from dbaccess import DBAccess
 import psycopg2
 import configparser 
@@ -13,6 +13,7 @@ import hashlib
 import sendgrid
 from lookup import DictionaryDemandOffer, Services
 from datetime import datetime, date, time
+from flask import current_app as app
 
 blueprint = Blueprint('profile_bp', __name__, template_folder='templates')
 
@@ -21,9 +22,12 @@ class OverviewFormBase(FlaskForm):
 
 @blueprint.route('/profil', methods=['GET', 'POST'])
 def profil():
-    if request.method == 'GET':
-        vysledekselectu = DBAccess.ExecuteSQL('select s.category as category, d.demand_offer as demand_offer from users u left join users_services us on us.id_users = u.id left join services s on s.id = us.id_services left join demand_offer d on d.id = us.id_demand_offer where u.id = %s', (session["id_user"],))
-    return render_template ('profil.html', entries = vysledekselectu)
+  nazev = f'{str(session["id_user"])}.jpg'
+  if request.method == 'GET':
+      vysledekselectu = DBAccess.ExecuteSQL('select s.category as category, d.demand_offer as demand_offer from users u left join users_services us on us.id_users = u.id left join services s on s.id = us.id_services left join demand_offer d on d.id = us.id_demand_offer where u.id = %s', (session["id_user"],))
+  return render_template ('profil.html', entries = vysledekselectu, nazev = nazev)
+
+
 
 @blueprint.route('/prehled', methods=['POST', 'GET'])
 def prehled_filtr():
@@ -47,3 +51,5 @@ def prehled_filtr():
         if vysledekselectu == None:
           vysledekselectu = []
         return render_template ('prehled_success.html', entries = vysledekselectu)
+
+

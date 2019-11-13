@@ -2,10 +2,11 @@ import os
 from flask import Flask, Blueprint, g, request, url_for, render_template, redirect, session, flash
 from jinja2 import exceptions
 from flask_wtf import FlaskForm
-from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField
+from wtforms import Form, BooleanField, StringField, SelectField, IntegerField, widgets, validators, PasswordField, SubmitField, FileField
 from wtforms import RadioField
 from flask_wtf.file import FileRequired
 from wtforms.validators import InputRequired
+from werkzeug.utils import secure_filename
 from dbaccess import DBAccess
 import psycopg2
 import configparser 
@@ -13,6 +14,7 @@ import hashlib
 import sendgrid
 from lookup import DictionaryDemandOffer, Services
 from datetime import datetime, date, time
+from flask import current_app as app
 
 blueprint = Blueprint('login_bp', __name__, template_folder='templates')
 

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<img class="moje_foto" src="{{ url_for('static', filename='users_images/' + nazev )}}">
+
+<h3>Moje foto a info</h3> 
+
+
+
+<form method="POST" class="row justify-content-center" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <table>
+      <tr><td>{{ form.soubor.label }}:</td><td>{{ form.soubor }}</td></tr>
+      <tr><td>{{ form.submit.label }}</td><td> {{ form.submit }}<td></tr>
+  </table>
+</form>
+<div class="text-center">
+{% for field, errors in form.errors.items() %}
+  {% for error in errors %}
+      <span style="color: red;">Chyba pole - {{ field }} hláška - {{ error }}</span><br>
+  {% endfor %}
+{% endfor %}
+<hr>
+
+</div>
+
+{% endblock %}
