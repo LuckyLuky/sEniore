@@ -11,22 +11,31 @@
     <p>Prosím, vyplňte registrační formulář níže.</p>
 
     <p>
-        <form method="POST" action='/add_name' >
-            <div><label> Jméno </label> 
-            <input type="text" name="first_name" placeholder="Jméno"></div>
-            <div><label> Příjmení </label>
-            <input type="text" name="surname" placeholder="Příjmení"></div>
-            <div><label> E-mail </label>
-            <input type="text" name="email" placeholder="e-mail"></div>
-            <div><label> Adresa </label>
-            <input type="text" name="address" placeholder="adresa"></div>
-            <div><label> Telefon </label>
-            <input type="text" name="telephone" placeholder="telefon"></div>
-            <div><label> Heslo </label>
-            <input type="password" name="password" placeholder="heslo"></div>
-            <input type="submit" class="btn btn-default" value="Pokračovat">
-        </form>
-    </p>
+      <form method="POST" action='/add_name' >
+          <div><label> Jméno </label> 
+          <input type="text" name="first_name" placeholder="Jméno"></div>
+          <div><label> Příjmení </label>
+          <input type="text" name="surname" placeholder="Příjmení"></div>
+          <div><label> E-mail </label>
+          <input type="text" name="email" placeholder="e-mail"></div>
+          <div><label> Adresa </label>
+          <input type="text" name="address" placeholder="adresa"></div>
+          <div><label> Ulice </label>
+          <input type="text" name="street" placeholder="Ulice"></div>
+          <div><label> Číslo popisné </label>
+          <input type="text" name="streetNumber" placeholder="Číslo popisné"></div>
+          <div><label> Město </label>
+          <input type="text" name="town" placeholder="Město"></div>
+          <div><label> PSČ </label>
+          <input type="text" name="postCode" placeholder="PSČ"></div>
+          <div><label> Telefon </label>
+          <input type="text" name="telephone" placeholder="telefon"></div>
+          <div><label> Heslo </label>
+          <input type="password" name="password" placeholder="heslo"></div>
+          <input type="submit" class="btn btn-default" value="Registrovat se">
+      </form>
+
+  </p>
 </section>
 
 {% endblock %}

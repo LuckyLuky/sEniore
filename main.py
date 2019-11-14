@@ -14,8 +14,13 @@ import hashlib
 import sendgrid
 from lookup import DictionaryDemandOffer, Services
 from datetime import datetime, date, time
+from flask_googlemaps import GoogleMaps
+from flask_googlemaps import Map
+from utils import getGoogleAPIKey
 
 app = Flask('seniore')
+
+GoogleMaps(app, key=getGoogleAPIKey())
 
 app.config["SECRET_KEY"] = "super tajny klic"
 

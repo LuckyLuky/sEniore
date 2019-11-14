@@ -23,18 +23,18 @@ class OverviewFormBase(FlaskForm):
 def prehled_filtr():
     form = OverviewFormBase()
     services = DBAccess.ExecuteSQL('select * from services')
-    addresses = DBAccess.ExecuteSQL('select distinct address from users')
+    addresses = DBAccess.ExecuteSQL('select distinct town from users')
     if request.method == 'GET':
       return render_template('prehled.html', form = form, services = services, addresses = addresses)
 
     elif request.method == 'POST':
         vysledekselectu = DBAccess.ExecuteSQL('''
-        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.address, us.id
+        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.town, us.id
         FROM users u
         LEFT JOIN users_services us on us.id_users = u.id 
         LEFT JOIN services s on s.id = us.id_services
         LEFT JOIN demand_offer d on d.id = us.id_demand_offer
-        WHERE d.id = %s and s.id = %s and lower(u.address) = lower(%s)
+        WHERE d.id = %s and s.id = %s and lower(u.town) = lower(%s)
         ORDER BY us.id desc
         LIMIT 10
         ''', (form.demandOffer.data, request.form['category'], request.form['address']))

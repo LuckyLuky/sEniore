@@ -8,6 +8,7 @@ from flask_wtf.file import FileRequired
 from wtforms.validators import InputRequired
 from werkzeug.utils import secure_filename
 from dbaccess import DBAccess
+import requests
 import psycopg2
 import configparser 
 import hashlib
@@ -15,6 +16,8 @@ import sendgrid
 from lookup import DictionaryDemandOffer, Services
 from datetime import datetime, date, time
 from flask import current_app as app
+from utils import getGoogleAPIKey
+
 
 blueprint = Blueprint('login_bp', __name__, template_folder='templates')
 
@@ -27,6 +30,13 @@ class FileFormular(FlaskForm):
     soubor = FileField("Vlož obrázek", validators = [FileRequired()])
     submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
 
+def GetCoordinates(address) :
+    api_key = getGoogleAPIKey()
+    api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
+    api_response_dict = api_response.json()
+    latitude = api_response_dict['results'][0]['geometry']['location']['lat']
+    longitude = api_response_dict['results'][0]['geometry']['location']['lng']
+    return (latitude,longitude)
 
 @blueprint.route('/login/', methods = ["GET", "POST"])
 def login():
@@ -83,13 +93,23 @@ def add_name():
       'surname': request.form['surname'],
       'email': request.form['email'],
       'address': request.form['address'],
+      'town': request.form['town'],
+      'street': request.form['street'],
+      'streetNumber': request.form['streetNumber'],
+      'postCode': request.form['postCode'],
       'telephone': request.form['telephone'],
       'password': request.form['password']
     }
+
+    address = '{} {} {} {}'.format(kwargs['street'],kwargs['streetNumber'],kwargs['town'],kwargs['postCode'])
+    coordinates = GetCoordinates(address)
+
     unique_number_users_long = DBAccess.ExecuteSQL('SELECT nextval(\'users_id_seq\')')
     unique_number_users = unique_number_users_long[0]
     salt = DBAccess.ExecuteScalar('select salt()')
-    DBAccess.ExecuteInsert('insert into users (id, first_name, surname, email, address, telephone, password, salt, level) values (%s, %s, %s, %s, %s, %s, md5(%s),%s,%s)', (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'],request.form['telephone'], request.form['password']+salt,salt, 1))
+    DBAccess.ExecuteInsert('''insert into users (id, first_name, surname, email, address,street,streetNumber, town, postCode, telephone, password, salt, level, latitude,longitude)
+     values (%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, md5(%s),%s,%s, %s, %s)''',
+      (unique_number_users, request.form['first_name'], request.form['surname'], request.form['email'], request.form['address'],request.form['street'],request.form['streetNumber'],request.form['town'],request.form['postCode'],request.form['telephone'], request.form['password']+salt,salt, 1, coordinates[0],coordinates[1]))
     user = request.form['email']
     userRow = DBAccess.ExecuteSQL('select email, password, first_name, surname, id, level,salt from users where email like %s',(user,))
     userRow = userRow[0]
