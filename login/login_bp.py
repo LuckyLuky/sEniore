@@ -16,7 +16,7 @@ import sendgrid
 from lookup import DictionaryDemandOffer, Services
 from datetime import datetime, date, time
 from flask import current_app as app
-from utils import getGoogleAPIKey
+from utils import getGoogleAPIKey, GetCoordinates, UploadImage
 
 
 blueprint = Blueprint('login_bp', __name__, template_folder='templates')
@@ -30,13 +30,7 @@ class FileFormular(FlaskForm):
     soubor = FileField("Vlož obrázek", validators = [FileRequired()])
     submit = SubmitField("Odeslat", render_kw = dict(class_ = "btn btn-outline-primary btn-block"))
 
-def GetCoordinates(address) :
-    api_key = getGoogleAPIKey()
-    api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
-    api_response_dict = api_response.json()
-    latitude = api_response_dict['results'][0]['geometry']['location']['lat']
-    longitude = api_response_dict['results'][0]['geometry']['location']['lng']
-    return (latitude,longitude)
+
 
 @blueprint.route('/login/', methods = ["GET", "POST"])
 def login():
@@ -121,11 +115,14 @@ def photo():
   form = FileFormular()
   nazev = f'{str(session["id_user"])}.jpg'
   if form.validate_on_submit():
-    soubor = form.soubor.data
+    soubor = form.soubor.data 
     typ_soubor_seznam = secure_filename(soubor.filename).split('.')
     typ_soubor = typ_soubor_seznam[1]
     nazev = f'{str(session["id_user"])}.{typ_soubor}'
+    
     soubor.save(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
+    #UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
+
     flash('Foto uloženo, přihlaste se, prosím.')
     return redirect(url_for('login_bp.login'))
   return render_template("/registrace_2.html", form = form)
