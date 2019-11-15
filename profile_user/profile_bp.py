@@ -1,7 +1,6 @@
 from flask import (
     Blueprint,
     request,
-    url_for,
     render_template,
     session,
     )
@@ -11,6 +10,7 @@ from wtforms import (
     )
 from dbaccess import DBAccess
 from flask_googlemaps import Map
+from utils import GetImageUrl
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
 
@@ -23,7 +23,6 @@ class OverviewFormBase(FlaskForm):
 
 @blueprint.route("/profil", methods=["GET", "POST"])
 def profil():
-    nazev = f'{str(session["id_user"])}.jpg'
     latitude = str(
         DBAccess.ExecuteScalar(
             "select latitude from users where id = %s", (session["id_user"],)
@@ -34,8 +33,8 @@ def profil():
             "select longitude from users where id = %s", (session["id_user"],)
         )
     )
-    nazevUrl = url_for("static", filename="users_images/" + nazev)
     username = session["user"]
+    imgCloudUrl = GetImageUrl(session["id_user"])
 
     if request.method == "GET":
         vysledekselectu = DBAccess.ExecuteSQL(
@@ -56,11 +55,11 @@ def profil():
                 "icon": "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
                 "lat": latitude,
                 "lng": longitude,
-                "infobox": f"<b>{username}</b><img class=img_mapa src= {nazevUrl}/>",
+                "infobox": f"<b>{username}</b><img class=img_mapa src= {imgCloudUrl} />"
             }
         ]
     )
 
     return render_template(
-        "profil.html", entries=vysledekselectu, nazev=nazev, sndmap=sndmap
+        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap
     )

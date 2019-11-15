@@ -69,8 +69,13 @@ def CloudinaryConfigure():
 
 def UploadImage(filePath):
     fileName = Path(filePath).stem
-    Cloud.uploader.upload(filePath, width=150, height=150, crop="limit", public_id=fileName)
+    Cloud.uploader.upload(
+      filePath,
+      width=150,
+      height=150,
+      crop="limit",
+      public_id=fileName)
 
 
 def GetImageUrl(userId):
-    return Cloud.CloudinaryImage(str(userId)).url
+    return Cloud.CloudinaryImage(str(userId)).url   
