@@ -21,7 +21,7 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates
+from utils import GetCoordinates, UploadImage
 
 
 blueprint = Blueprint("login_bp", __name__, template_folder="templates")
@@ -178,7 +178,7 @@ def photo():
         nazev = f'{str(session["id_user"])}.{typ_soubor}'
 
         soubor.save(os.path.join(app.config["UPLOAD_FOLDER"], nazev))
-        # UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
+        UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
 
         flash("Foto uloženo, přihlaste se, prosím.")
         return redirect(url_for("login_bp.login"))

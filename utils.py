@@ -3,6 +3,7 @@ import configparser
 import cloudinary as Cloud
 import requests
 import cloudinary.uploader
+from pathlib import Path
 
 
 def GetCoordinates(address):
@@ -59,13 +60,17 @@ def CloudinaryConfigure():
     if not apiSecret:
         raise Exception("Could not find CLOUDINARY_API_SECRET value.")
 
-    Cloud.config.update = {
-        "cloud_name": cloudName,
-        "api_key": apiKey,
-        "api_secret": apiSecret,
-    }
+    Cloud.config(
+      cloud_name=cloudName,
+      api_key=apiKey,
+      api_secret=apiSecret
+      )
 
 
 def UploadImage(filePath):
-    CloudinaryConfigure()
-    Cloud.uploader.upload_resource(filePath)
+    fileName = Path(filePath).stem
+    Cloud.uploader.upload(filePath, width=150, height=150, crop="limit", public_id=fileName)
+
+
+def GetImageUrl(userId):
+    return Cloud.CloudinaryImage(str(userId)).url

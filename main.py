@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_googlemaps import GoogleMaps
-from utils import getGoogleAPIKey
+from utils import getGoogleAPIKey, CloudinaryConfigure
 from login import login_bp
 from profile_user import profile_bp
 from serviceReg import serviceReg_bp
@@ -12,6 +12,8 @@ from request_user import request_bp
 app = Flask("seniore")
 
 GoogleMaps(app, key=getGoogleAPIKey())
+
+CloudinaryConfigure()
 
 app.config["SECRET_KEY"] = "super tajny klic"
 
