@@ -1,6 +1,7 @@
 import os
 from flask import (
     Blueprint,
+    Flask,
     request,
     url_for,
     render_template,
@@ -16,7 +17,8 @@ from wtforms import (
     FileField,
 )
 from flask_wtf.file import FileRequired
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, DataRequired
+from wtforms.widgets import TextArea
 from werkzeug.utils import secure_filename
 from dbaccess import DBAccess
 import hashlib
@@ -46,6 +48,13 @@ class FileFormular(FlaskForm):
     )
 
 
+class TextFormular(FlaskForm):
+    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
+    submit = SubmitField(
+      "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+    )
+
+
 @blueprint.route("/login/", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -61,9 +70,7 @@ def login():
             flash("Uživatel nenalezen")
             return render_template("login.html", form=form)
 
-        userRow = userRow[
-            0
-        ]
+        userRow = userRow[0]
         # execute sql gets list with one item, ie:[(email, password, first_name,
         # surname, id)], we need just (), ie tuple
         salt = userRow[6]
@@ -167,7 +174,7 @@ def add_name():
     return render_template("/registrace_success.html", **kwargs)
 
 
-@blueprint.route("/registrace_2/", methods=["GET", "POST"])
+@blueprint.route("/registrace_photo/", methods=["GET", "POST"])
 def photo():
     form = FileFormular()
     nazev = f'{str(session["id_user"])}.jpg'
@@ -181,5 +188,15 @@ def photo():
         UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
 
         flash("Foto uloženo, přihlaste se, prosím.")
+        return redirect(url_for("login_bp.comment"))
+    return render_template("/registrace_photo.html", form=form)
+
+
+@blueprint.route("/registraceComment/", methods=["GET", "POST"])
+def comment():
+    form = TextFormular()
+    if form.validate_on_submit():
+        comment = form.comment.data
+        DBAccess.ExecuteUpdate('update users set info = %s where id = %s', (comment, session["id_user"]))
         return redirect(url_for("login_bp.login"))
-    return render_template("/registrace_2.html", form=form)
+    return render_template("/registraceComment.html", form=form)
