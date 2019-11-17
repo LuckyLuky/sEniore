@@ -1,7 +1,6 @@
 import os
 from flask import (
     Blueprint,
-    Flask,
     request,
     url_for,
     render_template,
@@ -187,7 +186,7 @@ def photo():
         soubor.save(os.path.join(app.config["UPLOAD_FOLDER"], nazev))
         UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
 
-        flash("Foto uloženo, přihlaste se, prosím.")
+        flash("Foto uloženo, jsme u posledního kroku registrace :-) ")
         return redirect(url_for("login_bp.comment"))
     return render_template("/registrace_photo.html", form=form)
 
