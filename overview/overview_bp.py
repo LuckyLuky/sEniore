@@ -2,7 +2,8 @@ from flask import (
     Blueprint,
     request,
     render_template,
-    session
+    session,
+    flash
    )
 from flask_wtf import FlaskForm
 from wtforms import RadioField
@@ -24,10 +25,10 @@ class OverviewFormBase(FlaskForm):
 def prehled_filtr():
     form = OverviewFormBase()
     services = DBAccess.ExecuteSQL("select * from services")
-    # addresses = DBAccess.ExecuteSQL("select distinct town from users")
+    addresses = DBAccess.ExecuteSQL("select distinct lower(town) from users")
     if request.method == "GET":
         return render_template(
-            "prehled.html", form=form, services=services
+            "prehled.html", form=form, services=services, addresses = addresses
         )
 
     elif request.method == "POST":
@@ -38,15 +39,18 @@ def prehled_filtr():
         LEFT JOIN users_services us on us.id_users = u.id
         LEFT JOIN services s on s.id = us.id_services
         LEFT JOIN demand_offer d on d.id = us.id_demand_offer
-        WHERE d.id = %s and s.id = %s
+        WHERE d.id = %s and s.id = %s and lower(u.town) = lower(%s)
         ORDER BY us.id desc
         """,
-            (form.demandOffer.data, request.form["category"])
+            (form.demandOffer.data, request.form["category"], request.form["address"])
         )
         if vysledekselectu is None:
             vysledekselectu = []
 
         dbUser = DBAccess.GetDBUserById(session['id_user'])
+
+        if len(vysledekselectu) == 0:
+          flash("Bohužel pro vámi zadanou kombinaci pro vás nemáme parťáka.") 
 
 
         # markery pro kazdeho vyhledaneho
@@ -67,11 +71,11 @@ def prehled_filtr():
             marker["infobox"] = f'<b>{user[0]} {user[1]}</b><br>{user[9]}<img class=img_mapa src= {pictureUrl} /> <a href="/match?id={user[5]}">Kontaktovat</a>'
             markers.append(marker)
 
-            map = Map(
-                        identifier="sndmap",
-                        lat=str(dbUser.latitude),
-                        lng=str(dbUser.longitude),
-                        markers=markers
-                        )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
+        map = Map(
+                    identifier="sndmap",
+                    lat=str(dbUser.latitude),
+                    lng=str(dbUser.longitude),
+                    markers=markers
+                    )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
 
         return render_template("prehled_success.html", entries=vysledekselectu, sndmap=map)

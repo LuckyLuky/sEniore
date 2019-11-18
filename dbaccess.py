@@ -121,4 +121,4 @@ class DBAccess:
         cursor = db_connection.cursor()
         sql = f"select nextval('{seq}')"
         cursor.execute(sql)
-        return cursor.fetchone()
+        return cursor.fetchone()[0]

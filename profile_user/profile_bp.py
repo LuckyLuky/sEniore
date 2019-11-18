@@ -44,22 +44,50 @@ def profil():
             " left join demand_offer d on d.id = us.id_demand_offer where u.id = %s",
             (session["id_user"],)
         )
-    sndmap = Map(
-        identifier="sndmap",
-        lat=latitude,
-        lng=longitude,
-        report_clickpos=True,
-        clickpos_uri="/clickpost/",
-        markers=[
-            {
-                "icon": "http://maps.google.com/mapfiles/kml/pal2/icon10.png",
-                "lat": latitude,
-                "lng": longitude,
-                "infobox": f"<b>{username}</b><img class=img_mapa src= {imgCloudUrl} />"
-            }
-        ]
-    )
+        sndmap = Map(
+            identifier="sndmap",
+            lat=latitude,
+            lng=longitude,
+            report_clickpos=True,
+            clickpos_uri="/clickpost/",
+            markers=[
+                {
+                    "icon": "http://maps.google.com/mapfiles/kml/pal2/icon10.png",
+                    "lat": latitude,
+                    "lng": longitude,
+                    "infobox": f"<b>{username}</b><img class=img_mapa src= {imgCloudUrl} />"
+                }
+            ]
+        )
 
+        requests = DBAccess.ExecuteSQL(
+            """select
+              ud.first_name,
+              ud.surname,
+              ud.address,
+              ud.email,
+              ud.telephone,
+              uo.first_name,
+              uo.surname,
+              uo.address,
+              uo.email,
+              uo.telephone,
+              s.category,
+              r.date_time,
+              r.add_information,
+              r.timestamp,
+              rs.status,
+              r.id
+            from requests r
+            inner join services s on r.id_services = s.id
+            inner join users ud on r.id_users_demand = ud.id
+            inner join users uo on r.id_users_offer = uo.id
+            inner join requests_status rs on r.id_requests_status = rs.id
+            where ud.id = %s or uo.id =%s """, (session["id_user"], session["id_user"])
+        )
+        if requests == None:
+          requests = []
+    
     return render_template(
-        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap
+        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap, requests = requests
     )

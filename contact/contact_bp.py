@@ -58,44 +58,60 @@ def email_sent():
     dt = datetime.strptime(strDateTime, "%Y-%m-%d %H:%M")
 
     info = request.form.get("info", type=str)
+
     email_user_long = DBAccess.ExecuteSQL(
-        """
-        SELECT u.email, u.id, s.id
-        FROM users u
-        LEFT JOIN users_services us on us.id_users = u.id
-        LEFT JOIN services s on s.id = us.id_services
-        LEFT JOIN demand_offer d on d.id = us.id_demand_offer
-        WHERE us.id = %s
-        """,
-        (id_users_services,)
+    """
+    SELECT u.email, u.id, s.id
+    FROM users u
+    LEFT JOIN users_services us on us.id_users = u.id
+    LEFT JOIN services s on s.id = us.id_services
+    LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+    WHERE us.id = %s
+    """,
+    (id_users_services,)
     )
-    email_user = email_user_long[0][0]
+    email_user = email_user_long[0][0] # for testing emails are sent to admin
     offeringUserId = email_user_long[0][1]
     services_id = email_user_long[0][2]
 
+    id_request = DBAccess.GetSequencerNextVal("requests_id_seq")
+    DBAccess.ExecuteInsert(
+        "INSERT INTO requests (id, id_users_demand, id_users_offer, id_services, "
+        "timestamp, date_time, add_information, id_requests_status)"
+        " values (%s, %s,%s,%s,now(),%s,%s,%s)",
+        (id_request, session["id_user"], offeringUserId, services_id, dt, info, 1)
+    )
+
     message = {
         "personalizations": [
-            {"to": [{"email": f"{email_user}"}], "subject": "Seniore"}
+            {"to": [{"email": "katacek@seniore.org"}], "subject": "Seniore"}
         ],
         "from": {"email": "noreply@seniore.org"},
         "content": [
             {
                 "type": "text/plain",
-                "value": f"Uživatel {user} se s Vámi chce setkat dne {date} v {time}."
-                " Doplňující informace: {info}. Prosím, potvrďte svůj zájem"
-                " odpovědí na zobrazený e-mail.",
+                "value": f"Uživatel {user} se s chce setkat s {email_user} dne {date} v {time}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
             }
         ],
     }
+    
+    # message = {
+    #     "personalizations": [
+    #         {"to": [{"email": f"{email_user}"}], "subject": "Seniore"}
+    #     ],
+    #     "from": {"email": "noreply@seniore.org"},
+    #     "content": [
+    #         {
+    #             "type": "text/plain",
+    #             "value": f"Uživatel {user} se s Vámi chce setkat dne {date} v {time}."
+    #             " Doplňující informace: {info}. Prosím, potvrďte svůj zájem"
+    #             " odpovědí na zobrazený e-mail.",
+    #         }
+    #     ],
+    # }
 
     sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
 
-    DBAccess.ExecuteInsert(
-        "INSERT INTO requests (id_users_demand, id_users_offer, id_services, "
-        "timestamp, date_time, add_information, id_requests_status)"
-        " values (%s,%s,%s,now(),%s,%s,%s)",
-        (session["id_user"], offeringUserId, services_id, dt, info, 1)
-    )
     response = sg.send(message)
     print(response.status_code)
     print(response.body)
