@@ -116,7 +116,7 @@ def add_name():
         "first_name": request.form["first_name"],
         "surname": request.form["surname"],
         "email": request.form["email"],
-        "address": request.form["address"],
+        # "address": request.form["address"],
         "town": request.form["town"],
         "street": request.form["street"],
         "streetNumber": request.form["streetNumber"],
@@ -128,22 +128,22 @@ def add_name():
     address = "{} {} {} {}".format(
         kwargs["street"], kwargs["streetNumber"], kwargs["town"], kwargs["postCode"]
     )
+    
     coordinates = GetCoordinates(address)
 
     unique_number_users_long = DBAccess.ExecuteSQL("SELECT nextval('users_id_seq')")
     unique_number_users = unique_number_users_long[0]
     salt = DBAccess.ExecuteScalar("select salt()")
     DBAccess.ExecuteInsert(
-        """insert into users (id, first_name, surname, email, address,street,
+        """insert into users (id, first_name, surname, email, street,
         streetNumber, town, postCode, telephone, password, salt,
         level, latitude,longitude)
-     values (%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, md5(%s),%s,%s, %s, %s)""",
+     values (%s, %s, %s, %s, %s, %s,%s, %s, %s, md5(%s),%s,%s, %s, %s)""",
         (
             unique_number_users,
             request.form["first_name"],
             request.form["surname"],
             request.form["email"],
-            request.form["address"],
             request.form["street"],
             request.form["streetNumber"],
             request.form["town"],

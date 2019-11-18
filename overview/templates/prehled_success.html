@@ -9,9 +9,13 @@
   <div>
     <div id="left" >
     <h3>Přehled</h3> 
-    
     <p>Níže je přehled služeb dle vámi zvoleného filtru. </p>
-  
+
+    <div id="right">
+      {{ sndmap.html }} 
+    </div>
+  </div>
+
     <table>
         <tr>
           <th class="sloupec"> Jméno </th> 
@@ -34,11 +38,7 @@
          {% endfor %}
         </table>
       </div>
-      <div id="right">
-         {{ sndmap.html }} 
-   
-      </div>
-     </div>
+      
   </section>
 
 {% endblock %}
