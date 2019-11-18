@@ -2,9 +2,12 @@
 
 {% block body %}
 
+{{ sndmap.js }}   
+
 <!-- Match -->
 <section class="prehled" id="prehled">
-  
+  <div>
+    <div id="left" >
     <h3>Přehled</h3> 
     
     <p>Níže je přehled služeb dle vámi zvoleného filtru. </p>
@@ -30,7 +33,12 @@
           </tr> 
          {% endfor %}
         </table>
-  
+      </div>
+      <div id="right">
+         {{ sndmap.html }} 
+   
+      </div>
+     </div>
   </section>
 
 {% endblock %}
