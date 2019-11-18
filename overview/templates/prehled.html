@@ -14,13 +14,7 @@
           <form role="form" action="" method="POST">
               <div class="form-group">
 
-              <!-- <label>Nabídka / Poptávka</label>
-              <select class="form-control" name="demand_offer">
-                  <option value="1">Nabízím</option>
-                  <option value="2">Poptávám</option>
-              </select>
-              </div> -->
-              
+            
             {% for subfield in form.demandOffer %}
             <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
             {% endfor %}
@@ -39,11 +33,7 @@
                     {% for address in addresses %}
                     <option value= {{ address[0] }} > {{ address[0]}} </option>
                     {% endfor %}
-                  <!-- <option value="Praha">Praha</option>
-                  <option value="Olomouc">Olomouc</option>
-                  <option value="Varnsdorf">Varnsdorf</option>
-                  <option value="Kladno">Kladno</option> -->
-                </select>
+                  </select>
               </div>
               <input type="hidden" name="SECRET_KEY" value="super tajny klic">
               <button type="submit" name='submit' class="btn btn-default" value="Form sent!">Hledat</button>

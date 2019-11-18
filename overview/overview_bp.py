@@ -2,10 +2,14 @@ from flask import (
     Blueprint,
     request,
     render_template,
+    session
    )
 from flask_wtf import FlaskForm
 from wtforms import RadioField
-from dbaccess import DBAccess
+from dbaccess import DBAccess, DBUser
+from flask_googlemaps import Map
+from utils import GetImageUrl
+
 
 blueprint = Blueprint("overview_bp", __name__, template_folder="templates")
 
@@ -29,17 +33,45 @@ def prehled_filtr():
     elif request.method == "POST":
         vysledekselectu = DBAccess.ExecuteSQL(
             """
-        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.town, us.id
+        SELECT u.first_name, u.surname, s.category, d.demand_offer, u.town, us.id, u.latitude, u.longitude, u.id, u.info
         FROM users u
         LEFT JOIN users_services us on us.id_users = u.id
         LEFT JOIN services s on s.id = us.id_services
         LEFT JOIN demand_offer d on d.id = us.id_demand_offer
         WHERE d.id = %s and s.id = %s and lower(u.town) = lower(%s)
         ORDER BY us.id desc
-        LIMIT 10
         """,
             (form.demandOffer.data, request.form["category"], request.form["address"])
         )
         if vysledekselectu is None:
             vysledekselectu = []
-        return render_template("prehled_success.html", entries=vysledekselectu)
+
+        dbUser = DBAccess.GetDBUserById(session['id_user'])
+
+
+        # markery pro kazdeho vyhledaneho
+        markers = []
+        marker = {}
+        marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
+        marker["lat"] = str(dbUser.latitude)
+        marker["lng"] =  str(dbUser.longitude)
+        marker["infobox"] = f'<b>{dbUser.first_name} {dbUser.surname}</b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
+        markers.append(marker)
+
+        for user in vysledekselectu:
+            pictureUrl = GetImageUrl(user[8])
+            marker = {}
+            marker["icon"] = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            marker["lat"] = str(user[6])
+            marker["lng"] =  str(user[7])
+            marker["infobox"] = f'<b>{user[0]} {user[1]}</b><br>{user[9]}<img class=img_mapa src= {pictureUrl} /> <a href="/match?id={user[5]}">Kontaktovat</a>'
+            markers.append(marker)
+
+            map = Map(
+                        identifier="sndmap",
+                        lat=str(dbUser.latitude),
+                        lng=str(dbUser.longitude),
+                        markers=markers
+                        )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
+
+        return render_template("prehled_success.html", entries=vysledekselectu, sndmap=map)

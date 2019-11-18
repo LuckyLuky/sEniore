@@ -2,8 +2,51 @@ import os
 import psycopg2
 import configparser
 
+class DBUser():
+    id = None
+    first_name  = None
+    surname = None
+    email  = None
+    street = None
+    street_number  = None
+    postCode = None
+    town  = None
+    telephone = None
+    info = None
+    password = None
+    salt = None
+    latitude = None
+    longitude  = None
+    level = None
+
 
 class DBAccess:
+    @classmethod   # method which return object from class DBUser, ie I get specific user from db
+    def GetDBUserById(cls, id):
+        user = DBAccess.ExecuteSQL(
+            "select id, first_name,surname,email,street,streetnumber, postcode,town,telephone,info,password,salt,latitude,longitude,level from users where id=%s",(id,))
+        if len(user)==0:
+          return None
+        user = user[0]  # returns [()], I need ()
+        dbUser = DBUser()
+        dbUser.id=user[0]
+        dbUser.first_name = user[1]
+        dbUser.surname = user[2]
+        dbUser.email = user[3]
+        dbUser.street = user[4]
+        dbUser.street_number = user[5]
+        dbUser.postCode = user[6]
+        dbUser.town = user[7]
+        dbUser.telephone = user[8]
+        dbUser.info = user[9]
+        dbUser.password = user[10]
+        dbUser.salt = user[11]
+        dbUser.latitude = user[12]
+        dbUser.longitude = user[13]
+        dbUser.level = user[14]
+        return dbUser
+
+
     @staticmethod
     def Get_DB_URL():
         database_url = os.environ.get("DATABASE_URL")

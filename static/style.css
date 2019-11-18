@@ -154,3 +154,12 @@ section {
   float: right;
   margin: 0px 30px 30px 0px;
 }
+
+#left{
+  float:left;
+  width: 75%;
+}
+#right{
+  float:left;
+  width: 25%;
+}
