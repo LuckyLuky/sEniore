@@ -19,13 +19,26 @@ from flask_wtf.file import FileRequired
 from wtforms.validators import InputRequired, DataRequired
 from wtforms.widgets import TextArea
 from werkzeug.utils import secure_filename
-from dbaccess import DBAccess
+from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage
+from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl
+from lookup import AdminMail
 
 
 blueprint = Blueprint("login_bp", __name__, template_folder="templates")
+
+class RegistrationForm(FlaskForm):
+    first_name = StringField( validators=[InputRequired()])
+    surname = StringField( validators=[InputRequired()])
+    email = StringField( validators=[InputRequired()])
+    telephone = StringField( validators=[InputRequired()])
+    street = StringField( validators=[InputRequired()])
+    street_number = StringField( validators=[InputRequired()])
+    town = StringField( validators=[InputRequired()])
+    post_code = StringField( validators=[InputRequired()])
+    password = PasswordField( validators=[InputRequired()])
+    submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 
 class LoginForm(FlaskForm):
@@ -50,7 +63,7 @@ class FileFormular(FlaskForm):
 class TextFormular(FlaskForm):
     comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
     submit = SubmitField(
-      "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+      "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
 
 
@@ -92,6 +105,8 @@ def login():
         session["user"] = user
         session["id_user"] = userRow[4]
         session["level_user"] = userRow[5]
+        dbUser = DBAccess.GetDBUserById(userRow[4])
+        dbUser.SaveToSession('dbUser')
         flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]))
         return redirect(url_for("profile_bp.profil"))
     return render_template("login.html", form=form)
@@ -111,9 +126,52 @@ def index():
     return render_template("layout.html")
 
 
-@blueprint.route("/registrace")
+@blueprint.route("/registrace", methods=["GET", "POST"])
 def registrace():
-    return render_template("registrace.html")
+    form = RegistrationForm()
+    if(form.validate_on_submit()):
+        dbUser = DBUser()
+        dbUser.email = form.email.data
+        dbUser.password = form.password.data
+        dbUser.first_name = form.first_name.data
+        dbUser.surname = form.surname.data
+        dbUser.telephone = form.telephone.data
+        dbUser.town = form.town.data
+        dbUser.street = form.street.data
+        dbUser.street_number = form.street_number.data
+        dbUser.post_code = form.post_code.data
+        dbUser.level = 1
+
+
+        if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
+          flash(f'Uživatel {dbUser.email} je již zaregistrován, zvolte jiný email.')
+          dbUser.email = None
+          form.email.data = None
+          return render_template("registrace.html", form = form)
+
+
+        dbUser.salt = salt = DBAccess.ExecuteScalar("select salt()")
+
+        #md% tranform password use md5 function on password + salt
+        md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
+        dbUser.password = md5Pass
+        
+        
+
+        kwargs = dbUser.__dict__
+        address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
+        coordinates = GetCoordinates(address)
+        if(coordinates is not None):
+            dbUser.latitude = coordinates[0]
+            dbUser.longitude = coordinates[1]
+        else:
+            flash('Nenalezeny souřadnice pro vaši adresu')
+            return render_template("registrace.html", form = form)
+
+
+        dbUser.SaveToSession('dbUserRegistration')
+        return render_template("/registrace_success.html", **kwargs)
+    return render_template("registrace.html", form = form)
 
 
 @blueprint.route("/add_name", methods=["POST"])
@@ -176,17 +234,11 @@ def add_name():
 @blueprint.route("/registrace_photo/", methods=["GET", "POST"])
 def photo():
     form = FileFormular()
-    nazev = f'{str(session["id_user"])}.jpg'
     if form.validate_on_submit():
-        soubor = form.soubor.data
-        typ_soubor_seznam = secure_filename(soubor.filename).split(".")
-        typ_soubor = typ_soubor_seznam[1]
-        nazev = f'{str(session["id_user"])}.{typ_soubor}'
-
-        soubor.save(os.path.join(app.config["UPLOAD_FOLDER"], nazev))
-        UploadImage(os.path.join(app.config['UPLOAD_FOLDER'], nazev))
-
-        flash("Foto uloženo, jsme u posledního kroku registrace :-) ")
+        file_name = secure_filename(form.soubor.data.filename)
+        session['fotoPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+        form.soubor.data.save(session['fotoPath'])
+        flash("Foto nahráno, jsme u posledního kroku registrace :-) ")
         return redirect(url_for("login_bp.comment"))
     return render_template("/registrace_photo.html", form=form)
 
@@ -195,7 +247,12 @@ def photo():
 def comment():
     form = TextFormular()
     if form.validate_on_submit():
-        comment = form.comment.data
-        DBAccess.ExecuteUpdate('update users set info = %s where id = %s', (comment, session["id_user"]))
+        dbUser = DBUser.LoadFromSession('dbUserRegistration')
+        dbUser.info = form.comment.data
+        dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
+        dbUser.InsertDB()
+        UploadImage(session['fotoPath'],str(dbUser.id))
+        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> údaje: {dbUser.__dict__}')
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Nyní prosím vyčkejte na ověření administrátorem, poté dostanete informační mail a můžete nalogovat. :-)')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)

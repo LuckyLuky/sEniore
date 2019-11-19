@@ -7,32 +7,22 @@
 <section class="registrace" id="registrace">
     
     <h2>Registrace</h2>
-  
-    <p>Prosím, vyplňte registrační formulář níže.</p>
-
-    <p>
-      <form method="POST" action='/add_name' >
-          <div><label> Jméno </label> 
-          <input type="text" name="first_name" placeholder="Jméno"></div>
-          <div><label> Příjmení </label>
-          <input type="text" name="surname" placeholder="Příjmení"></div>
-          <div><label> E-mail </label>
-          <input type="email" name="email" placeholder="e-mail"></div>
-          <!-- <div><label> Adresa </label>
-          <input type="text" name="address" placeholder="adresa"></div> -->
-          <div><label> Ulice </label>
-          <input type="text" name="street" placeholder="Ulice"></div>
-          <div><label> Číslo popisné </label>
-          <input type="text" name="streetNumber" placeholder="Číslo popisné"></div>
-          <div><label> Město </label>
-          <input type="text" name="town" placeholder="Město"></div>
-          <div><label> PSČ </label>
-          <input type="text" name="postCode" placeholder="PSČ"></div>
-          <div><label> Telefon </label>
-          <input type="text" name="telephone" placeholder="telefon"></div>
-          <div><label> Heslo </label>
-          <input type="password" name="password" placeholder="heslo"></div>
-          <input type="submit" class="btn btn-default" value="Registrovat se">
+       <form method="POST" class="row justify-content-center">
+          {{ form.hidden_tag() }}
+      
+        <table>
+            <tr><td>Email(uživatelské jméno):</td><td> {{ form.email }}<td></tr>
+            <tr><td>Heslo:</td><td> {{ form.password }}<td></tr>
+            <tr></tr>
+            <tr><td>Jméno:</td><td>{{ form.first_name }}</td></tr>
+            <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>
+            <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr>
+            <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
+            <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr>
+            <tr><td>Město:</td><td> {{ form.town }}<td></tr>
+            <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
+            <tr><td>Pokračovat:</td><td> {{ form.submit }}<td></tr>
+       </table>
       </form>
 
   </p>

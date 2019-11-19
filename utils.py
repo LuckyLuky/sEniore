@@ -4,6 +4,10 @@ import cloudinary as Cloud
 import requests
 import cloudinary.uploader
 from pathlib import Path
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+
 
 
 def GetCoordinates(address):
@@ -14,9 +18,14 @@ def GetCoordinates(address):
         )
     )
     api_response_dict = api_response.json()
-    latitude = api_response_dict["results"][0]["geometry"]["location"]["lat"]
-    longitude = api_response_dict["results"][0]["geometry"]["location"]["lng"]
-    return (latitude, longitude)
+    try:
+
+        latitude = api_response_dict["results"][0]["geometry"]["location"]["lat"]
+        longitude = api_response_dict["results"][0]["geometry"]["location"]["lng"]
+        return (latitude, longitude)
+    except:
+        return None
+
 
 
 def getGoogleAPIKey():
@@ -67,15 +76,40 @@ def CloudinaryConfigure():
       )
 
 
-def UploadImage(filePath):
-    fileName = Path(filePath).stem
+def UploadImage(filePath, public_id):
     Cloud.uploader.upload(
       filePath,
       width=150,
       height=150,
       crop="limit",
-      public_id=fileName)
+      public_id=public_id)
 
 
 def GetImageUrl(userId):
     return Cloud.CloudinaryImage(str(userId)).url   
+
+def getEmailAPIKey():
+    API_Key = os.environ.get("SENDGRID_API_KEY")
+    if not API_Key:
+        configParser = configparser.RawConfigParser()
+        configFilePath = r"config.txt"
+        configParser.read(configFilePath)
+        API_Key = configParser.get("my-config", "sendgrid_api_key")
+    if not API_Key:
+        raise Exception("Could not find API_Key value.")
+    return API_Key
+
+def SendMail(_from, _to, _subject, _text):
+    message = Mail(
+    from_email=_from,
+    to_emails=_to,
+    subject=_subject,
+    html_content=_text)
+    try:
+        sg = SendGridAPIClient(getEmailAPIKey())
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e.message)

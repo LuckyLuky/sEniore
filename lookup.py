@@ -15,3 +15,7 @@ Services = {
     "9": "Vyprávění",
     "10": "Pletení",
 }
+
+AdminMail = {
+  "kacka" : "katacek@seniore.org",
+}

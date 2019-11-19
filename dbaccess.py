@@ -1,6 +1,8 @@
 import os
 import psycopg2
 import configparser
+from jsonpickle import encode, decode
+from flask import session
 
 class DBUser():
     id = None
@@ -9,7 +11,7 @@ class DBUser():
     email  = None
     street = None
     street_number  = None
-    postCode = None
+    post_code = None
     town  = None
     telephone = None
     info = None
@@ -18,6 +20,42 @@ class DBUser():
     latitude = None
     longitude  = None
     level = None
+    
+    def SaveToSession(self, sessionKey):
+        session[sessionKey] = encode(self)
+
+    @classmethod
+    def LoadFromSession(cls, sessionKey):
+        if(sessionKey in session):
+            return decode(session[sessionKey])
+        return None
+    
+    def InsertDB(self):
+        DBAccess.ExecuteInsert(
+        """insert into users (id, first_name, surname, email, street,
+        streetNumber, town, postCode, telephone, password, salt,
+        level, latitude,longitude, info)
+     values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s,%s,%s, %s, %s, %s)""",
+        (
+            self.id,
+            self.first_name,
+            self.surname,
+            self.email,
+            self.street,
+            self.street_number,
+            self.town,
+            self.post_code,
+            self.telephone,
+            self.password,
+            self.salt,
+            self.level,
+            self.latitude,
+            self.longitude,
+            self.info
+        )
+    )
+
+
 
 
 class DBAccess:
