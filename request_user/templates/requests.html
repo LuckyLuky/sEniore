@@ -5,10 +5,11 @@
 <!-- Services -->
 <!-- <section id="zadosti"> -->
 
-    <h3>Přehled všech zadaných žádostí</h3>
-    <p class="p_requests">(p) poptávající, (n) nabízející</p>
+    <h4>Přehled všech zadaných žádostí:</h4>
+    <p class="p_requests">Bude sloužit pro administrátora stránek. Legenda: (p) poptávající, (n) nabízející</p>
 
-    <table class="table_requests">
+    <table class="table table-striped">
+        <thead class="thead-light">
             <!-- <table class="table table-striped">
                 <thead class="thead-light"> -->
         <tr>
@@ -29,6 +30,7 @@
           <th class="sloupec"> Status</th>
           <th class="sloupec"></th> 
         </tr>
+        </thead>
         <!-- </thead> -->
         {% for request in entries %}
         <tr> 

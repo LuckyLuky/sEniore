@@ -18,40 +18,75 @@
 <header>
 {% block header %}
 
-{% set user = session["user"] %}
-Login -
-{% if user %}
-  {{ user }}
-{% else %}
-  Nejsi přihlášen
-{% endif %}
+<div class="hlavicka">
+    <div class="container">
+          <div class="topnav">
+              <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <a class="navbar-brand" href="{{ url_for('login_bp.index') }}"><img src="/static/images/logoSeniore.png" class="img-fluid" alt="LOGO" width=80px></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarText">
+                  <ul class="nav navbar-nav ml-auto ">
+                      <!-- <li class="nav-item">
+                        <a class="nav-link" href="/"> Úvod </a>
+                      </li> -->
+                        {% set user = session["user"] %}
+                        {% set level = session["level_user"] %}
+                        {% if user %}
+                      <li class="nav-item">
+                        <a  class="nav-link"href="/profil"> Profil </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/sluzby"> Nabídnout </a>
+                      </li>
+                      <li class="nav-item">
+                      <a class="nav-link" href="/prehled"> Vyhledat </a>
+                      </li>
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/user_request_overview"> Přehled </a>
+                      </li>
+                        {% if level == 2 %}
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/requests"> Žádosti </a>
+                      </li>
+                        {% endif %}
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/logout"> Odhlásit </a>
+                      </li>
+                      {% else %}
+                      <li class="nav-item">
+                      <a class="nav-link" href="/login"> Login </a>
+                      </li>
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/registrace"> Registrace </a>
+                      </li>
+                        {% endif %}
+                      </ul>
+                    </div>
+                  </nav>
+            </div>
+        </div>
+  </div>
 
 {% endblock %}
 </header>
 
-<ul class="menu">
-    <li><a href="/"> Úvod </a></li>
-    {% set user = session["user"] %}
-    {% set level = session["level_user"] %}
-    {% if user %}
-    <li><a href="/profil"> Profil </a></li>
-    <li><a href="/sluzby"> Nabídnout </a></li>
-    <li><a href="/prehled"> Vyhledat </a></li>
-    <li><a href="/user_request_overview"> Přehled </a></li>
-    {% if level == 2 %}
-    <li><a href="/requests"> Žádosti </a></li>
-    {% endif %}
-    <li><a href="/logout"> Odhlásit </a></li>
-    {% else %}
-    <li><a href="/login"> Login </a></li>
-    <li><a href="/registrace"> Registrace </a></li>
-    {% endif %}
-    </ul>
 
-  <header class="hlavicka">
-  <h1>sEniore</h1>
-  </header>
 
+
+
+  <p class="login">
+      {% set user = session["user"] %}
+      Login -
+      {% if user %}
+        {{ user }}
+      {% else %}
+        Nejsi přihlášen
+      {% endif %}
+      </p>
+
+    <!-- flash messages -->
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class="alert alert-success", style="list-style-type:none;">
