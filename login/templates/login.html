@@ -3,11 +3,13 @@
 {{ super() }} <!-- V hlavní šabloně se bude vypisovat aktuální uživatel, proto vyrenderujeme její header -->
 {% endblock %}
 
+<h3>Vítejte v aplikaci.</h3> 
+
 {% block body %}
     <form method="POST" class="row justify-content-center">
         {{ form.hidden_tag() }}
         <table>
-            <tr><td>{{ form.user.label }}:</td><td>{{ form.user }}</td></tr>
+            <tr><td>{{ form.user.label }}:</td><td>{{ form.user(placeholder="Email zadaný při registraci") }}</td></tr>
             <tr><td>{{ form.password.label }}: </td><td>{{ form.password }}</td></tr>
             <tr><td>{{ form.submit.label }}</td><td> {{ form.submit }}<td></tr>
         </table>

@@ -13,8 +13,7 @@ body {color: #282425;
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
   line-height: 1.5;
-  margin:0;
- }
+  }
 
 h1{
   font-size: 80px;
@@ -45,9 +44,14 @@ h3 {
   font-style: italic; 
 }
 
-p {
-  margin-left: 30px;
+h5 {
+  font-weight: bold;
   font-family: 'Playfair Display', serif;
+}
+
+p {
+  font-family: 'Playfair Display', serif;
+  margin-left: 30px;
 }
 
 .hlavicka {
@@ -94,13 +98,13 @@ p {
 
 table {
   text-align: left;
+  font-family: 'Playfair Display', serif;
   border-spacing: 0;
 }
 
 th,
 td {
-  border-bottom: 1px solid black;
-  padding: 10px 0px
+ padding: 10px 0px
 }
 
 section {
@@ -117,7 +121,7 @@ section {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  border: 10px solid black;
+  border: 10px black;
 }
 
 .table_requests_detail td {
@@ -126,7 +130,7 @@ section {
 
 .table_requests_detail_header {
   text-decoration: underline;
-  border-bottom:10px solid black;
+  border: 10px black;
 }
 
 .service_item{
@@ -143,9 +147,7 @@ section {
 
 .moje_foto {
   width: 150px;
-  border-radius: 50%;
-  float: right;
-  margin: 0px 30px 30px 0px;
+  border-radius: 10px;
 }
 
 .img_mapa {
@@ -163,3 +165,20 @@ section {
   float:left;
   width: 40%;
 }
+
+.fotogalerie img { 
+  width: 70%;
+  border: 2px solid #ced2da;
+  border-radius: 10px;
+}
+
+figure {
+  width: 32%;
+  display: inline-block;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+

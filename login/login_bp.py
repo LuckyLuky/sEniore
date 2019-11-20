@@ -43,7 +43,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     user = StringField(
-        "Uživatel", validators=[InputRequired()], render_kw=dict(class_="form-control")
+        "Přihlašovací jméno", validators=[InputRequired()], render_kw=dict(class_="form-control")
     )  # Přihlašovací jméno
     password = PasswordField(
         "Heslo", validators=[InputRequired()], render_kw=dict(class_="form-control")
@@ -174,61 +174,61 @@ def registrace():
     return render_template("registrace.html", form = form)
 
 
-@blueprint.route("/add_name", methods=["POST"])
-def add_name():
-    kwargs = {
-        "first_name": request.form["first_name"],
-        "surname": request.form["surname"],
-        "email": request.form["email"],
-        # "address": request.form["address"],
-        "town": request.form["town"],
-        "street": request.form["street"],
-        "streetNumber": request.form["streetNumber"],
-        "postCode": request.form["postCode"],
-        "telephone": request.form["telephone"],
-        "password": request.form["password"],
-    }
+# @blueprint.route("/add_name", methods=["POST"])
+# def add_name():
+#     kwargs = {
+#         "first_name": request.form["first_name"],
+#         "surname": request.form["surname"],
+#         "email": request.form["email"],
+#         # "address": request.form["address"],
+#         "town": request.form["town"],
+#         "street": request.form["street"],
+#         "streetNumber": request.form["streetNumber"],
+#         "postCode": request.form["postCode"],
+#         "telephone": request.form["telephone"],
+#         "password": request.form["password"],
+#     }
 
-    address = "{} {} {} {}".format(
-        kwargs["street"], kwargs["streetNumber"], kwargs["town"], kwargs["postCode"]
-    )
+#     address = "{} {} {} {}".format(
+#         kwargs["street"], kwargs["streetNumber"], kwargs["town"], kwargs["postCode"]
+#     )
     
-    coordinates = GetCoordinates(address)
+#     coordinates = GetCoordinates(address)
 
-    unique_number_users_long = DBAccess.ExecuteSQL("SELECT nextval('users_id_seq')")
-    unique_number_users = unique_number_users_long[0]
-    salt = DBAccess.ExecuteScalar("select salt()")
-    DBAccess.ExecuteInsert(
-        """insert into users (id, first_name, surname, email, street,
-        streetNumber, town, postCode, telephone, password, salt,
-        level, latitude,longitude)
-     values (%s, %s, %s, %s, %s, %s,%s, %s, %s, md5(%s),%s,%s, %s, %s)""",
-        (
-            unique_number_users,
-            request.form["first_name"],
-            request.form["surname"],
-            request.form["email"],
-            request.form["street"],
-            request.form["streetNumber"],
-            request.form["town"],
-            request.form["postCode"],
-            request.form["telephone"],
-            request.form["password"] + salt,
-            salt,
-            1,
-            coordinates[0],
-            coordinates[1]
-        )
-    )
-    user = request.form["email"]
-    userRow = DBAccess.ExecuteSQL(
-        "select email, password, first_name, surname, id, level,salt from users "
-        "where email like %s",
-        (user,)
-    )
-    userRow = userRow[0]
-    session["id_user"] = userRow[4]
-    return render_template("/registrace_success.html", **kwargs)
+#     unique_number_users_long = DBAccess.ExecuteSQL("SELECT nextval('users_id_seq')")
+#     unique_number_users = unique_number_users_long[0]
+#     salt = DBAccess.ExecuteScalar("select salt()")
+#     DBAccess.ExecuteInsert(
+#         """insert into users (id, first_name, surname, email, street,
+#         streetNumber, town, postCode, telephone, password, salt,
+#         level, latitude,longitude)
+#      values (%s, %s, %s, %s, %s, %s,%s, %s, %s, md5(%s),%s,%s, %s, %s)""",
+#         (
+#             unique_number_users,
+#             request.form["first_name"],
+#             request.form["surname"],
+#             request.form["email"],
+#             request.form["street"],
+#             request.form["streetNumber"],
+#             request.form["town"],
+#             request.form["postCode"],
+#             request.form["telephone"],
+#             request.form["password"] + salt,
+#             salt,
+#             1,
+#             coordinates[0],
+#             coordinates[1]
+#         )
+#     )
+#     user = request.form["email"]
+#     userRow = DBAccess.ExecuteSQL(
+#         "select email, password, first_name, surname, id, level,salt from users "
+#         "where email like %s",
+#         (user,)
+#     )
+#     userRow = userRow[0]
+#     session["id_user"] = userRow[4]
+#     return render_template("/registrace_success.html", **kwargs)
 
 
 @blueprint.route("/registrace_photo/", methods=["GET", "POST"])
@@ -253,6 +253,11 @@ def comment():
         dbUser.InsertDB()
         UploadImage(session['fotoPath'],str(dbUser.id))
         SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> údaje: {dbUser.__dict__}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Nyní prosím vyčkejte na ověření administrátorem, poté dostanete informační mail a můžete nalogovat. :-)')
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
+
+
+@blueprint.route("/goodpracticephoto")
+def photo_good_practice():
+    return render_template("goodpracticephoto.html")

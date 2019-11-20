@@ -17,7 +17,7 @@ blueprint = Blueprint("serviceReg_bp", __name__, template_folder="templates")
 
 class RegistrationFormBase(FlaskForm):
     demandOffer = RadioField(
-        "Nabídka/Poptávka", choices=[("2", "nabídka"), ("1", "poptávka")], default="2"
+        "Nabídka/Poptávka", choices=[("2", "nabízím"), ("1", "hledám")], default="2"
     )
     checkBoxes = []  # adding dynamically, created in relevant fcn
     checkBoxIndexes = []

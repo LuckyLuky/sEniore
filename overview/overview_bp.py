@@ -17,7 +17,7 @@ blueprint = Blueprint("overview_bp", __name__, template_folder="templates")
 
 class OverviewFormBase(FlaskForm):
     demandOffer = RadioField(
-        "Nabídka/Poptávka", choices=[("2", "nabídka"), ("1", "poptávka")], default="2"
+        "Nabídka/Poptávka", choices=[("2", "hledám nabídku"), ("1", "hledám poptávku")], default="2"
     )
 
 
@@ -79,3 +79,5 @@ def prehled_filtr():
                     )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
 
         return render_template("prehled_success.html", entries=vysledekselectu, sndmap=map)
+
+

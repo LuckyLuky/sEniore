@@ -5,41 +5,10 @@
 <!-- Services -->
 <section id="sluzby">
 
-    <h2>Služby</h2>
-  
-    <!-- <p>Prosím, vyberte službu a zda jí chcete nabízet či poskytovat. Je možné vybrat více služeb.</p>
-   
-        <div class="row" style="margin-top:20px">
-        <div class="col-md-12">
-            <form role="form" action="" method="POST">
-              <div class="form-group">
-                <label>Nabídka / Poptávka</label>
-                <select class="form-control" name="demand_offer">
-                    <option value="1">Poptávám</option>
-                    <option value="2">Nabízím</option>
-                </select><div class="form-group">
-                  <label>Služby</label>
-                  <select class="form-control" name="category">
-                      <option value="1">Vaření</option>
-                      <option value="2">Šachy</option>
-                      <option value="3">Karty</option>
-                      <option value="4">Čtení</option>
-                      <option value="5">Umění</option>
-                      <option value="6">Ruční výroba</option>
-                      <option value="7">Procházka</option>
-                      <option value="8">Káva / čaj</option>
-                      <option value="9">Vyprávění</option>
-                      <option value="10">Pletení</option>
-                  </select>
-              </div>
-              <input type="hidden" name="SECRET_KEY" value="super tajny klic">
-              <button type="submit" name='submit' class="btn btn-default" value="Form sent!">Poslat</button>
-            </form>
-        </div>
-    </div> -->
-  
-<p>Zaškrtněte činnosti, které nabízíte, či poptáváte.</p>
+<h5>Vyberte službu / služby, které můžete nabídnout, či které hledáte:</h5>
 
+
+<p class="lead"> 
 <form method="POST">
     {{ form.csrf_token }}
     
@@ -55,11 +24,11 @@
        {% endfor %}
     </table>
    
-    <input type="submit" class="btn btn-default" value="Registrovat se">
+    <input type="submit" class="btn btn-primary" value="Uložit">
     
 </form>
   
-  
+</p>
   </section>
 
   {% endblock %}

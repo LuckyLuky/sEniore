@@ -11,6 +11,7 @@ from wtforms import (
 from dbaccess import DBAccess
 from flask_googlemaps import Map
 from utils import GetImageUrl
+from dbaccess import DBAccess,DBUser
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
 
@@ -23,6 +24,11 @@ class OverviewFormBase(FlaskForm):
 
 @blueprint.route("/profil", methods=["GET", "POST"])
 def profil():
+    dbUser = DBAccess.GetDBUserById(session["id_user"])
+    name = f'{dbUser.first_name} {dbUser.surname}'
+    info = dbUser.info
+    mail = dbUser.email
+    phone = dbUser.telephone
     latitude = str(
         DBAccess.ExecuteScalar(
             "select latitude from users where id = %s", (session["id_user"],)
@@ -89,5 +95,37 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap, requests = requests
+        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone
     )
+
+@blueprint.route("/user_request_overview")
+def user_request_overview():
+  requests = DBAccess.ExecuteSQL(
+            """select
+              ud.first_name,
+              ud.surname,
+              ud.address,
+              ud.email,
+              ud.telephone,
+              uo.first_name,
+              uo.surname,
+              uo.address,
+              uo.email,
+              uo.telephone,
+              s.category,
+              r.date_time,
+              r.add_information,
+              r.timestamp,
+              rs.status,
+              r.id
+            from requests r
+            inner join services s on r.id_services = s.id
+            inner join users ud on r.id_users_demand = ud.id
+            inner join users uo on r.id_users_offer = uo.id
+            inner join requests_status rs on r.id_requests_status = rs.id
+            where ud.id = %s or uo.id =%s """, (session["id_user"], session["id_user"])
+        )
+  if requests == None:
+     requests = []
+
+  return render_template("user_request_overview.html", requests = requests)

@@ -35,8 +35,9 @@ Login -
     {% set level = session["level_user"] %}
     {% if user %}
     <li><a href="/profil"> Profil </a></li>
-    <li><a href="/sluzby"> Služby </a></li>
-    <li><a href="/prehled"> Přehled </a></li>
+    <li><a href="/sluzby"> Nabídnout </a></li>
+    <li><a href="/prehled"> Vyhledat </a></li>
+    <li><a href="/user_request_overview"> Přehled </a></li>
     {% if level == 2 %}
     <li><a href="/requests"> Žádosti </a></li>
     {% endif %}
@@ -53,7 +54,7 @@ Login -
 
   {% with messages = get_flashed_messages() %}
     {% if messages %}
-      <ul class=flashes>
+      <ul class="alert alert-success", style="list-style-type:none;">
       {% for message in messages %}
         <li>{{ message }}</li>
       {% endfor %}
@@ -61,7 +62,6 @@ Login -
     {% endif %}
   {% endwith %}
   
-
   {% block body %} 
   
     <h3>Vítejte v aplikaci Seniore!</h3>

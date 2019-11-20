@@ -2,36 +2,49 @@
 
 {% block body %}
 
-<img class="moje_foto" src="{{ nazev }}">
-
 {{ sndmap.js }}   
-
-{{ sndmap.html }}  
 
 <h3>Můj profil</h3> 
 
-<!-- Přidat možnost úpravy profilu - změna jména, města... -->
+<div class="row">
+    <div class="column">
     
-<p>Toto je přehled mých zaregistrovaných služeb:</p>
+    <p> <b>Jméno:</b> {{name}} </p>
+    <p> <b>Info o mně:</b> {{info}} </p>
 
-<table>
-  <tr>
-    <th class="sloupec"> Služba </th>
-    <th class="sloupec"> Nabídka / Poptávka </th>
-  </tr>
-  {% for service in entries %}
-  <tr> 
-   <td class="sloupec"> {{ service[0] }} </td>
-   <td class="sloupec"> {{ service[1] }} </td>
-  </tr> 
-   {% endfor %}
-  </table>
+   
+    {{ sndmap.html }}
 
 
+    </div>
+    
+    <div class="column">
+        <img align="right", class="moje_foto" src="{{ nazev }}">
+        <p> <b>E-mail:</b> {{mail}} </p>
+        <p> <b>Telefon:</b> {{phone}} </p>
 
-<p>Chci přidat novou službu? Stačí kliknout <a href="/sluzby"> zde </a>. </p>
-<p>Chci změnit služby, které nabízím / poptávám? Stačí kliknout <a href="/sluzby_update"> zde </a>. (POZOR: Všechny aktuálně zadané služby se tímto vymažou)</p>
-<p>Hledám či poptávám službu? Stačí kliknout na celkový <a href="/prehled"> prehled </a>. </p>
+
+
+        <p> <b>Toto je přehled mých zaregistrovaných služeb:</b></p>
+
+        <table class="table table-striped">
+          <thead class="thead-light">
+          <tr>
+            <th class="sloupec"> Služba </th>
+            <th class="sloupec"> Nabízím / Hledám </th>
+          </tr>
+          </thead>
+          {% for service in entries %}
+          <tr> 
+          <td class="sloupec"> {{ service[0] }} </td>
+          <td class="sloupec"> {{ service[1] }} </td>
+          </tr> 
+          {% endfor %}
+          </table>
+          <p>Chci přidat novou službu? Stačí kliknout <a href="/sluzby"> zde </a>. </p>
+          <p>Chci změnit služby, které nabízím / poptávám? Stačí kliknout <a href="/sluzby_update"> zde </a>. (POZOR: Všechny aktuálně zadané služby se tímto vymažou)</p>
+  </div>
+</div>
 
 <h3>Toto je přehled žádostí, ve kterých figuruji:</h3>
 
@@ -39,23 +52,17 @@
 
     <!-- <table class="table_requests"> -->
             <table class="table table-striped">
+                <thead class="thead-light">
         <tr>
           <th class="sloupec"> Jméno (p) </th> 
           <th class="sloupec"> Příjmení (p)</th>
-          <!-- <th class="sloupec"> Adresa (p)</th>
-          <th class="sloupec"> Email (p)</th>
-          <th class="sloupec"> Telefon (p)</th> -->
           <th class="sloupec"> Jméno (n) </th> 
           <th class="sloupec"> Příjmení (n)</th>
-          <!-- <th class="sloupec"> Adresa (n)</th>
-          <th class="sloupec"> Email (n)</th>
-          <th class="sloupec"> Telefon (n)</th> -->
           <th class="sloupec"> Služba</th>
           <th class="sloupec"> Datum a čas setkání</th>
-          <!-- <th class="sloupec"> Info</th> -->
-          <!-- <th class="sloupec"> Vytvořeno</th> -->
           <th class="sloupec"> Status</th>
           <th class="sloupec"></th> 
+          </thead>
         </tr>
         {% for request in requests %}
         <tr> 
@@ -78,5 +85,6 @@
          </tr> 
          {% endfor %}
         </table>
+
 
 {% endblock %}

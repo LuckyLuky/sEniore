@@ -2,35 +2,25 @@
 
 {% block body %}
 
-<!-- Services -->
-<!-- <section id="zadosti"> -->
+<h5>Toto je přehled žádostí, ve kterých figuruji:</h5>
 
-    <h3>Přehled všech zadaných žádostí</h3>
-    <p class="p_requests">(p) poptávající, (n) nabízející</p>
+<p>(p) poptávající, (n) nabízející</p>
 
-    <table class="table_requests">
-            <!-- <table class="table table-striped">
-                <thead class="thead-light"> -->
+    <!-- <table class="table_requests"> -->
+            <table class="table table-striped">
+                <thead class="thead-light">
         <tr>
           <th class="sloupec"> Jméno (p) </th> 
           <th class="sloupec"> Příjmení (p)</th>
-          <!-- <th class="sloupec"> Adresa (p)</th>
-          <th class="sloupec"> Email (p)</th>
-          <th class="sloupec"> Telefon (p)</th> -->
           <th class="sloupec"> Jméno (n) </th> 
           <th class="sloupec"> Příjmení (n)</th>
-          <!-- <th class="sloupec"> Adresa (n)</th>
-          <th class="sloupec"> Email (n)</th>
-          <th class="sloupec"> Telefon (n)</th> -->
           <th class="sloupec"> Služba</th>
           <th class="sloupec"> Datum a čas setkání</th>
-          <!-- <th class="sloupec"> Info</th> -->
-          <!-- <th class="sloupec"> Vytvořeno</th> -->
           <th class="sloupec"> Status</th>
           <th class="sloupec"></th> 
+          </thead>
         </tr>
-        <!-- </thead> -->
-        {% for request in entries %}
+        {% for request in requests %}
         <tr> 
          <td class="sloupec"> {{ request[0] }} </td>
          <td class="sloupec"> {{ request[1] }} </td>
@@ -51,7 +41,5 @@
          </tr> 
          {% endfor %}
         </table>
-    <!-- </section> -->
-
 
 {% endblock %}
