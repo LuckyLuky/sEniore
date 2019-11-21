@@ -4,6 +4,7 @@ from flask import (
     render_template,
     )
 from dbaccess import DBAccess
+from lookup import RequestStatus
 
 blueprint = Blueprint("request_bp", __name__, template_folder="templates")
 
@@ -42,7 +43,8 @@ def requests_detail():
     rid = request.args.get("id", type=int)
 
     if request.method == "POST":
-        status = request.form["submit_button"]
+        # status = request.form["submit_button"]
+        status = RequestStatus[request.form["submit_button"]]
         DBAccess.ExecuteUpdate(
             "UPDATE requests SET id_requests_status= %s where id= %s", (status, rid)
         )

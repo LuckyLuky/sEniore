@@ -140,7 +140,7 @@ def registrace():
         dbUser.street = form.street.data
         dbUser.street_number = form.street_number.data
         dbUser.post_code = form.post_code.data
-        dbUser.level = 1
+        dbUser.level = 2 # for testing, then set to 0 for manual verifivation of user's pohoto, ...
 
 
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:

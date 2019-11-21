@@ -19,3 +19,10 @@ Services = {
 AdminMail = {
   "kacka" : "katacek@seniore.org",
 }
+
+RequestStatus = {
+    "Žádá se": "1",
+    "Potvrzeno": "2",
+    "Odmítnuto": "3",
+    "Proběhlo": "4",
+}

@@ -46,12 +46,18 @@
     <form method="POST">
     <table class="table_requests_detail">
             <tr><th colspan=4>Změnit stav</th></tr>
-            <tr> 
+            <!-- <tr> 
                 <td><input type="submit" name="submit_button" value = '1' id="1" class="btn btn-default" value="Žádá se"></td>
                 <td><input type="submit" name="submit_button" value = '2'  class="btn btn-default" value="Schváleno"></td>
                 <td><input type="submit" name="submit_button" value = '3'  class="btn btn-default" value="Odmítnuto"></td>
                 <td><input type="submit" name="submit_button" value = '4'  class="btn btn-default" value="Splněno"></td>
-            </tr>
+            </tr> -->
+            <tr> 
+              <td><input type="submit" name="submit_button" value = 'Žádá se' id="1" class="btn btn-secondary" ></td>
+              <td><input type="submit" name="submit_button" value = 'Potvrzeno' id="2" class="btn btn-primary"></td>
+              <td><input type="submit" name="submit_button" value = 'Odmítnuto' id="3" class="btn btn-danger" ></td>
+              <td><input type="submit" name="submit_button" value = 'Proběhlo' id="4" class="btn btn-success" ></td>
+          </tr>
 
     </table> 
     </form>   
