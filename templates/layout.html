@@ -14,11 +14,12 @@
 
 </head>
 
+
 <body>
 
-  <!-- <img class=logo src="static/images/logoSeniore.png" alt="logoSeniore"> -->
-
-<header>
+<div class="main-container">
+<div id="content-wrap">
+  <header>
 {% block header %}
 
 <div class="hlavicka">
@@ -75,7 +76,6 @@
 {% endblock %}
 </header>
 
-
   <p class="login">
       {% set user = session["user"] %}
       Login -
@@ -109,12 +109,10 @@
     <p>Nejste? <a href="/registrace">Pojďme na to</a>.</p>
 
   {% endblock %}
-
-
+    </div>
   <footer class="paticka"> 
-  
   <p> © 2019, Seniore </p> 
   </footer>
-
+</div>
 </body>
 </html>

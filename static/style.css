@@ -8,11 +8,14 @@ head {
   margin: 0px 0px 0px 0px;
 }
 
-body {color: #282425;
+body {
+  color: #282425;
   background-color: whitesmoke;
   font-family: 'Raleway', sans-serif;
   font-size: 20px;
   line-height: 1.5;
+  position: relative;
+  margin: 0;
   }
 
 h1{
@@ -129,13 +132,25 @@ p {
   background-color: #bebec2;
 }
 
+.main-container {
+  min-height: 100vh; /* will cover the 100% of viewport */
+  overflow: hidden;
+  display: block;
+  position: relative;
+}
+
+#content-wrap {
+  padding-bottom: 30px;    /* Footer height */
+}
+
 .paticka {
+  position: absolute;
   background-color: #000080;
   color: white;
   text-align: center;
-  padding: 10 px 0;
-  margin-top: 0px;
-  bottom: 0
+  bottom: 0;
+  width: 100%;
+  height: 30px;
 }
 
 
