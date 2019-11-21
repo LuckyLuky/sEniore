@@ -9,6 +9,7 @@ from dbaccess import DBAccess
 import configparser
 import sendgrid
 from datetime import datetime
+from lookup import AdminMail
 
 blueprint = Blueprint("contact_bp", __name__, template_folder="templates")
 
@@ -84,7 +85,7 @@ def email_sent():
 
     message = {
         "personalizations": [
-            {"to": [{"email": "katacek@seniore.org"}], "subject": "Seniore"}
+            {"to": [{"email": AdminMail["kacka"]}], "subject": "Seniore"}
         ],
         "from": {"email": "noreply@seniore.org"},
         "content": [
