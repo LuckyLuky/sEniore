@@ -137,7 +137,7 @@ def sluzby_update():
                     )
                 else:
                   DBAccess.ExecuteUpdate(
-                    "delete from users_services where id_users = %s and id_services = %s", (nextId, checkbox.id) )
+                    "delete from users_services where id_users = %s and id_services = %s and id_demand_offer= %s", (nextId, checkbox.id, form.demandOffer.data), )
                 services_checked.append(checkbox.label)
         kwargs = {
             "demand_offer": DictionaryDemandOffer.get(form.demandOffer.data, "unknown"),
