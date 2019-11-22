@@ -4,9 +4,9 @@
 
 <section id="sluzby">
 
-    <h2>Služby</h2>
+    <h5>Služby</h5>
   
-<p>Zaškrtněte činnosti, které nově nabízíte, či poptáváte.</p>
+<p>Zaškrtněte činnosti, které již nenabízíte / nepoptáváte.</p>
 
 <form method="POST">
     {{ form.csrf_token }}
@@ -15,7 +15,7 @@
     {% for subfield in form.demandOffer %}
           <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
     {% endfor %}
-
+    
     <table class = "sluzbyTable">
    
        {% for checkBox in form.checkBoxes %}
