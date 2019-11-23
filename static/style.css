@@ -1,0 +1,242 @@
+head {
+  width: 150px;
+}
+
+.logo{ 
+  width: 5%;
+  float: left;
+  margin: 0px 0px 0px 0px;
+}
+
+body {
+  color: #282425;
+  background-color: whitesmoke;
+  font-family: 'Raleway', sans-serif;
+  font-size: 20px;
+  line-height: 1.5;
+  position: relative;
+  margin: 0;
+  }
+
+h1{
+  font-size: 80px;
+  text-align: center;
+  color: white;
+  margin: 0px;
+  text-shadow:0 3px 10px rgba(0, 0, 0, 0.7);
+  font-family: 'Playfair Display', serif; 
+  font-style: italic;
+  line-height: 3;
+}
+
+h2{
+  font-size: 48px;
+  text-align: center;
+  margin-top: 20px;
+  color:  #2B1B17;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; 
+}
+
+h3 {
+  font-size: 30px;
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 30px;
+  color:  #2B1B17;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; 
+}
+
+h4 {
+  font-size: 25px;
+  text-align: left;
+  color: black;
+  font-family: 'Playfair Display', serif;
+  font-style: italic; 
+  margin-left: 30px;
+
+}
+
+h5 {
+  font-weight: bold;
+  font-family: 'Playfair Display', serif;
+  margin-left: 30px;
+}
+
+p {
+  font-family: 'Playfair Display', serif;
+  margin-left: 30px;
+}
+
+.hlavicka {
+  background-image: url(images/background-1.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  min-height: 200px;
+}
+
+.container {
+  position: absolute;
+  margin: 20px;
+  width: auto;
+  }
+
+.topnav {
+  overflow: hidden;
+  background-color: rgb(64, 113, 177);
+  border-radius: 10px;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: 'Playfair Display', serif;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.login {
+  text-align: right;
+}
+.menu {
+  padding: 0;
+  margin: 0px;
+  text-align: right;
+  background-color: whitesmoke;
+}
+
+.menu li {
+  display: inline-block;
+}
+
+.menu a {
+  display: inline-block;
+  color: rgb(36, 27, 27);
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+.menu a:hover, 
+.menu a:focus 
+.menu a:active {
+  background-color: #bebec2;
+}
+
+.main-container {
+  min-height: 100vh; /* will cover the 100% of viewport */
+  overflow: hidden;
+  display: block;
+  position: relative;
+}
+
+#content-wrap {
+  padding-bottom: 30px;    /* Footer height */
+}
+
+.paticka {
+  position: absolute;
+  background-color: #000080;
+  color: white;
+  text-align: center;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+}
+
+
+table {
+  text-align: left;
+  font-family: 'Playfair Display', serif;
+  border-spacing: 0;
+}
+
+th,
+td {
+ padding: 10px 0px
+}
+
+section {
+  padding: 50px 15%;
+  overflow: auto;
+}
+
+.sloupec {
+  text-align: center;
+  padding-left: 50px;
+}
+
+.table_requests_detail{
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  border: 10px black;
+}
+
+.table_requests_detail td {
+  padding: 10px;
+}
+
+.table_requests_detail_header {
+  text-decoration: underline;
+  border: 10px black;
+}
+
+.service_item{
+  margin-left: 30px;
+}
+
+.sluzbyTable {
+  color: rgb(7, 7, 7);
+  text-align: right;
+  padding: 10 px 0;
+  font-size: 4mm;
+  font-weight: bold;
+}
+
+.moje_foto {
+  width: 150px;
+  border-radius: 10px;
+}
+
+.img_mapa {
+  width: 50px;
+  border-radius: 50%;
+  float: right;
+  margin: 0px 30px 30px 0px;
+}
+
+#left{
+  float:left;
+  width: 60%;
+}
+#right{
+  float:left;
+  width: 40%;
+}
+
+.fotogalerie img { 
+  width: 70%;
+  border: 2px solid #ced2da;
+  border-radius: 10px;
+}
+
+figure {
+  width: 32%;
+  display: inline-block;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+

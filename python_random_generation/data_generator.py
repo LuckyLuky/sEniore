@@ -34,10 +34,10 @@ for name in names:
 
 # Fill in two Surname lists according to gender
 for sur in surnames:
-    if sur [1] == 'muž':
-        surnames_M = surnames_M + [sur [0]]
-    elif sur [1] == 'žena':
-        surnames_F = surnames_F + [sur [0]]
+    if sur[1] == "muž":
+        surnames_M = surnames_M + [sur[0]]
+    elif sur[1] == "žena":
+        surnames_F = surnames_F + [sur[0]]
     else:
         print('ERROR!!!') # For possible error check
         exit ()
@@ -63,8 +63,8 @@ while line < 1000:
         for_email = f'{names_M [name][0].lower()}.{surnames_M [sur].lower()}'   # creates email in format 'n.surname'
 
         # Cycle to remove diacritics from email name
-        for_email = unicodedata.normalize('NFKD', for_email)
-        email = ''
+        for_email = unicodedata.normalize("NFKD", for_email)
+        email = ""
         for c in for_email:
             if not unicodedata.combining(c):
                 email += c
@@ -94,8 +94,8 @@ while line < 1000:
         for_email = f'{names_F [name][0].lower()}.{surnames_F [sur].lower()}'   # creates email in format 'n.surname'
 
         # Cycle to remove diacritics from email name
-        for_email = unicodedata.normalize('NFKD', for_email)
-        email = ''
+        for_email = unicodedata.normalize("NFKD", for_email)
+        email = ""
         for c in for_email:
             if not unicodedata.combining(c):
                 email += c
@@ -117,6 +117,7 @@ while line < 1000:
             telephone,                          # TELEPHONE
             zip_codes[z]]                       # ZIP CODE
             ]
+        ]
     line = line + 1
 
 
@@ -128,3 +129,4 @@ for x in user_table:
         new_data.write(str(y) + ';')
     new_data.write('\n')
 new_data.close()
+

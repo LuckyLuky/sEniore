@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{{ sndmap.js }}   
+
+
+<div class="row">
+    <div class="column">
+    
+    <p> <b>Jméno:</b> {{name}} </p>
+    <p> <b>Info o mně:</b> {{info}} </p>
+
+   
+    {{ sndmap.html }}
+
+
+    </div>
+    
+    <div class="column">
+        <img align="right", class="moje_foto" src="{{ nazev }}">
+        <p> <b>E-mail:</b> {{mail}} </p>
+        <p> <b>Telefon:</b> {{phone}} </p>
+
+
+
+        <p> <b>Toto je přehled mých zaregistrovaných služeb:</b></p>
+
+        <table class="table table-striped">
+          <thead class="thead-light">
+          <tr>
+            <th class="sloupec"> Služba </th>
+            <th class="sloupec"> Nabízím / Hledám </th>
+          </tr>
+          </thead>
+          {% for service in entries %}
+          <tr> 
+          <td class="sloupec"> {{ service[0] }} </td>
+          <td class="sloupec"> {{ service[1] }} </td>
+          </tr> 
+          {% endfor %}
+          </table>
+          <p>Chci přidat novou službu / služby? Stačí kliknout <a href="/sluzby"> zde </a>. </p>
+          <p>Chci smazat službu /služby. Stačí kliknout <a href="/sluzby_update"> zde </a>. </p> 
+  </div>
+</div>
+
+
+
+{% endblock %}

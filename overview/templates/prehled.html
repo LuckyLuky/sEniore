@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Match -->
+<section class="prehled" id="prehled">
+    
+    <h5>Vyberte službu, kterou potřebujete využít:</h5>
+  
+    <div class="row" style="margin-top:20px">
+      <div class="col-md-12">
+          <form role="form" action="" method="POST">
+              <div class="form-group">
+
+            
+            {% for subfield in form.demandOffer %}
+            <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
+            {% endfor %}
+
+                <div class="form-group">
+                <label>Služba: </label> 
+                <select class="form-control" name="category">
+                    {% for service in services %}
+                    <option value= {{ service[0] }} > {{ service[1]}} </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                <label>Město: </label>
+                <select class="form-control" name="address">
+                    {% for address in addresses %}
+                    <option value= {{ address[0] }} > {{ address[0]}} </option>
+                    {% endfor %}
+                  </select>
+              </div>
+              <input type="hidden" name="SECRET_KEY" value="super tajny klic">
+              <button type="submit" name='submit' class="btn btn-primary" value="Form sent!">Hledat</button>
+          </form>
+      </div>
+    </div>
+  
+  </section>
+
+{% endblock %}  
+
+
+
+
+
+

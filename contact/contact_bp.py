@@ -1,0 +1,120 @@
+import os
+from flask import (
+    Blueprint,
+    request,
+    render_template,
+    session,
+    )
+from dbaccess import DBAccess
+import configparser
+import sendgrid
+from datetime import datetime
+from lookup import AdminMail
+
+blueprint = Blueprint("contact_bp", __name__, template_folder="templates")
+
+
+@blueprint.route("/match/", methods=["GET"])
+def match():
+    id_users_services = request.args.get("id", type=int)
+    user_service_requested = DBAccess.ExecuteSQL(
+        """
+      SELECT d.demand_offer, s.category
+      FROM users u
+      LEFT JOIN users_services us on us.id_users = u.id
+      LEFT JOIN services s on s.id = us.id_services
+      LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+      WHERE us.id = %s
+      """,
+        (id_users_services,),
+    )[0]
+    kwargs = {
+        "demand_offer": user_service_requested[0],
+        "services": user_service_requested[1],
+        "id": id_users_services,
+    }
+    return render_template("/match.html", **kwargs)
+
+
+def getEmailAPIKey():
+    API_Key = os.environ.get("SENDGRID_API_KEY")
+    if not API_Key:
+        configParser = configparser.RawConfigParser()
+        configFilePath = r"config.txt"
+        configParser.read(configFilePath)
+        API_Key = configParser.get("my-config", "sendgrid_api_key")
+    if not API_Key:
+        raise Exception("Could not find API_Key value.")
+    return API_Key
+
+
+@blueprint.route("/email_sent/", methods=["POST"])
+def email_sent():
+    user = session["user"]
+    session["id_user"]
+    id_users_services = request.form.get("id", type=int)
+    date = request.form.get("date", type=str)
+    time = request.form.get("time", type=str)
+    strDateTime = f"{date} {time}"
+    dt = datetime.strptime(strDateTime, "%Y-%m-%d %H:%M")
+
+    info = request.form.get("info", type=str)
+
+    email_user_long = DBAccess.ExecuteSQL(
+    """
+    SELECT u.email, u.id, s.id
+    FROM users u
+    LEFT JOIN users_services us on us.id_users = u.id
+    LEFT JOIN services s on s.id = us.id_services
+    LEFT JOIN demand_offer d on d.id = us.id_demand_offer
+    WHERE us.id = %s
+    """,
+    (id_users_services,)
+    )
+    email_user = email_user_long[0][0] # for testing emails are sent to admin
+    offeringUserId = email_user_long[0][1]
+    services_id = email_user_long[0][2]
+
+    id_request = DBAccess.GetSequencerNextVal("requests_id_seq")
+    DBAccess.ExecuteInsert(
+        "INSERT INTO requests (id, id_users_demand, id_users_offer, id_services, "
+        "timestamp, date_time, add_information, id_requests_status)"
+        " values (%s, %s,%s,%s,now(),%s,%s,%s)",
+        (id_request, session["id_user"], offeringUserId, services_id, dt, info, 1)
+    )
+
+    message = {
+        "personalizations": [
+            {"to": [{"email": AdminMail["kacka"]}], "subject": "Seniore"}
+        ],
+        "from": {"email": "noreply@seniore.org"},
+        "content": [
+            {
+                "type": "text/plain",
+                "value": f"Uživatel {user} se s chce setkat s {email_user} dne {date} v {time}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
+            }
+        ],
+    }
+    
+    # message = {
+    #     "personalizations": [
+    #         {"to": [{"email": f"{email_user}"}], "subject": "Seniore"}
+    #     ],
+    #     "from": {"email": "noreply@seniore.org"},
+    #     "content": [
+    #         {
+    #             "type": "text/plain",
+    #             "value": f"Uživatel {user} se s Vámi chce setkat dne {date} v {time}."
+    #             " Doplňující informace: {info}. Prosím, potvrďte svůj zájem"
+    #             " odpovědí na zobrazený e-mail.",
+    #         }
+    #     ],
+    # }
+
+    sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
+
+    response = sg.send(message)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+    return render_template("email_sent.html")

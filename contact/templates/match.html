@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<section class="registrace" id="registrace">
+    
+  <h2>Kontaktní formulář</h2>
+
+  Vybrali jste:
+
+  <ul>
+    <li><strong>Poptávka / nabídka: </strong> {{ demand_offer }}</li>
+    <li><strong>Služba:</strong> {{ services }}</li>
+  </ul>
+
+  <p>Prosím, doplňte bližší informace.</p>
+
+  <p>
+      <form method="POST" action='/email_sent/' >
+        
+        <input type="hidden" name="id" value="{{ id }}"></div>
+        <div><label> Datum </label>
+          <input type="date" name="date" placeholder="datum"></div>
+          <div><label> Čas </label>
+          <input type="time" name="time" placeholder="Čas"></div>
+          <div><label> Doplňující informace </label>
+          <input type="text" name="info" placeholder="informace"></div>
+          <input type="submit" class="btn btn-primary" value="Poslat poptávku">
+      </form>
+  </p>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+  <script src="http://cdn.jsdelivr.net/webshim/1.12.4/extras/modernizr-custom.js"></script>
+  
+  <script src="http://cdn.jsdelivr.net/webshim/1.12.4/polyfiller.js"></script>
+  
+  <script>
+  
+    webshims.setOptions('waitReady', false);
+  
+    webshims.setOptions('forms-ext', {type: 'date'});
+  
+    webshims.setOptions('forms-ext', {type: 'time'});
+  
+    webshims.polyfill('forms forms-ext');
+  
+  </script>
+
+</section>
+
+
+
+
+
+{% endblock %}

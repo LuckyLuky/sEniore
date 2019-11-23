@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Services -->
+<section id="sluzby">
+
+    <h5>Děkujeme. Rekapitulace zadaných údajů:</h5>
+
+    <ul>
+      <strong>Nabídka / Poptávka:</strong> {{ demand_offer }} <br>
+      <strong>Služby:</strong>
+      {% for service in category %}
+      <li class='service_item'> {{ service }}</li>
+      {% endfor %}
+    </ul>
+
+    <p>Zpět na můj <a href="/profil">profil </a>.</p>
+
+
+{% endblock %}

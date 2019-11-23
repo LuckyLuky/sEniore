@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Seniore aplikace</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+  <!-- <link rel="stylesheet" href="static/style.css" type="text/css"/> -->
+
+</head>
+
+
+<body>
+
+<div class="main-container">
+<div id="content-wrap">
+  <header>
+{% block header %}
+
+<div class="hlavicka">
+    <div class="container">
+          <div class="topnav">
+              <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <a class="navbar-brand" href="{{ url_for('login_bp.index') }}"><img src="/static/images/logoSeniore.png" class="img-fluid" alt="LOGO" width=80px></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarText">
+                  <ul class="nav navbar-nav ml-auto ">
+                      <!-- <li class="nav-item">
+                        <a class="nav-link" href="/"> Úvod </a>
+                      </li> -->
+                        {% set user = session["user"] %}
+                        {% set level = session["level_user"] %}
+                        {% if user %}
+                      <li class="nav-item">
+                        <a  class="nav-link"href="/profil"> Profil </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/sluzby"> Nabídnout </a>
+                      </li>
+                      <li class="nav-item">
+                      <a class="nav-link" href="/prehled"> Vyhledat </a>
+                      </li>
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/user_request_overview"> Přehled </a>
+                      </li>
+                        {% if level == 2 %}
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/requests"> Žádosti (admin) </a>
+                      </li>
+                        {% endif %}
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/logout"> Odhlásit </a>
+                      </li>
+                      {% else %}
+                      <li class="nav-item">
+                      <a class="nav-link" href="/login"> Login </a>
+                      </li>
+                      <li class="nav-item">
+                      <a  class="nav-link" href="/registrace"> Registrace </a>
+                      </li>
+                        {% endif %}
+                      </ul>
+                    </div>
+                  </nav>
+            </div>
+        </div>
+  </div>
+
+{% endblock %}
+</header>
+
+  <p class="login">
+      {% set user = session["user"] %}
+      Login -
+      {% if user %}
+        {{ user }}
+      {% else %}
+        Nejsi přihlášen
+      {% endif %}
+      </p>
+
+    <!-- flash messages -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="alert alert-success", style="list-style-type:none;">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  
+  {% block body %} 
+  
+    <h3>Vítejte v aplikaci Seniore!</h3>
+
+    <p>Stále pracujeme na zdokonalení aplikace.</p>
+      
+    <p>Už teď ale hledáme lidi, kteří se připojí. Potřebujete pomoc, nebo máte v okolí seniora, který pomoc potřebuje? Nebo můžete pomoci? Váš příběh nás zajímá. Budeme rádi, když se ozvete. Pomůžete nám tím nastavit službu co nejlépe.</p>
+
+    <p>Jste již zaregistrováni? Skvělé, jen pojďte <a href="/login">dále </a>.</p>
+    <p>Nejste? <a href="/registrace">Pojďme na to</a>.</p>
+
+  {% endblock %}
+    </div>
+  <footer class="paticka"> 
+  <p> © 2019, Seniore </p> 
+  </footer>
+</div>
+</body>
+</html>

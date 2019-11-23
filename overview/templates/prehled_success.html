@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{{ sndmap.js }}   
+
+<!-- Match -->
+<section class="prehled" id="prehled">
+
+    <h5>Níže je přehled služeb dle vámi zvoleného filtru.</h5> 
+    <p>Kontaktovat osobu můžete přímo v rozkliknutém profilu na mapě, či v tabulce. </p>
+
+    <div class="row">
+      <div class="column">
+
+        {{ sndmap.html }} 
+    
+      </div>
+ 
+      <div class="column">
+
+        <table class="table table-striped">
+            <thead class="thead-light">  
+            <tr>
+              <th class="sloupec"> Jméno </th> 
+              <th class="sloupec"> Příjmení </th>
+              <th class="sloupec"> Služba </th>
+              <th class="sloupec"> Typ </th>
+              <th class="sloupec"> Lokalita </th>
+              <th class="sloupec">  </th>
+            </tr>
+            </thead>
+            {% for user in entries %}
+            <tr> 
+            <td class="sloupec"> {{ user[0] }} </td>
+            <td class="sloupec"> {{ user[1] }} </td>
+            <td class="sloupec"> {{ user[2] }} </td>
+            <td class="sloupec"> {{ user[3] }} </td>
+            <td class="sloupec"> {{ user[4] }} </td>
+            <td class="sloupec"> <a href="/match?id={{user[5]}}">Kontaktovat</a>  </td>
+            
+              </tr> 
+            {% endfor %}
+            </table>
+      </div>
+    </div>
+      
+  </section>
+
+{% endblock %}

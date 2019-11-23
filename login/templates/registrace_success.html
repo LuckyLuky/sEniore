@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Match -->
+<section>
+  
+    <h2>Registrace proběhla úspěšně, děkujeme.</h2> 
+
+    <p>Vámi zadané údaje jsou následující:</p>
+
+    <ul>
+      <li><strong>Jméno: </strong> {{ first_name }}</li>
+      <li><strong>Příjmení:</strong> {{ surname }}</li>
+      <li><strong>Email:</strong> {{ email }}</li>
+      <li><strong>Telefon:</strong> {{ telephone }}</li>
+      <li><strong>Město:</strong> {{ town }}</li>
+    </ul>
+
+
+    
+    <p>Pojďme dále na přidání <a href="/registrace_photo">fotky </a>.</p>
+</section>
+
+{% endblock %}  

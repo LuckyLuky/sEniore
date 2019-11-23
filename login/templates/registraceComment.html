@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form method="POST" class="row justify-content-center">
+<div class="form-group">
+  <label for="comment">Na závěr prosím vypište pár slov o sobě:</label>
+</div>
+{{ form.hidden_tag() }}
+<div>
+  {{ form.comment(cols="50", rows="10") }}
+</div>
+<div>
+  {{ form.submit }}
+</div>
+</form>
+<div class="text-center">
+{% for field, errors in form.errors.items() %}
+  {% for error in errors %}
+      <span style="color: red;">Chyba pole - {{ field }} hláška - {{ error }}</span><br>
+  {% endfor %}
+{% endfor %}
+
+
+{% endblock %}

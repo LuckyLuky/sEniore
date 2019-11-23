@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Services -->
+<section id="sluzby">
+
+<h5>Vyberte službu / služby, které můžete nabídnout, či které hledáte:</h5>
+
+
+<p class="lead"> 
+<form method="POST">
+    {{ form.csrf_token }}
+    
+
+    {% for subfield in form.demandOffer %}
+          <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
+    {% endfor %}
+
+    <table class = "sluzbyTable">
+   
+       {% for checkBox in form.checkBoxes %}
+       <tr><td>{{ checkBox.label }} {{ checkBox }}</td></tr>
+       {% endfor %}
+    </table>
+   
+    <input type="submit" class="btn btn-primary" value="Uložit">
+    
+</form>
+  
+</p>
+  </section>
+
+  {% endblock %}
