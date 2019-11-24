@@ -2,7 +2,6 @@ from flask import (
     Blueprint,
     render_template,
     session,
-    flash,
 )
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -11,6 +10,7 @@ from wtforms import (
 from wtforms import RadioField
 from dbaccess import DBAccess
 from lookup import DictionaryDemandOffer
+from utils import flash, FlashStyle
 
 blueprint = Blueprint("serviceReg_bp", __name__, template_folder="templates")
 
@@ -76,7 +76,7 @@ def sluzby_upload():
                 ).lower()
                 if existing_combination > 0:
                     flash(
-                        f'Zadaná kombinace {session["user"]}, {text} a {checkbox.label.text} již existuje.'
+                        f'Zadaná kombinace {session["user"]}, {text} a {checkbox.label.text} již existuje.', FlashStyle.Danger
                     )
                 else:
                     DBAccess.ExecuteInsert(

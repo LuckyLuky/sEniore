@@ -11,9 +11,7 @@
     <p> <b>Jméno:</b> {{name}} </p>
     <p> <b>Info o mně:</b> {{info}} </p>
 
-   
     {{ sndmap.html }}
-
 
     </div>
     
@@ -31,17 +29,21 @@
           <tr>
             <th class="sloupec"> Služba </th>
             <th class="sloupec"> Nabízím / Hledám </th>
+            <th class="sloupec"></th>
+            
           </tr>
           </thead>
-          {% for service in entries %}
+          {% for service in users_services %}
           <tr> 
           <td class="sloupec"> {{ service[0] }} </td>
           <td class="sloupec"> {{ service[1] }} </td>
+          <td><a href="/remove_service?id={{ service[2] }}"> odebrat službu </a></td>
+          
           </tr> 
           {% endfor %}
           </table>
           <p>Chci přidat novou službu / služby? Stačí kliknout <a href="/sluzby"> zde </a>. </p>
-          <p>Chci smazat službu /služby. Stačí kliknout <a href="/sluzby_update"> zde </a>. </p> 
+          <!-- possibility to delete service right from profile<p>Chci smazat službu /služby. Stačí kliknout <a href="/sluzby_update"> zde </a>. </p>  -->
   </div>
 </div>
 

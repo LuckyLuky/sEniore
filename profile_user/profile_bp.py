@@ -3,6 +3,9 @@ from flask import (
     request,
     render_template,
     session,
+    abort,
+    redirect,
+    url_for
     )
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -10,7 +13,7 @@ from wtforms import (
     )
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl
+from utils import GetImageUrl, LoginRequired
 from dbaccess import DBAccess,DBUser
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
@@ -23,6 +26,7 @@ class OverviewFormBase(FlaskForm):
 
 
 @blueprint.route("/profil", methods=["GET", "POST"])
+@LoginRequired()
 def profil():
     dbUser = DBAccess.GetDBUserById(session["id_user"])
     name = f'{dbUser.first_name} {dbUser.surname}'
@@ -43,13 +47,16 @@ def profil():
     imgCloudUrl = GetImageUrl(session["id_user"])
 
     if request.method == "GET":
-        vysledekselectu = DBAccess.ExecuteSQL(
-            "select s.category as category, d.demand_offer as demand_offer from users u"
-            " left join users_services us on us.id_users = u.id"
+        users_services = DBAccess.ExecuteSQL(
+            "select s.category as category, d.demand_offer as demand_offer,us.id from users_services us"
+            " left join users u on us.id_users = u.id"
             " left join services s on s.id = us.id_services"
             " left join demand_offer d on d.id = us.id_demand_offer where u.id = %s",
             (session["id_user"],)
         )
+        if(users_services is None):
+            users_services = []
+
         sndmap = Map(
             identifier="sndmap",
             lat=latitude,
@@ -95,7 +102,7 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", entries=vysledekselectu, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone
+        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone
     )
 
 @blueprint.route("/user_request_overview")
@@ -129,3 +136,22 @@ def user_request_overview():
      requests = []
 
   return render_template("user_request_overview.html", requests = requests)
+
+@LoginRequired()
+@blueprint.route("/remove_service")
+def remove_service():
+    id = request.args.get("id", type=int)
+    #check if there was argument
+    if(id is None):
+         abort(403)
+    #check if service belongs to logged user..
+    dbUser = DBUser.LoadFromSession('dbUser')
+    user_service = DBAccess.ExecuteScalar("select id from users_services where id = %s and id_users=%s",(id,dbUser.id))
+    if(user_service is None):
+        abort(403)
+    
+    #delete service
+    DBAccess.ExecuteUpdate("delete from users_services where id=%s", (id,))
+    return redirect(url_for("profile_bp.profil"))
+
+

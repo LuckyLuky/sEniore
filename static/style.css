@@ -139,7 +139,7 @@ p {
   position: relative;
 }
 
-#content-wrap {
+.content-wrap {
   padding-bottom: 30px;    /* Footer height */
 }
 
@@ -206,6 +206,7 @@ section {
 .moje_foto {
   width: 150px;
   border-radius: 10px;
+  padding-right: 30px;
 }
 
 .img_mapa {
@@ -213,6 +214,7 @@ section {
   border-radius: 50%;
   float: right;
   margin: 0px 30px 30px 0px;
+  padding-left: 30px;
 }
 
 #left{

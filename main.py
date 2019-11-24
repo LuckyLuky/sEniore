@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
 from utils import getGoogleAPIKey, CloudinaryConfigure
 from login import login_bp
@@ -26,6 +26,13 @@ app.register_blueprint(serviceReg_bp.blueprint)
 app.register_blueprint(overview_bp.blueprint)
 app.register_blueprint(contact_bp.blueprint)
 app.register_blueprint(request_bp.blueprint)
+
+
+@app.errorhandler(403)
+def page_not_authorized(e):
+    # note that we set the 404 status explicitly
+    return render_template('403bat.html'), 403
+
 
 
 if __name__ == "__main__":

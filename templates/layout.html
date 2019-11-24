@@ -18,7 +18,7 @@
 <body>
 
 <div class="main-container">
-<div id="content-wrap">
+<div class="content-wrap">
   <header>
 {% block header %}
 
@@ -87,11 +87,11 @@
       </p>
 
     <!-- flash messages -->
-  {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}
-      <ul class="alert alert-success", style="list-style-type:none;">
-      {% for message in messages %}
-        <li>{{ message }}</li>
+      <ul class="alert", style="list-style-type:none;">
+      {% for category, message in messages %}
+        <li class = "{{category}}">{{ message }}</li>
       {% endfor %}
       </ul>
     {% endif %}
@@ -101,13 +101,10 @@
   
     <h3>Vítejte v aplikaci Seniore!</h3>
 
-    <p>Stále pracujeme na zdokonalení aplikace.</p>
+    <p> Více o celé myšlence Seniore naleznete přímo na stránkách <a href="http://seniore.org/">Seniore.org</a></p>
+
+    <p>Aplikace je stále ve vývoji. Omlouváme se za možné výpadky. V případě dotazů / problémů, prosím, kontaktujte administrátora na e-mailu katacek@seniore.org. Děkujeme předem i za jakoukoliv zpětnou vazbu a návrhy na zlepšení. </p>
       
-    <p>Už teď ale hledáme lidi, kteří se připojí. Potřebujete pomoc, nebo máte v okolí seniora, který pomoc potřebuje? Nebo můžete pomoci? Váš příběh nás zajímá. Budeme rádi, když se ozvete. Pomůžete nám tím nastavit službu co nejlépe.</p>
-
-    <p>Jste již zaregistrováni? Skvělé, jen pojďte <a href="/login">dále </a>.</p>
-    <p>Nejste? <a href="/registrace">Pojďme na to</a>.</p>
-
   {% endblock %}
     </div>
   <footer class="paticka"> 

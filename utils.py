@@ -6,9 +6,14 @@ import cloudinary.uploader
 from pathlib import Path
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-
-
-
+from dbaccess import DBUser
+from flask import redirect,url_for, flash as flaskFlash, current_app as app, abort
+from enum  import Enum
+import traceback, sys
+from functools import wraps
+import time
+from datetime import datetime
+import inspect
 
 def GetCoordinates(address):
     api_key = getGoogleAPIKey()
@@ -113,3 +118,38 @@ def SendMail(_from, _to, _subject, _text):
         print(response.headers)
     except Exception as e:
         print(e.message)
+
+class FlashStyle(Enum):
+    Normal = 'alert alert-primary'
+    Success = 'alert alert-success'
+    Warning = 'alert alert-warning'
+    Danger = 'alert alert-danger'
+
+def flash(text, style):
+    flaskFlash(text, style.value)
+
+def LoginRequired(level:int = 1):
+    try:
+        def LoginRequiredInner(function):
+            @wraps(function)
+            def decorated_function(*args, **kwargs):
+                dbUser:DBUser = DBUser.LoadFromSession('dbUser')
+                if dbUser is None :
+                    flash('Nejste přihlášeni, pro přístup je nutné se přihlásit.',FlashStyle.Danger)
+                    return redirect(url_for("login_bp.login"))
+                elif dbUser.level<level :
+                    abort(403)
+                return function(*args, **kwargs)
+            return decorated_function
+        return LoginRequiredInner
+            
+                
+          
+    except RuntimeError:
+        (t, v, tb) = sys.exc_info()
+        tracebacks = "".join(traceback.format_exception(t, v, tb))
+        return lambda :  tracebacks
+
+
+
+    

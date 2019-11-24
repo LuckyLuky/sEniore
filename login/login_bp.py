@@ -6,7 +6,7 @@ from flask import (
     render_template,
     redirect,
     session,
-    flash,
+    
 )
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -22,7 +22,7 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl
+from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash
 from lookup import AdminMail
 
 
@@ -79,7 +79,7 @@ def login():
         )
 
         if userRow is None:
-            flash("Uživatel nenalezen")
+            flash("Uživatel nenalezen",FlashStyle.Danger)
             return render_template("login.html", form=form)
 
         userRow = userRow[0]
@@ -92,13 +92,13 @@ def login():
 
         md5Pass = hashlib.md5(addSalt(str(form.password.data)).encode()).hexdigest()
         if userRow[1] != md5Pass:  # check if second item is equal to hashed password
-            flash("Špatné heslo")
+            flash("Špatné heslo",FlashStyle.Danger)
             return render_template("login.html", form=form)
 
         if userRow[5] == 0:
             flash(
                 "Uživatel není ověřen, počkejte prosím na ověření"
-                " administrátorem stránek."
+                " administrátorem stránek.", FlashStyle.Danger
             )
             return render_template("login.html", form=form)
 
@@ -107,7 +107,7 @@ def login():
         session["level_user"] = userRow[5]
         dbUser = DBAccess.GetDBUserById(userRow[4])
         dbUser.SaveToSession('dbUser')
-        flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]))
+        flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]), FlashStyle.Success)
         return redirect(url_for("profile_bp.profil"))
     return render_template("login.html", form=form)
 
@@ -144,7 +144,7 @@ def registrace():
 
 
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
-          flash(f'Uživatel {dbUser.email} je již zaregistrován, zvolte jiný email.')
+          flash(f'Uživatel {dbUser.email} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
           dbUser.email = None
           form.email.data = None
           return render_template("registrace.html", form = form)
@@ -165,7 +165,7 @@ def registrace():
             dbUser.latitude = coordinates[0]
             dbUser.longitude = coordinates[1]
         else:
-            flash('Nenalezeny souřadnice pro vaši adresu')
+            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
             return render_template("registrace.html", form = form)
 
 
@@ -238,7 +238,7 @@ def photo():
         file_name = secure_filename(form.soubor.data.filename)
         session['fotoPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
         form.soubor.data.save(session['fotoPath'])
-        flash("Foto nahráno, jsme u posledního kroku registrace :-) ")
+        flash("Foto nahráno, jsme u posledního kroku registrace :-) ", FlashStyle.Success)
         return redirect(url_for("login_bp.comment"))
     return render_template("/registrace_photo.html", form=form)
 
@@ -253,7 +253,7 @@ def comment():
         dbUser.InsertDB()
         UploadImage(session['fotoPath'],str(dbUser.id))
         SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> údaje: {dbUser.__dict__}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)')
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)', FlashStyle.Success)
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
 
