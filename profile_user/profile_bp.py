@@ -59,6 +59,7 @@ def profil():
 
         sndmap = Map(
             identifier="sndmap",
+            style="height:100%;width:100%;margin:0;",
             lat=latitude,
             lng=longitude,
             report_clickpos=True,

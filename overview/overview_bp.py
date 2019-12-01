@@ -73,6 +73,7 @@ def prehled_filtr():
 
         map = Map(
                     identifier="sndmap",
+                    style="height:100%;width:100%;margin:0;",
                     lat=str(dbUser.latitude),
                     lng=str(dbUser.longitude),
                     markers=markers

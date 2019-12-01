@@ -135,12 +135,15 @@ p {
 .main-container {
   min-height: 100vh; /* will cover the 100% of viewport */
   overflow: hidden;
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 
 .content-wrap {
   padding-bottom: 30px;    /* Footer height */
+  display: flex;
+  flex-direction: column;
 }
 
 .paticka {
@@ -206,7 +209,6 @@ section {
 .moje_foto {
   width: 150px;
   border-radius: 10px;
-  padding-right: 30px;
 }
 
 .img_mapa {
@@ -237,8 +239,14 @@ figure {
   display: inline-block;
 }
 
-.column {
-  float: left;
-  width: 50%;
+.profile_row {
+  display: flex;
+  flex-direction: row;
 }
+
+.profile_column {
+  display: block;
+  width: 50%;
+  margin: 10px;
+ }
 
