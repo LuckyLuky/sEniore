@@ -29,7 +29,7 @@ html {
   position: relative;
   top: -200px;
   font-family: 'Creepster', cursive;
-  color: white;
+  color: black;
   text-align: center;
   font-size: 6em;
   letter-spacing: 0.1em;
@@ -38,7 +38,7 @@ html {
 .errortext {
   position: relative;
   top: -260px;
-  color: #FBD130;
+  color: red;
   text-align: center;
   text-transform: uppercase;
   font-size: 1.8em;
