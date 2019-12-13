@@ -6,6 +6,7 @@ from flask import (
     render_template,
     redirect,
     session,
+    abort
     
 )
 from flask_wtf import FlaskForm
@@ -22,16 +23,22 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash
+from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail
 from lookup import AdminMail
+from itsdangerous import URLSafeTimedSerializer
 
 
 blueprint = Blueprint("login_bp", __name__, template_folder="templates")
 
+class EmailForm(FlaskForm):
+    email = StringField( validators=[InputRequired()])
+    submit = SubmitField('Odeslat ověřovací email',render_kw=dict(class_="btn btn-outline-primary btn-block"))
+
+
 class RegistrationForm(FlaskForm):
     first_name = StringField( validators=[InputRequired()])
     surname = StringField( validators=[InputRequired()])
-    email = StringField( validators=[InputRequired()])
+    email = StringField( validators=[InputRequired()],render_kw={'disabled':''})
     telephone = StringField( validators=[InputRequired()])
     street = StringField( validators=[InputRequired()])
     street_number = StringField( validators=[InputRequired()])
@@ -128,7 +135,14 @@ def index():
 
 @blueprint.route("/registrace", methods=["GET", "POST"])
 def registrace():
+    email = session.pop('confirmed_email',None)
+    
+    if(email is None):
+        abort(403)
+   
     form = RegistrationForm()
+    form.email.data = email
+    
     if(form.validate_on_submit()):
         dbUser = DBUser()
         dbUser.email = form.email.data
@@ -261,3 +275,31 @@ def comment():
 @blueprint.route("/goodpracticephoto")
 def photo_good_practice():
     return render_template("goodpracticephoto.html")
+
+@blueprint.route("/registrace_email",methods=["GET", "POST"])
+def registration_email():
+    emailForm = EmailForm()
+    if emailForm.validate_on_submit():
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        token = ts.dumps(emailForm.email.data, salt='email-confirm-key')
+        confirm_url = url_for(
+            'login_bp.email_confirmation',
+            token=token,
+            _external=True)
+        email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
+        SendMail("noreply@seniore.cz",emailForm.email.data,'Seniore.cz - ověření emailu',email_text)
+        flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
+        emailForm.submit.label.text = "Odeslat ověřovací email znovu"
+        return render_template("registrace_email.html", form = emailForm)
+    return render_template("registrace_email.html", form = emailForm)
+
+@blueprint.route("/email_confirmation/<token>")
+def email_confirmation(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="email-confirm-key", max_age=86400)
+    except:
+        abort(403)
+    session['confirmed_email'] = email
+    return redirect(url_for('login_bp.registrace'),)
+

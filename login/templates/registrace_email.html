@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Registration -->
+
+<section class="registrace" id="registrace">
+    
+    <h3><center>Zadejte prosím email/uživatelské jméno</center></h3>
+       <form method="POST" class="row justify-content-center">
+          {{ form.hidden_tag() }}
+          <table>
+            <tr><td> {{ form.email }}<td></tr>
+            <tr><td> {{ form.submit }}<td></tr>
+          </table>
+       </form>
+</section>
+
+{% endblock %}

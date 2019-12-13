@@ -250,13 +250,3 @@ figure {
   margin: 10px;
  }
 
- .nav-item > .active {
-    color:rgb(12, 138, 221);
-    font-weight: bold; 
-  }
-
-
-
-
-
-
