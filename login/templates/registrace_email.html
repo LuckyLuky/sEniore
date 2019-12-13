@@ -11,6 +11,8 @@
           {{ form.hidden_tag() }}
           <table>
             <tr><td> {{ form.email }}<td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "1"> Souhlas s podmínkami  </td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "2"> Souhlas s GDPR  </td></tr>
             <tr><td> {{ form.submit }}<td></tr>
           </table>
        </form>

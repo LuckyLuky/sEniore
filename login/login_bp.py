@@ -143,7 +143,7 @@ def registrace():
     form = RegistrationForm()
     form.email.data = email
     
-    if(form.validate_on_submit()):
+    if form.validate_on_submit():
         dbUser = DBUser()
         dbUser.email = form.email.data
         dbUser.password = form.password.data
@@ -154,7 +154,7 @@ def registrace():
         dbUser.street = form.street.data
         dbUser.street_number = form.street_number.data
         dbUser.post_code = form.post_code.data
-        dbUser.level = 2 # for testing, then set to 0 for manual verifivation of user's pohoto, ...
+        dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
 
 
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
@@ -279,7 +279,16 @@ def photo_good_practice():
 @blueprint.route("/registrace_email",methods=["GET", "POST"])
 def registration_email():
     emailForm = EmailForm()
+    
     if emailForm.validate_on_submit():
+      if request.form.getlist('conditionsAccept')!=['1', '2']:
+        flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
+        return render_template("registrace_email.html", form = emailForm)
+      if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is not None:
+          flash(f'Uživatel {emailForm.email.data} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
+          emailForm.email.data = None
+          return render_template("registrace_email.html", form = emailForm)
+      else:
         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
         token = ts.dumps(emailForm.email.data, salt='email-confirm-key')
         confirm_url = url_for(

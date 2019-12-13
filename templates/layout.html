@@ -40,9 +40,9 @@
                       <li class="nav-item">
                         <a  class="nav-link" href="/profil" id="profil_menu"> Profil </a>
                       </li>
-                      <li class="nav-item">
+                      <!-- <li class="nav-item">
                         <a class="nav-link" href="/sluzby"> Nabídnout </a>
-                      </li>
+                      </li> -->
                       <li class="nav-item">
                       <a class="nav-link" href="/prehled"> Vyhledat </a>
                       </li>
@@ -75,7 +75,7 @@
 {% endblock %}
 </header>
 
-  <p class="login">
+  <!-- <p class="login">
       {% set user = session["user"] %}
       Login -
       {% if user %}
@@ -83,7 +83,7 @@
       {% else %}
         Nejsi přihlášen
       {% endif %}
-      </p>
+      </p> -->
 
     <!-- flash messages -->
     {% with messages = get_flashed_messages(with_categories=True) %}

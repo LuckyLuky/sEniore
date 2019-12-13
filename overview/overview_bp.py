@@ -17,7 +17,7 @@ blueprint = Blueprint("overview_bp", __name__, template_folder="templates")
 
 class OverviewFormBase(FlaskForm):
     demandOffer = RadioField(
-        "Nabídka/Poptávka", choices=[("2", "hledám nabídku"), ("1", "hledám poptávku")], default="2"
+        "Nabídka/Poptávka", choices=[("2", "hledám někoho, kdo nabízí"), ("1", "hledám někoho, kdo poptává")], default="2"
     )
 
 
@@ -59,7 +59,7 @@ def prehled_filtr():
         marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
         marker["lat"] = str(dbUser.latitude)
         marker["lng"] =  str(dbUser.longitude)
-        marker["infobox"] = f'<b>{dbUser.first_name} {dbUser.surname}</b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
+        marker["infobox"] = f'<b>{dbUser.first_name} </b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
         markers.append(marker)
 
         for user in vysledekselectu:
