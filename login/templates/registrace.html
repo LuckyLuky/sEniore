@@ -8,7 +8,8 @@
     
     <h2>Registrace</h2>
        <form method="POST" class="row justify-content-center">
-          {{ form.hidden_tag() }}
+          <!-- {{ form.hidden_tag() }} -->
+          {{ form.csrf_token }}
       
         <table>
             <tr><td>Email (uživatelské jméno):</td><td> {{ form.email }}<td></tr>
@@ -23,6 +24,11 @@
             <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
             <tr><td>Pokračovat:</td><td> {{ form.submit }}<td></tr>
        </table>
+       {% if form.errors %}
+          {{ form.errors }}
+        {% endif %}
+
+
       </form>
 
   </p>

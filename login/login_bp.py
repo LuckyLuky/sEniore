@@ -38,7 +38,7 @@ class EmailForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     first_name = StringField( validators=[InputRequired()])
     surname = StringField( validators=[InputRequired()])
-    email = StringField( validators=[InputRequired()],render_kw={'disabled':''})
+    email = StringField( render_kw={'disabled':''})
     telephone = StringField( validators=[InputRequired()])
     street = StringField( validators=[InputRequired()])
     street_number = StringField( validators=[InputRequired()])
@@ -135,15 +135,12 @@ def index():
 
 @blueprint.route("/registrace", methods=["GET", "POST"])
 def registrace():
-    email = session.pop('confirmed_email',None)
-    
-    if(email is None):
-        abort(403)
-   
+        
     form = RegistrationForm()
-    form.email.data = email
-    
+        
     if form.validate_on_submit():
+        email = session['confirmed_email']
+        form.email.data = email
         dbUser = DBUser()
         dbUser.email = form.email.data
         dbUser.password = form.password.data
@@ -156,7 +153,7 @@ def registrace():
         dbUser.post_code = form.post_code.data
         dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
 
-
+    
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
           flash(f'Uživatel {dbUser.email} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
           dbUser.email = None
@@ -165,7 +162,7 @@ def registrace():
 
 
         dbUser.salt = salt = DBAccess.ExecuteScalar("select salt()")
-
+        
         #md% tranform password use md5 function on password + salt
         md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
         dbUser.password = md5Pass
@@ -185,6 +182,15 @@ def registrace():
 
         dbUser.SaveToSession('dbUserRegistration')
         return render_template("/registrace_success.html", **kwargs)
+    
+    #email = session.pop('confirmed_email',None)
+    email = session['confirmed_email']
+
+    if(email is None):
+        abort(403)
+
+    form.email.data = email
+    
     return render_template("registrace.html", form = form)
 
 
