@@ -115,7 +115,7 @@ def login():
         dbUser = DBAccess.GetDBUserById(userRow[4])
         dbUser.SaveToSession('dbUser')
         flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]), FlashStyle.Success)
-        return redirect(url_for("profile_bp.profil"))
+        return redirect(url_for("overview_bp.prehled_all"))
     return render_template("login.html", form=form)
 
 

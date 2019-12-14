@@ -7,23 +7,22 @@
 <!-- Match -->
 <!-- <section class="prehled" id="prehled"> -->
 
-    <h3>Níže je přehled služeb dle vámi zvoleného filtru.</h3> 
-    <p>Kontaktovat osobu můžete přímo v rozkliknutém profilu na mapě, či v tabulce. </p>
-
-    <div class="profile_row">
-      <div class="profile_column">
+    <h3>Všechny aktuálně zaregistrované nabídky služeb. </h3> 
+    <p> Pokud chcete filtrovat dle typu služby / hledat poptávku, stačí kliknout <a href="/prehled"> zde </a>. </p> </p>
+<div class="profile_row"><center>
+      <!-- <div class="profile_column"> -->
 
         {{ sndmap.html }} 
-    
+      </center>
       </div>
  
-      <div class="profile_column">
+      <!-- <div class="profile_column">
 
         <table class="table table-striped">
             <thead class="thead-light">  
             <tr>
               <th class="sloupec"> Jméno </th> 
-              <!-- <th class="sloupec"> Příjmení </th> -->
+              <th class="sloupec"> Příjmení </th>
               <th class="sloupec"> Služba </th>
               <th class="sloupec"> Typ </th>
               <th class="sloupec"> Lokalita </th>
@@ -33,7 +32,7 @@
             {% for user in entries %}
             <tr> 
             <td class="sloupec"> {{ user[0] }} </td>
-            <!-- <td class="sloupec"> {{ user[1] }} </td> -->
+            <td class="sloupec"> {{ user[1] }} </td>
             <td class="sloupec"> {{ user[2] }} </td>
             <td class="sloupec"> {{ user[3] }} </td>
             <td class="sloupec"> {{ user[4] }} </td>
@@ -42,9 +41,8 @@
               </tr> 
             {% endfor %}
             </table>
-      </div>
+      </div> -->
     </div>
       
-  </section>
 
 {% endblock %}
