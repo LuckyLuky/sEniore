@@ -40,11 +40,19 @@ class RegistrationForm(FlaskForm):
     surname = StringField( validators=[InputRequired()])
     email = StringField( render_kw={'disabled':''})
     telephone = StringField( validators=[InputRequired()])
+    # street = StringField( validators=[InputRequired()])
+    # street_number = StringField( validators=[InputRequired()])
+    # town = StringField( validators=[InputRequired()])
+    # post_code = StringField( validators=[InputRequired()])
+    password = PasswordField( validators=[InputRequired()])
+    submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
+
+
+class RegistrationFormAddress(FlaskForm):
     street = StringField( validators=[InputRequired()])
     street_number = StringField( validators=[InputRequired()])
     town = StringField( validators=[InputRequired()])
     post_code = StringField( validators=[InputRequired()])
-    password = PasswordField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 
@@ -147,10 +155,10 @@ def registrace():
         dbUser.first_name = form.first_name.data
         dbUser.surname = form.surname.data
         dbUser.telephone = form.telephone.data
-        dbUser.town = form.town.data
-        dbUser.street = form.street.data
-        dbUser.street_number = form.street_number.data
-        dbUser.post_code = form.post_code.data
+        # dbUser.town = form.town.data
+        # dbUser.street = form.street.data
+        # dbUser.street_number = form.street_number.data
+        # dbUser.post_code = form.post_code.data
         dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
 
     
@@ -169,19 +177,19 @@ def registrace():
         
         
 
-        kwargs = dbUser.__dict__
-        address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
-        coordinates = GetCoordinates(address)
-        if(coordinates is not None):
-            dbUser.latitude = coordinates[0]
-            dbUser.longitude = coordinates[1]
-        else:
-            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
-            return render_template("registrace.html", form = form)
+        # kwargs = dbUser.__dict__
+        # address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
+        # coordinates = GetCoordinates(address)
+        # if(coordinates is not None):
+        #     dbUser.latitude = coordinates[0]
+        #     dbUser.longitude = coordinates[1]
+        # else:
+        #     flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
+        #     return render_template("registrace.html", form = form)
 
 
         dbUser.SaveToSession('dbUserRegistration')
-        return render_template("/registrace_success.html", **kwargs)
+        return redirect(url_for("login_bp.registrace_address"))
     
     #email = session.pop('confirmed_email',None)
     email = session['confirmed_email']
@@ -193,62 +201,33 @@ def registrace():
     
     return render_template("registrace.html", form = form)
 
+@blueprint.route("/registrace_address", methods=["GET", "POST"])
+def registrace_address():
+        
+    form = RegistrationFormAddress()
+        
+    if form.validate_on_submit():
+        dbUser =  DBUser.LoadFromSession('dbUserRegistration')
+        dbUser.town = form.town.data
+        dbUser.street = form.street.data
+        dbUser.street_number = form.street_number.data
+        dbUser.post_code = form.post_code.data
+            
+        kwargs = dbUser.__dict__
+        address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
+        coordinates = GetCoordinates(address)
+        if(coordinates is not None):
+            dbUser.latitude = coordinates[0]
+            dbUser.longitude = coordinates[1]
+        else:
+            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
+            return render_template("registrace_address.html", form = form)
 
-# @blueprint.route("/add_name", methods=["POST"])
-# def add_name():
-#     kwargs = {
-#         "first_name": request.form["first_name"],
-#         "surname": request.form["surname"],
-#         "email": request.form["email"],
-#         # "address": request.form["address"],
-#         "town": request.form["town"],
-#         "street": request.form["street"],
-#         "streetNumber": request.form["streetNumber"],
-#         "postCode": request.form["postCode"],
-#         "telephone": request.form["telephone"],
-#         "password": request.form["password"],
-#     }
 
-#     address = "{} {} {} {}".format(
-#         kwargs["street"], kwargs["streetNumber"], kwargs["town"], kwargs["postCode"]
-#     )
+        dbUser.SaveToSession('dbUserRegistration')
+        return render_template("/registrace_success.html", **kwargs)
     
-#     coordinates = GetCoordinates(address)
-
-#     unique_number_users_long = DBAccess.ExecuteSQL("SELECT nextval('users_id_seq')")
-#     unique_number_users = unique_number_users_long[0]
-#     salt = DBAccess.ExecuteScalar("select salt()")
-#     DBAccess.ExecuteInsert(
-#         """insert into users (id, first_name, surname, email, street,
-#         streetNumber, town, postCode, telephone, password, salt,
-#         level, latitude,longitude)
-#      values (%s, %s, %s, %s, %s, %s,%s, %s, %s, md5(%s),%s,%s, %s, %s)""",
-#         (
-#             unique_number_users,
-#             request.form["first_name"],
-#             request.form["surname"],
-#             request.form["email"],
-#             request.form["street"],
-#             request.form["streetNumber"],
-#             request.form["town"],
-#             request.form["postCode"],
-#             request.form["telephone"],
-#             request.form["password"] + salt,
-#             salt,
-#             1,
-#             coordinates[0],
-#             coordinates[1]
-#         )
-#     )
-#     user = request.form["email"]
-#     userRow = DBAccess.ExecuteSQL(
-#         "select email, password, first_name, surname, id, level,salt from users "
-#         "where email like %s",
-#         (user,)
-#     )
-#     userRow = userRow[0]
-#     session["id_user"] = userRow[4]
-#     return render_template("/registrace_success.html", **kwargs)
+    return render_template("registrace_address.html", form = form)
 
 
 @blueprint.route("/registrace_photo/", methods=["GET", "POST"])

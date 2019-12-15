@@ -12,16 +12,16 @@
           {{ form.csrf_token }}
       
         <table>
-            <tr><td>Email (uživatelské jméno):</td><td> {{ form.email }}<td></tr>
+            <!-- <tr><td>Email (uživatelské jméno):</td><td> {{ form.email }}<td></tr>
             <tr><td>Heslo:</td><td> {{ form.password }}<td></tr>
             <tr></tr>
             <tr><td>Jméno:</td><td>{{ form.first_name }}</td></tr>
             <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>
-            <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr>
-            <!-- <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
+            <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr> -->
+            <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
             <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr>
             <tr><td>Město:</td><td> {{ form.town }}<td></tr>
-            <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr> -->
+            <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
             <tr><td>Pokračovat:</td><td> {{ form.submit }}<td></tr>
        </table>
        {% if form.errors %}
