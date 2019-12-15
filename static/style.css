@@ -1,5 +1,6 @@
 head {
   width: 150px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .logo{ 
@@ -11,11 +12,11 @@ head {
 body {
   color: #282425;
   background-color: whitesmoke;
-  font-family: 'Raleway', sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 20px;
   line-height: 1.5;
   position: relative;
-  margin: 0;
+  margin: auto;
   }
 
 h1{
@@ -24,7 +25,7 @@ h1{
   color: white;
   margin: 0px;
   text-shadow:0 3px 10px rgba(0, 0, 0, 0.7);
-  font-family: 'Playfair Display', serif; 
+  font-family: Verdana, Geneva, Tahoma, sans-serif; 
   font-style: italic;
   line-height: 3;
 }
@@ -34,25 +35,25 @@ h2{
   text-align: center;
   margin-top: 20px;
   color:  #2B1B17;
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-style: italic; 
 }
 
 h3 {
   font-size: 30px;
-  text-align: left;
+  text-align: center;
   margin-top: 30px;
   margin-left: 30px;
   color:  #2B1B17;
-  font-family: 'Playfair Display', serif;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-style: italic; 
 }
 
 h4 {
   font-size: 25px;
-  text-align: left;
+  text-align: center;
   color: black;
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-style: italic; 
   margin-left: 30px;
 
@@ -60,12 +61,13 @@ h4 {
 
 h5 {
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   margin-left: 30px;
 }
 
 p {
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
   margin-left: 30px;
 }
 
@@ -97,7 +99,7 @@ p {
   padding: 14px 16px;
   text-decoration: none;
   font-size: 20px;
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;;
 }
 
 .topnav a:hover {
@@ -159,7 +161,7 @@ p {
 
 table {
   text-align: left;
-  font-family: 'Playfair Display', serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   border-spacing: 0;
 }
 

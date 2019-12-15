@@ -127,7 +127,7 @@ def prehled_all():
 
       map = Map(
                   identifier="sndmap",
-                  style="height:500px;width:900px;margin:30px;",
+                  style="height:500px;width:900px;margin:auto;",
                   lat=str(dbUser.latitude),
                   lng=str(dbUser.longitude),
                   markers=markers
