@@ -130,7 +130,7 @@ def odhlasit():
 
 @blueprint.route("/")
 def index():
-    return render_template("layout.html")
+    return redirect(url_for("login_bp.login"))
 
 
 @blueprint.route("/registrace", methods=["GET", "POST"])

@@ -8,12 +8,18 @@
 {% block body %}
     <form method="POST" class="row justify-content-center">
         {{ form.hidden_tag() }}
+
         <table>
             <tr><td>{{ form.user.label }}:</td><td>{{ form.user(placeholder="Email zadaný při registraci") }}</td></tr>
             <tr><td>{{ form.password.label }}: </td><td>{{ form.password }}</td></tr>
             <tr><td>{{ form.submit.label }}</td><td> {{ form.submit }}<td></tr>
         </table>
     </form>
+<br>
+<br>
+    <p> Ještě nemáte registraci? <a href="/registrace_email">Pojďme na to!</a></p>
+
+
     <div class="text-center">
     {% for field, errors in form.errors.items() %}
         {% for error in errors %}
