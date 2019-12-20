@@ -3,16 +3,19 @@
 {% block body %}
 
 <form method="POST" class="row justify-content-center">
-<div class="form-group">
-  <label for="comment">Na závěr prosím vypište pár slov o sobě:</label>
-</div>
+  <table>
+    <tr><td>
+  <h3>Na závěr prosím vypište pár slov o sobě:</h3>
+</td></tr>
 {{ form.hidden_tag() }}
-<div>
+
+  <tr><td>
   {{ form.comment(cols="50", rows="10") }}
-</div>
-<div>
+</td></tr>
+<tr><td>
   {{ form.submit }}
-</div>
+</td></tr>
+</table>
 </form>
 <div class="text-center">
 {% for field, errors in form.errors.items() %}

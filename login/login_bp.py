@@ -17,7 +17,7 @@ from wtforms import (
     FileField,
 )
 from flask_wtf.file import FileRequired
-from wtforms.validators import InputRequired, DataRequired
+from wtforms.validators import InputRequired, DataRequired, Length
 from wtforms.widgets import TextArea
 from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
@@ -41,17 +41,23 @@ class NewPasswordForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    first_name = StringField( validators=[InputRequired()])
-    surname = StringField( validators=[InputRequired()])
+    # first_name = StringField( validators=[InputRequired()])
+    # surname = StringField( validators=[InputRequired()])
     email = StringField( render_kw={'disabled':''})
-    telephone = StringField( validators=[InputRequired()])
+    # telephone = StringField( validators=[InputRequired()])
     # street = StringField( validators=[InputRequired()])
     # street_number = StringField( validators=[InputRequired()])
     # town = StringField( validators=[InputRequired()])
     # post_code = StringField( validators=[InputRequired()])
     password = PasswordField( validators=[InputRequired()])
+    passwordAgain = PasswordField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
+class RegistrationFormName(FlaskForm):
+    first_name = StringField( validators=[InputRequired()])
+    surname = StringField( validators=[InputRequired()])
+    telephone = StringField( validators=[InputRequired(), Length(min=9, max=9)], )
+    submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 class RegistrationFormAddress(FlaskForm):
     street = StringField( validators=[InputRequired()])
@@ -79,6 +85,11 @@ class FileFormular(FlaskForm):
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
 
+class IDFormular(FlaskForm):
+    soubor = FileField("Vlož fotku OP", validators=[FileRequired()])
+    submit = SubmitField(
+        "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+    )
 
 class TextFormular(FlaskForm):
     comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
@@ -127,7 +138,7 @@ def login():
         session["level_user"] = userRow[5]
         dbUser = DBAccess.GetDBUserById(userRow[4])
         dbUser.SaveToSession('dbUser')
-        flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]), FlashStyle.Success)
+        # flash("Uživatel/ka {0} {1} přihlášen/a".format(userRow[2], userRow[3]), FlashStyle.Success)
         return redirect(url_for("overview_bp.prehled_all"))
     return render_template("login.html", form=form)
 
@@ -152,18 +163,16 @@ def registrace():
     form = RegistrationForm()
         
     if form.validate_on_submit():
+        if(form.password.data!=form.passwordAgain.data):
+            flash('Hesla nejsou stejná.',FlashStyle.Danger)
+            email = session['confirmed_email']
+            form.email.data = email
+            return render_template("registrace.html", form = form)
         email = session['confirmed_email']
         form.email.data = email
         dbUser = DBUser()
         dbUser.email = form.email.data
         dbUser.password = form.password.data
-        dbUser.first_name = form.first_name.data
-        dbUser.surname = form.surname.data
-        dbUser.telephone = form.telephone.data
-        # dbUser.town = form.town.data
-        # dbUser.street = form.street.data
-        # dbUser.street_number = form.street_number.data
-        # dbUser.post_code = form.post_code.data
         dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
 
     
@@ -180,21 +189,8 @@ def registrace():
         md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
         dbUser.password = md5Pass
         
-        
-
-        # kwargs = dbUser.__dict__
-        # address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
-        # coordinates = GetCoordinates(address)
-        # if(coordinates is not None):
-        #     dbUser.latitude = coordinates[0]
-        #     dbUser.longitude = coordinates[1]
-        # else:
-        #     flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
-        #     return render_template("registrace.html", form = form)
-
-
         dbUser.SaveToSession('dbUserRegistration')
-        return redirect(url_for("login_bp.registrace_address"))
+        return redirect(url_for("login_bp.registrace_name"))
     
     #email = session.pop('confirmed_email',None)
     email = session['confirmed_email']
@@ -205,6 +201,23 @@ def registrace():
     form.email.data = email
     
     return render_template("registrace.html", form = form)
+
+@blueprint.route("/registrace_name", methods=["GET", "POST"])
+def registrace_name():
+        
+    form = RegistrationFormName()
+        
+    if form.validate_on_submit():
+        dbUser =  DBUser.LoadFromSession('dbUserRegistration')
+        dbUser.first_name = form.first_name.data
+        dbUser.surname = form.surname.data
+        dbUser.telephone = form.telephone.data
+            
+        dbUser.SaveToSession('dbUserRegistration')
+        return redirect(url_for("login_bp.registrace_address"))
+    
+    return render_template("registrace_name.html", form = form)
+
 
 @blueprint.route("/registrace_address", methods=["GET", "POST"])
 def registrace_address():
@@ -230,7 +243,7 @@ def registrace_address():
 
 
         dbUser.SaveToSession('dbUserRegistration')
-        return render_template("/registrace_success.html", **kwargs)
+        return redirect(url_for("login_bp.photo"))
     
     return render_template("registrace_address.html", form = form)
 
@@ -242,10 +255,20 @@ def photo():
         file_name = secure_filename(form.soubor.data.filename)
         session['fotoPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
         form.soubor.data.save(session['fotoPath'])
-        flash("Foto nahráno, jsme u posledního kroku registrace :-) ", FlashStyle.Success)
-        return redirect(url_for("login_bp.comment"))
+        # flash("Foto nahráno, jsme u posledního kroku registrace :-) ", FlashStyle.Success)
+        return redirect(url_for("login_bp.registrace_idCard"))
     return render_template("/registrace_photo.html", form=form)
 
+@blueprint.route("/registrace_idCard/", methods=["GET", "POST"])
+def registrace_idCard():
+    form = IDFormular()
+    if form.validate_on_submit():
+        file_name = secure_filename(form.soubor.data.filename)
+        session['idPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+        form.soubor.data.save(session['idPath'])
+        # flash("Foto nahráno, jsme u posledního kroku registrace :-) ", FlashStyle.Success)
+        return redirect(url_for("login_bp.comment"))
+    return render_template("/registrace_idCard.html", form=form)
 
 @blueprint.route("/registraceComment/", methods=["GET", "POST"])
 def comment():
@@ -256,7 +279,9 @@ def comment():
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
         dbUser.InsertDB()
         UploadImage(session['fotoPath'],str(dbUser.id))
-        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> údaje: {dbUser.__dict__}')
+        UploadImage(session['idPath'],str(dbUser.id) + 'OP')
+        OP_id = str(dbUser.id) + 'OP'
+        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)', FlashStyle.Success)
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
@@ -345,4 +370,11 @@ def new_password(token):
         return redirect(url_for('login_bp.login'),)
     return render_template('new_password.html',form=form, email=email)
 
+@blueprint.route("/conditions_1")
+def conditions_1():
+    return render_template("conditions_1.html")
+
+@blueprint.route("/conditions_2")
+def conditions_2():
+    return render_template("conditions_2.html")
 
