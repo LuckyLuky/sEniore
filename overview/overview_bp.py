@@ -82,7 +82,7 @@ def prehled_filtr():
         return render_template("prehled_success.html", entries=vysledekselectu, sndmap=map)
 
 
-@blueprint.route("/prehled_all/", methods=["GET"])
+@blueprint.route("/prehled_all", methods=["GET"])
 def prehled_all():
   if request.method == "GET":
       vysledekselectu = DBAccess.ExecuteSQL(
@@ -130,7 +130,8 @@ def prehled_all():
                   style="height:500px;width:900px;margin:auto;",
                   lat=str(dbUser.latitude),
                   lng=str(dbUser.longitude),
-                  markers=markers
+                  markers=markers,
+                  cluster=True
                   )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
   return render_template("prehled_all.html", entries=vysledekselectu, sndmap=map)
 

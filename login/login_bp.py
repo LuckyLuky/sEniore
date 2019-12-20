@@ -34,6 +34,11 @@ class EmailForm(FlaskForm):
     email = StringField( validators=[InputRequired()])
     submit = SubmitField('Odeslat ověřovací email',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
+class NewPasswordForm(FlaskForm):
+    password = PasswordField( validators=[InputRequired()])
+    passwordAgain = PasswordField( validators=[InputRequired()])
+    submit = SubmitField('Nastavit nové heslo',render_kw=dict(class_="btn btn-outline-primary btn-block"))
+
 
 class RegistrationForm(FlaskForm):
     first_name = StringField( validators=[InputRequired()])
@@ -296,4 +301,48 @@ def email_confirmation(token):
         abort(403)
     session['confirmed_email'] = email
     return redirect(url_for('login_bp.registrace'),)
+
+
+@blueprint.route("/zapomenute_heslo",methods=["GET", "POST"])
+def lost_password():
+    emailForm = EmailForm()
+    
+    if emailForm.validate_on_submit():
+        if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is None:
+          flash(f'Uživatel {emailForm.email.data} nebyl nalezen, zvolte jiný email.',FlashStyle.Danger)
+          emailForm.email.data = None
+          return render_template("registrace_email.html", form = emailForm)
+        else:
+            ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+            token = ts.dumps(emailForm.email.data, salt='email-renew-key')
+            confirm_url = url_for(
+                'login_bp.new_password',
+                token=token,
+                _external=True)
+            email_text = f'Prosím klikněte na následující odkaz pro zadání nového hesla.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
+            SendMail("noreply@seniore.cz",emailForm.email.data,'Seniore.cz - obnova zapomenutého hesla',email_text)
+            flash("Na zadanou adresu byl odeslán email s odkazem na obnovu hesla.",FlashStyle.Success)
+            emailForm.submit.label.text = "Odeslat email znovu"
+            return render_template("lost_password.html", form = emailForm)
+    return render_template("lost_password.html", form = emailForm)
+
+@blueprint.route("/new_password/<token>",methods=["GET", "POST"])
+def new_password(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="email-renew-key", max_age=86400)
+    except:
+        abort(403)
+    form = NewPasswordForm()
+    if(form.validate_on_submit()):
+        if(form.password.data!=form.passwordAgain.data):
+            flash('Hesla nejsou stejná.',FlashStyle.Danger)
+            return render_template('new_password.html',form=form, email=email)
+        salt = DBAccess.ExecuteScalar("select salt()")
+        md5Pass = hashlib.md5((form.password.data+salt).encode()).hexdigest()
+        DBAccess.ExecuteUpdate('update users set password=%s,salt=%s where email like %s',(md5Pass,salt,email))
+        flash('Nové heslo nastaveno, nyní se zkuste přihlásit.',FlashStyle.Success)
+        return redirect(url_for('login_bp.login'),)
+    return render_template('new_password.html',form=form, email=email)
+
 
