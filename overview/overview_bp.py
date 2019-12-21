@@ -131,7 +131,6 @@ def prehled_all():
                   lat=str(dbUser.latitude),
                   lng=str(dbUser.longitude),
                   markers=markers,
-                  cluster=True
                   )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
   return render_template("prehled_all.html", entries=vysledekselectu, sndmap=map)
 

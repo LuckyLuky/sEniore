@@ -79,6 +79,7 @@ def requests_detail():
         inner join requests_status rs on r.id_requests_status = rs.id
         where r.id =%s""",
         (rid,))
+        
     if(requests is None):
          abort(403)
     requests = requests[0]
