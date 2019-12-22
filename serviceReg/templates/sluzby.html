@@ -20,7 +20,7 @@
     <table class = "sluzbyTable">
    
        {% for checkBox in form.checkBoxes %}
-       <tr><td>{{ checkBox.label }} {{ checkBox }}</td></tr>
+       <tr><td style="padding-right:10px">{{ checkBox }}</td><td align="left">{{ checkBox.label }}</td></tr>
        {% endfor %}
     </table>
    

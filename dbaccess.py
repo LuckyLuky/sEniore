@@ -55,6 +55,31 @@ class DBUser():
         )
     )
 
+    def UpdateDB(self):
+        DBAccess.ExecuteUpdate(
+        """update users SET (first_name, surname, street,
+        streetNumber, town, postCode, telephone, password, salt,
+        level, latitude,longitude, info)=
+        (%s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s) where id=%s""",
+        (
+            self.first_name,
+            self.surname,
+            self.street,
+            self.street_number,
+            self.town,
+            self.post_code,
+            self.telephone,
+            self.password,
+            self.salt,
+            self.level,
+            self.latitude,
+            self.longitude,
+            self.info,
+            self.id
+        )
+        
+    )
+
 
 
 
@@ -73,7 +98,7 @@ class DBAccess:
         dbUser.email = user[3]
         dbUser.street = user[4]
         dbUser.street_number = user[5]
-        dbUser.postCode = user[6]
+        dbUser.post_code = user[6]
         dbUser.town = user[7]
         dbUser.telephone = user[8]
         dbUser.info = user[9]

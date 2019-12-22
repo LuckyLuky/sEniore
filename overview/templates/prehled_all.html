@@ -4,45 +4,31 @@
 
 {{ sndmap.js }}   
 
-<!-- Match -->
-<!-- <section class="prehled" id="prehled"> -->
+
 
     <h3>Všechny aktuálně zaregistrované nabídky služeb. </h3> 
     <p> Pokud chcete filtrovat dle typu služby / hledat poptávku, stačí kliknout <a href="/prehled"> zde </a>. </p> 
-    <div>
-    <center>
-      <!-- <div class="profile_column"> -->
-
-        {{ sndmap.html }} 
-      </center>
+    <div class="profile_row">
+      <div class="profile_column">
+          {{ sndmap.html }} 
       </div>
- 
-      <!-- <div class="profile_column">
-
-        <table class="table table-striped">
-            <thead class="thead-light">  
-            <tr>
-              <th class="sloupec"> Jméno </th> 
-              <th class="sloupec"> Příjmení </th>
-              <th class="sloupec"> Služba </th>
-              <th class="sloupec"> Typ </th>
-              <th class="sloupec"> Lokalita </th>
-              <th class="sloupec">  </th>
-            </tr>
-            </thead>
-            {% for user in entries %}
-            <tr> 
-            <td class="sloupec"> {{ user[0] }} </td>
-            <td class="sloupec"> {{ user[1] }} </td>
-            <td class="sloupec"> {{ user[2] }} </td>
-            <td class="sloupec"> {{ user[3] }} </td>
-            <td class="sloupec"> {{ user[4] }} </td>
-            <td class="sloupec"> <a href="/match?id={{user[5]}}">Kontaktovat</a>  </td>
-            
-              </tr> 
-            {% endfor %}
-            </table>
-      </div> -->
+      <div class="profile_column_non_flex">
+          <form method="POST">
+              {{ form.csrf_token }}
+              
+          
+              {% for subfield in form.demandOffer %}
+                    <tr><td>{{ subfield }}</td><td>{{ subfield.label }}</td></tr>
+              {% endfor %}
+              
+              <table class = "sluzbyTable">
+              {% for checkBox in form.checkBoxes %}
+              <tr><td style="padding-right:10px">{{ checkBox }}</td><td align="left">{{ checkBox.label }}</td></tr>
+              {% endfor %}
+              </table>
+             
+              <input type="submit" class="btn btn-primary" value="Filtrovat">
+      </div>
     </div>
       
 

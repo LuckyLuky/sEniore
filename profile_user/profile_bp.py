@@ -1,3 +1,5 @@
+import os
+from flask import current_app as app
 from flask import (
     Blueprint,
     request,
@@ -9,21 +11,41 @@ from flask import (
     )
 from flask_wtf import FlaskForm
 from wtforms import (
-    RadioField,
-    )
+    StringField,
+    PasswordField,
+    SubmitField,
+    FileField,
+    RadioField
+)
+
+from flask_wtf.file import FileRequired
+from wtforms.validators import InputRequired, DataRequired
+from wtforms.widgets import TextArea
+from werkzeug.utils import secure_filename
+
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, LoginRequired
+from utils import GetImageUrl, LoginRequired, GetCoordinates, UploadImage
 from dbaccess import DBAccess,DBUser
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
-
 
 class OverviewFormBase(FlaskForm):
     demandOffer = RadioField(
         "Nabídka/Poptávka", choices=[("2", "nabídka"), ("1", "poptávka")], default="2"
     )
 
+class ProfilUpdateForm(FlaskForm):
+    first_name = StringField( validators=[DataRequired()])
+    surname = StringField( validators=[DataRequired()])
+    telephone = StringField( validators=[DataRequired()])
+    street = StringField( validators=[DataRequired()])
+    street_number = StringField( validators=[DataRequired()])
+    town = StringField( validators=[DataRequired()])
+    post_code = StringField( validators=[DataRequired()])
+    info = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
+    soubor = FileField("Vlož obrázek")
+    submit = SubmitField('Změnit údaje',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 @blueprint.route("/profil", methods=["GET", "POST"])
 @LoginRequired()
@@ -59,7 +81,7 @@ def profil():
 
         sndmap = Map(
             identifier="sndmap",
-            style="height:80%;width:80%;margin:0;",
+            style="height:100%;width:100%;margin:0;",
             lat=latitude,
             lng=longitude,
             report_clickpos=True,
@@ -101,7 +123,7 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone
+        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone,
     )
 
 @blueprint.route("/user_request_overview")
@@ -150,5 +172,60 @@ def remove_service():
     #delete service
     DBAccess.ExecuteUpdate("delete from users_services where id=%s", (id,))
     return redirect(url_for("profile_bp.profil"))
+
+@LoginRequired()
+@blueprint.route("/profil_editace",methods=["GET", "POST"])
+def profil_editace():
+   
+    regForm = ProfilUpdateForm()
+    dbUser = DBUser.LoadFromSession('dbUser')
+    if(regForm.validate_on_submit()):
+        dbUser.first_name = regForm.first_name.data
+        dbUser.surname = regForm.surname.data
+        dbUser.telephone = regForm.telephone.data
+        dbUser.street = regForm.street.data
+        dbUser.street_number = regForm.street_number.data
+        dbUser.post_code = regForm.post_code.data
+        dbUser.town = regForm.town.data
+        dbUser.info = regForm.info.data
+
+        address = "{} {} {} {}".format(dbUser.street, dbUser.street_number, dbUser.town, dbUser.post_code)
+        coordinates = GetCoordinates(address)
+        if(coordinates is not None):
+            dbUser.latitude = coordinates[0]
+            dbUser.longitude = coordinates[1]
+        else:
+            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
+            return render_template("profil_editace.html", form = regForm)
+        
+        dbUser.UpdateDB()
+        dbUser.SaveToSession('dbUser')
+
+        if(regForm.soubor.data is not None and regForm.soubor.data != ''):
+            file_name = secure_filename(regForm.soubor.data.filename)
+            path = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+            regForm.soubor.data.save(path)
+            UploadImage(path,str(dbUser.id))
+
+        return redirect(url_for('profile_bp.profil'))
+
+        
+
+    
+    regForm.first_name.data = dbUser.first_name
+    regForm.surname.data = dbUser.surname
+    regForm.telephone.data = dbUser.telephone
+    regForm.street.data = dbUser.street
+    regForm.street_number.data = dbUser.street_number
+    regForm.post_code.data = dbUser.post_code
+    regForm.town.data = dbUser.town
+    regForm.info.data = dbUser.info
+
+    #if(regForm.validate_on_submit()):
+
+    
+
+    return render_template("profil_editace.html",form = regForm)
+
 
 

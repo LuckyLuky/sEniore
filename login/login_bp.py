@@ -52,14 +52,12 @@ class RegistrationForm(FlaskForm):
     password = PasswordField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
-
 class RegistrationFormAddress(FlaskForm):
     street = StringField( validators=[InputRequired()])
     street_number = StringField( validators=[InputRequired()])
     town = StringField( validators=[InputRequired()])
     post_code = StringField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
-
 
 class LoginForm(FlaskForm):
     user = StringField(
@@ -72,13 +70,11 @@ class LoginForm(FlaskForm):
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
 
-
 class FileFormular(FlaskForm):
     soubor = FileField("Vlož obrázek", validators=[FileRequired()])
     submit = SubmitField(
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
-
 
 class TextFormular(FlaskForm):
     comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])

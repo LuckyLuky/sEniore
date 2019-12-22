@@ -10,6 +10,7 @@ from wtforms import RadioField
 from dbaccess import DBAccess, DBUser
 from flask_googlemaps import Map
 from utils import GetImageUrl
+from serviceReg.serviceReg_bp import regFormBuilder
 
 
 blueprint = Blueprint("overview_bp", __name__, template_folder="templates")
@@ -84,8 +85,10 @@ def prehled_filtr():
 
 @blueprint.route("/prehled_all", methods=["GET"])
 def prehled_all():
-  if request.method == "GET":
-      vysledekselectu = DBAccess.ExecuteSQL(
+
+    
+    if request.method == "GET":
+        vysledekselectu = DBAccess.ExecuteSQL(
             """
         SELECT u.first_name, u.surname, s.category, d.demand_offer, u.town, us.id, u.latitude, u.longitude, u.id, u.info
         FROM users u
@@ -98,41 +101,53 @@ def prehled_all():
             (2,)
         )
 
-      if vysledekselectu is None:
-        vysledekselectu = []
+        if vysledekselectu is None:
+            vysledekselectu = []
 
-      dbUser = DBAccess.GetDBUserById(session['id_user'])
+        dbUser = DBAccess.GetDBUserById(session['id_user'])
 
-      if len(vysledekselectu) == 0:
-        flash("Bohužel v systému nejsou zadány žádné služby.") 
+        if len(vysledekselectu) == 0:
+            flash("Bohužel v systému nejsou zadány žádné služby.") 
 
 
-      # markery pro kazdeho vyhledaneho
-      markers = []
-      marker = {}
-      marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
-      marker["lat"] = str(dbUser.latitude)
-      marker["lng"] =  str(dbUser.longitude)
-      marker["infobox"] = f'<b>{dbUser.first_name} </b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
-      markers.append(marker)
+        # markery pro kazdeho vyhledaneho
+        markers = []
+        marker = {}
+        marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
+        marker["lat"] = str(dbUser.latitude)
+        marker["lng"] =  str(dbUser.longitude)
+        marker["infobox"] = f'<b>{dbUser.first_name} </b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
+        markers.append(marker)
 
-      for user in vysledekselectu:
-          pictureUrl = GetImageUrl(user[8])
-          marker = {}
-          marker["icon"] = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-          marker["lat"] = str(user[6])
-          marker["lng"] =  str(user[7])
-          marker["infobox"] = f'<b>{user[0]} {user[1]}</b><br>{user[9]} <img class=img_mapa src= {pictureUrl} /><br>nabízená služba: {user[2]} <br><a href="/match?id={user[5]}">Kontaktovat</a>'
-          markers.append(marker)
+        for user in vysledekselectu:
+            pictureUrl = GetImageUrl(user[8])
+            marker = {}
+            marker["icon"] = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            marker["lat"] = str(user[6])
+            marker["lng"] =  str(user[7])
+            marker["infobox"] = f'<b>{user[0]} {user[1]}</b><br>{user[9]} <img class=img_mapa src= {pictureUrl} /><br>nabízená služba: {user[2]} <br><a href="/match?id={user[5]}">Kontaktovat</a>'
+            markers.append(marker)
 
-      map = Map(
-                  identifier="sndmap",
-                  style="height:500px;width:900px;margin:auto;",
-                  lat=str(dbUser.latitude),
-                  lng=str(dbUser.longitude),
-                  markers=markers,
-                  cluster=True
-                  )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
-  return render_template("prehled_all.html", entries=vysledekselectu, sndmap=map)
+        map = Map(
+                    identifier="sndmap",
+                    style="height:100%;width:100%;margin:0;",
+                    lat=str(dbUser.latitude),
+                    lng=str(dbUser.longitude),
+                    markers=markers
+                    )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
+
+
+    services = DBAccess.ExecuteSQL("select * from services")
+    form = regFormBuilder(
+        services
+    )  # put all services to form, but I need to display it - by for cycle below
+    form.checkBoxes.clear()
+
+    for index in form.checkBoxIndexes:
+        form.checkBoxes.append(
+            getattr(form, "checkbox%d" % index)
+        )  # displaying checkboxes on website   
+
+    return render_template("prehled_all.html", entries=vysledekselectu, sndmap=map, form = form)
 
 
