@@ -4,7 +4,7 @@
 
 <section class="registrace" id="registrace">
     
-  <h2>Kontaktní formulář</h2>
+  <!-- <h2>Kontaktní formulář</h2> -->
 
   <!-- Vybrali jste:
 
@@ -18,14 +18,13 @@
   <p>
       <form method="POST" action='/email_sent/' >
         
-        <input type="hidden" name="id" value="{{ id }}"></div>
-        <div><label> Datum </label>
-          <input type="date" name="date" placeholder="datum"></div>
-          <div><label> Čas </label>
-          <input type="time" name="time" placeholder="Čas"></div>
-          <div><label> Doplňující informace </label>
-          <input type="text" name="info" placeholder="informace"></div>
-          <input type="submit" class="btn btn-primary" value="Poslat poptávku">
+        <input type="hidden" name="id" value="{{ id }}">
+        <table>
+        <tr><td> Datum: </td><td><input type="date" min="datetime-local" name="date" placeholder="datum"></td></tr>
+        <tr><td> Čas: </td><td><input type="time" name="time" placeholder="Čas"></td></tr>
+        <tr><td> Doplňující informace: </td><td> <textarea rows = "3" cols = "60"></textarea></td></tr>
+        <tr><td></td>  <td><input type="submit" class="btn btn-primary" value="Poslat poptávku"></td></tr>
+      </table>
       </form>
   </p>
 

@@ -101,6 +101,7 @@ def prehled_all():
             (2,)
         )
 
+
         if vysledekselectu is None:
             vysledekselectu = []
 

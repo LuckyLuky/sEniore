@@ -153,12 +153,40 @@ def user_request_overview():
             inner join users ud on r.id_users_demand = ud.id
             inner join users uo on r.id_users_offer = uo.id
             inner join requests_status rs on r.id_requests_status = rs.id
-            where ud.id = %s or uo.id =%s """, (session["id_user"], session["id_user"])
+            where ud.id = %s order by r.date_time desc""", (session["id_user"], )
         )
+
   if requests == None:
      requests = []
 
-  return render_template("user_request_overview.html", requests = requests)
+  requests_2 = DBAccess.ExecuteSQL(
+            """select
+              ud.first_name,
+              ud.surname,
+              ud.email,
+              ud.telephone,
+              uo.first_name,
+              uo.surname,
+              uo.email,
+              uo.telephone,
+              s.category,
+              r.date_time,
+              r.add_information,
+              r.timestamp,
+              rs.status,
+              r.id
+            from requests r
+            inner join services s on r.id_services = s.id
+            inner join users ud on r.id_users_demand = ud.id
+            inner join users uo on r.id_users_offer = uo.id
+            inner join requests_status rs on r.id_requests_status = rs.id
+            where uo.id =%s order by r.date_time desc""", (session["id_user"], )
+        )
+
+  if requests_2 == None:
+     requests_2 = []
+ 
+  return render_template("user_request_overview.html", requests = requests, requests_2 = requests_2)
 
 @LoginRequired()
 @blueprint.route("/remove_service")
