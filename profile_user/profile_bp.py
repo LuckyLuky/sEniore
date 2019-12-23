@@ -15,6 +15,7 @@ from dbaccess import DBAccess
 from flask_googlemaps import Map
 from utils import GetImageUrl, LoginRequired
 from dbaccess import DBAccess,DBUser
+from lookup import RequestStatus
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
 
@@ -129,6 +130,7 @@ def user_request_overview():
             inner join requests_status rs on r.id_requests_status = rs.id
             where ud.id = %s order by r.date_time desc""", (session["id_user"], )
         )
+
   if requests == None:
      requests = []
 
@@ -155,9 +157,10 @@ def user_request_overview():
             inner join requests_status rs on r.id_requests_status = rs.id
             where uo.id =%s order by r.date_time desc""", (session["id_user"], )
         )
+
   if requests_2 == None:
      requests_2 = []
-
+ 
   return render_template("user_request_overview.html", requests = requests, requests_2 = requests_2)
 
 @LoginRequired()

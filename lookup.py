@@ -25,4 +25,5 @@ RequestStatus = {
     "Potvrzeno": "2",
     "Odmítnuto": "3",
     "Proběhlo": "4",
+    "Ohodnoceno": "5",
 }

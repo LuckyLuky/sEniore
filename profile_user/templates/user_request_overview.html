@@ -23,6 +23,7 @@
           <th class="sloupec"> Služba</th>
           <th class="sloupec"> Datum a čas setkání</th>
           <th class="sloupec"> Status</th>
+          <th class="sloupec"></th>
           <th class="sloupec"></th> 
           </thead>
         </tr>
@@ -43,7 +44,10 @@
          <!-- <td class="sloupec"> {{ request[12] }} </td>
          <td class="sloupec"> {{ request[13] }} </td> -->
          <td class="sloupec"> {{ request[12] }} </td>
-         <td class="sloupec"> <a href="/requests_detail?id={{ request[13] }}">detail</a> </td>
+         <td class="sloupec"> <a href="/requests_detail?id={{ request[13] }}">Detail</a> </td>
+         {% if request[12] == "proběhlo" %}
+         <td class="sloupec"> <a href="/feedback?id={{ request[13] }}">Hodnocení</a> </td>
+         {% endif %}
          </tr> 
          {% endfor %}
         </table>
