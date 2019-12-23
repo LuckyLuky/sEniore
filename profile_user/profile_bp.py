@@ -260,7 +260,9 @@ def profil_editace():
                 Link pro schválení fotografie {confirm_url} <br>\
                 Link pro odmítnutí fotografie {denied_url}'''
 
-            SendMail("noreply@seniore.cz",AdminMail['oodoow'],'Seniore.cz - schválení profilové fotografie',email_text)
+            to_emails = [(AdminMail['kacka']), (AdminMail['oodoow']), (AdminMail['michal'])]
+
+            SendMail("noreply@seniore.cz",to_emails,'Seniore.cz - schválení profilové fotografie',email_text)
             flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
         return redirect(url_for('profile_bp.profil'))
    
