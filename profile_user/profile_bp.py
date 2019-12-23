@@ -26,7 +26,7 @@ from werkzeug.utils import secure_filename
 
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, RenameImage, UploadImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
+from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
 from dbaccess import DBAccess,DBUser
 from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
@@ -209,8 +209,9 @@ def profil_editace():
             file_name = secure_filename(regForm.soubor.data.filename)
             path = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
             regForm.soubor.data.save(path)
-            UploadImage(path,str(dbUser.id)+'new')
-            newImageUrl = GetImageUrl(str(dbUser.id) + 'new')
+            json = UploadImage(path,str(dbUser.id)+'new')
+            version = json['version']
+            newImageUrl = GetImageUrl(str(dbUser.id) + 'new', version = version)
 
             ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
             token = ts.dumps(dbUser.email, salt='change-photo-key')
@@ -223,10 +224,11 @@ def profil_editace():
                 'profile_bp.change_photo_denied',
                 token=token,
                 _external=True)
+            noCacheSufix = '?nocache=<?php echo time(); ?'
 
             email_text = f'''Uživatel { dbUser.first_name } {dbUser.surname} {dbUser.email} si změnil profilovou fotografii.  <br>\
-                 <img src={GetImageUrl(dbUser.id)}>původní foto</img> <br>\
-                 <img src={newImageUrl}>nové foto</img> <br>\
+                 <img src={GetImageUrl(dbUser.id)+noCacheSufix}>původní foto</img> <br>\
+                 <img src={newImageUrl+noCacheSufix}>nové foto</img> <br>\
                 Link pro schválení fotografie {confirm_url} <br>\
                 Link pro odmítnutí fotografie {denied_url}'''
 
@@ -254,6 +256,8 @@ def change_photo_confirm(token):
         abort(403)
     dbUser = DBAccess.GetDBUserByEmail(email)
     RenameImage(str(dbUser.id)+'new',str(dbUser.id))
+    DeleteImage(str(dbUser.id)+'new')
+
     SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na seniore.org bylo schváleno a bude nahráno na váš profil.")
     return render_template('photo_confirmation.html',denied = False, text = f'Nové profilové foto nahráno, informační mail odeslán uživateli {email}')
 
@@ -271,7 +275,8 @@ def change_photo_denied(token):
     if(form.validate_on_submit()):
         dbUser = DBAccess.GetDBUserByEmail(email)
         SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie",f'Vaše nové profilové foto na seniore.org bylo zamístnuto, důvod zamítnutí: <br> {form.comment.data}')
-        text = f'Informační email o zamítnutí byl odeslán uživateli {email}'
+        DeleteImage(str(dbUser.id)+'new')
+        text = f'Informační email o zamítnutí byl odeslán uživateli {email} a nová fotografie smazána.'
         return render_template('photo_confirmation.html', denied = False, text = text)
 
     form.comment.label.text = 'Napište důvod zamítnutí'
