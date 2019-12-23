@@ -81,17 +81,25 @@ def CloudinaryConfigure():
       )
 
 
-def UploadImage(filePath, public_id):
+def UploadImage(filePath, public_id,):
     Cloud.uploader.upload(
       filePath,
       width=150,
       height=150,
       crop="limit",
-      public_id=public_id)
+      public_id=public_id,
+      invalidate=True)
+
+def RenameImage(oldId, newId):
+    Cloud.uploader.rename(
+      oldId,
+      newId,
+      invalidate=True,
+      overwrite = True)
 
 
 def GetImageUrl(userId):
-    return Cloud.CloudinaryImage(str(userId)).url   
+    return Cloud.CloudinaryImage(str(userId),).url   
 
 def getEmailAPIKey():
     API_Key = os.environ.get("SENDGRID_API_KEY")

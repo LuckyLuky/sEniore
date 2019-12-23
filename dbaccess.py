@@ -108,6 +108,32 @@ class DBAccess:
         dbUser.longitude = user[13]
         dbUser.level = user[14]
         return dbUser
+    
+    
+    @classmethod   # method which return object from class DBUser, ie I get specific user from db
+    def GetDBUserByEmail(cls, email):
+        user = DBAccess.ExecuteSQL(
+            "select id, first_name,surname,email,street,streetnumber, postcode,town,telephone,info,password,salt,latitude,longitude,level from users where email=%s",(email,))
+        if len(user)==0:
+          return None
+        user = user[0]  # returns [()], I need ()
+        dbUser = DBUser()
+        dbUser.id=user[0]
+        dbUser.first_name = user[1]
+        dbUser.surname = user[2]
+        dbUser.email = user[3]
+        dbUser.street = user[4]
+        dbUser.street_number = user[5]
+        dbUser.post_code = user[6]
+        dbUser.town = user[7]
+        dbUser.telephone = user[8]
+        dbUser.info = user[9]
+        dbUser.password = user[10]
+        dbUser.salt = user[11]
+        dbUser.latitude = user[12]
+        dbUser.longitude = user[13]
+        dbUser.level = user[14]
+        return dbUser
 
 
     @staticmethod

@@ -8,6 +8,7 @@ from flask import (
     abort,
     redirect,
     url_for
+    
     )
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -25,8 +26,11 @@ from werkzeug.utils import secure_filename
 
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, LoginRequired, GetCoordinates, UploadImage
+from utils import GetImageUrl, RenameImage, UploadImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
 from dbaccess import DBAccess,DBUser
+from lookup import AdminMail
+from itsdangerous import URLSafeTimedSerializer
+from login.login_bp import TextFormular
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
 
@@ -205,13 +209,31 @@ def profil_editace():
             file_name = secure_filename(regForm.soubor.data.filename)
             path = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
             regForm.soubor.data.save(path)
-            UploadImage(path,str(dbUser.id))
+            UploadImage(path,str(dbUser.id)+'new')
+            newImageUrl = GetImageUrl(str(dbUser.id) + 'new')
 
+            ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+            token = ts.dumps(dbUser.email, salt='change-photo-key')
+            confirm_url = url_for(
+                'profile_bp.change_photo_confirm',
+                token=token,
+                _external=True)
+            
+            denied_url = url_for(
+                'profile_bp.change_photo_denied',
+                token=token,
+                _external=True)
+
+            email_text = f'''Uživatel { dbUser.first_name } {dbUser.surname} {dbUser.email} si změnil profilovou fotografii.  <br>\
+                 <img src={GetImageUrl(dbUser.id)}>původní foto</img> <br>\
+                 <img src={newImageUrl}>nové foto</img> <br>\
+                Link pro schválení fotografie {confirm_url} <br>\
+                Link pro odmítnutí fotografie {denied_url}'''
+
+            SendMail("noreply@seniore.cz",AdminMail['oodoow'],'Seniore.cz - schválení profilové fotografie',email_text)
+            flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
         return redirect(url_for('profile_bp.profil'))
-
-        
-
-    
+   
     regForm.first_name.data = dbUser.first_name
     regForm.surname.data = dbUser.surname
     regForm.telephone.data = dbUser.telephone
@@ -220,12 +242,44 @@ def profil_editace():
     regForm.post_code.data = dbUser.post_code
     regForm.town.data = dbUser.town
     regForm.info.data = dbUser.info
-
-    #if(regForm.validate_on_submit()):
-
-    
-
     return render_template("profil_editace.html",form = regForm)
+
+@LoginRequired()
+@blueprint.route("/change_photo_confirm/<token>",methods=["GET", "POST"])
+def change_photo_confirm(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="change-photo-key")
+    except:
+        abort(403)
+    dbUser = DBAccess.GetDBUserByEmail(email)
+    RenameImage(str(dbUser.id)+'new',str(dbUser.id))
+    SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na seniore.org bylo schváleno a bude nahráno na váš profil.")
+    return render_template('photo_confirmation.html',denied = False, text = f'Nové profilové foto nahráno, informační mail odeslán uživateli {email}')
+
+@LoginRequired()
+@blueprint.route("/change_photo_denied/<token>",methods=["GET", "POST"])
+def change_photo_denied(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="change-photo-key")
+    except:
+        abort(403)
+
+    form = TextFormular()
+
+    if(form.validate_on_submit()):
+        dbUser = DBAccess.GetDBUserByEmail(email)
+        SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie",f'Vaše nové profilové foto na seniore.org bylo zamístnuto, důvod zamítnutí: <br> {form.comment.data}')
+        text = f'Informační email o zamítnutí byl odeslán uživateli {email}'
+        return render_template('photo_confirmation.html', denied = False, text = text)
+
+    form.comment.label.text = 'Napište důvod zamítnutí'
+    form.submit.label.text  = 'Odeslat mail'
+    text = f'Nové profilové foto zamítnuto, vyplňte důvod odmítnutí a odešlete informační mail uživateli {email}'
+    return render_template('photo_confirmation.html',denied = True, text = text, form=form)
+
+
 
 
 
