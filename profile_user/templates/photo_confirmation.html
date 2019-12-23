@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<p align='text-center'>{{ text }}</p> 
+{% if denied  %}
+<form method="POST" class="row justify-content-center">
+{{ form.hidden_tag() }}
+<table>
+<tr<><td>
+{{ form.comment(cols="50", rows="10") }}</td></tr>
+<tr<><td>{{ form.submit }}</td></tr>
+</table>
+</form>
+<div class="text-center">
+{% for field, errors in form.errors.items() %}
+  {% for error in errors %}
+      <span style="color: red;">Chyba pole - {{ field }} hláška - {{ error }}</span><br>
+  {% endfor %}
+{% endfor %}
+{% endif %}
+
+
+{% endblock %}

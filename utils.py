@@ -81,17 +81,30 @@ def CloudinaryConfigure():
       )
 
 
-def UploadImage(filePath, public_id):
-    Cloud.uploader.upload(
+def UploadImage(filePath, public_id,):
+    return Cloud.uploader.upload(
       filePath,
       width=150,
       height=150,
       crop="limit",
-      public_id=public_id)
+      public_id=public_id,
+      invalidate=True)
+
+def RenameImage(oldId, newId):
+    Cloud.uploader.rename(
+      oldId,
+      newId,
+      invalidate=True,
+      overwrite = True)
+
+def DeleteImage(public_id):
+    Cloud.uploader.destroy(
+      public_id,
+      invalidate=True)
 
 
-def GetImageUrl(userId):
-    return Cloud.CloudinaryImage(str(userId)).url   
+def GetImageUrl(userId, version=None):
+    return Cloud.CloudinaryImage(str(userId),version = version).url   
 
 def getEmailAPIKey():
     API_Key = os.environ.get("SENDGRID_API_KEY")
@@ -105,11 +118,17 @@ def getEmailAPIKey():
     return API_Key
 
 def SendMail(_from, _to, _subject, _text):
+    gmailDontCacheHeader = '''<?php
+                              header('Content-Type: image/jpeg');
+                              header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+                              header("Cache-Control: post-check=0, pre-check=0", false);
+                              header("Pragma: no-cache"); ?>
+                              '''
     message = Mail(
     from_email=_from,
     to_emails=_to,
     subject=_subject,
-    html_content=_text)
+    html_content=gmailDontCacheHeader + _text)
     try:
         sg = SendGridAPIClient(getEmailAPIKey())
         response = sg.send(message)

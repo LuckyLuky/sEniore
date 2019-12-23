@@ -12,16 +12,21 @@
     <p> <b>O mně:</b> {{info}} </p>
 
     {{ sndmap.html }}
+    
 
     </div>
     
-    <div class="profile_column">
-        <img align="right", class="moje_foto" src="{{ nazev }}">
+    <div class="profile_column_non_flex">
+       
+        <img align="right" class="moje_foto" src="{{ nazev }}" title="popis">
+       
+       
+     
+        
+
         <p> <b>E-mail:</b> {{mail}} </p>
         <p> <b>Telefon:</b> {{phone}} </p>
-
-
-
+        <p><sub><a href="/profil_editace">Změna osobních údajů</a></sub></p>
         <p> <b>Mé zaregistrované služby:</b></p>
 
         <table class="table table-striped">

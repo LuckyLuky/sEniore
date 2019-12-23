@@ -66,7 +66,6 @@ class RegistrationFormAddress(FlaskForm):
     post_code = StringField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
-
 class LoginForm(FlaskForm):
     user = StringField(
         "Přihlašovací jméno", validators=[InputRequired()], render_kw=dict(class_="form-control")
@@ -77,7 +76,6 @@ class LoginForm(FlaskForm):
     submit = SubmitField(
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
-
 
 class FileFormular(FlaskForm):
     soubor = FileField("Vlož obrázek", validators=[FileRequired()])

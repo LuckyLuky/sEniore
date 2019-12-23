@@ -145,6 +145,7 @@ p {
   padding-bottom: 30px;    /* Footer height */
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .paticka {
@@ -243,12 +244,18 @@ figure {
 .profile_row {
   display: flex;
   flex-direction: row;
+  flex: 1;
 }
 
 .profile_column {
   display: block;
-  width: 50%;
-  margin: 10px;
+  flex: 1;
+  margin: 30px;
+ }
+
+ .profile_column_non_flex {
+  display: block;
+  margin: 30px;
  }
 
  .nav-item > .active {

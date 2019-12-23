@@ -1,3 +1,5 @@
+import os
+from flask import current_app as app
 from flask import (
     Blueprint,
     request,
@@ -6,25 +8,48 @@ from flask import (
     abort,
     redirect,
     url_for
+    
     )
 from flask_wtf import FlaskForm
 from wtforms import (
-    RadioField,
-    )
+    StringField,
+    PasswordField,
+    SubmitField,
+    FileField,
+    RadioField
+)
+
+from flask_wtf.file import FileRequired
+from wtforms.validators import InputRequired, DataRequired
+from wtforms.widgets import TextArea
+from werkzeug.utils import secure_filename
+
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, LoginRequired
+from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
 from dbaccess import DBAccess,DBUser
-from lookup import RequestStatus
+from lookup import AdminMail
+from itsdangerous import URLSafeTimedSerializer
+from login.login_bp import TextFormular
 
 blueprint = Blueprint("profile_bp", __name__, template_folder="templates")
-
 
 class OverviewFormBase(FlaskForm):
     demandOffer = RadioField(
         "Nabídka/Poptávka", choices=[("2", "nabídka"), ("1", "poptávka")], default="2"
     )
 
+class ProfilUpdateForm(FlaskForm):
+    first_name = StringField( validators=[DataRequired()])
+    surname = StringField( validators=[DataRequired()])
+    telephone = StringField( validators=[DataRequired()])
+    street = StringField( validators=[DataRequired()])
+    street_number = StringField( validators=[DataRequired()])
+    town = StringField( validators=[DataRequired()])
+    post_code = StringField( validators=[DataRequired()])
+    info = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
+    soubor = FileField("Vlož obrázek")
+    submit = SubmitField('Změnit údaje',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 @blueprint.route("/profil", methods=["GET", "POST"])
 @LoginRequired()
@@ -60,7 +85,7 @@ def profil():
 
         sndmap = Map(
             identifier="sndmap",
-            style="height:80%;width:80%;margin:0;",
+            style="height:100%;width:100%;margin:0;",
             lat=latitude,
             lng=longitude,
             report_clickpos=True,
@@ -102,7 +127,7 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone
+        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone,
     )
 
 @blueprint.route("/user_request_overview")
@@ -179,5 +204,115 @@ def remove_service():
     #delete service
     DBAccess.ExecuteUpdate("delete from users_services where id=%s", (id,))
     return redirect(url_for("profile_bp.profil"))
+
+@LoginRequired()
+@blueprint.route("/profil_editace",methods=["GET", "POST"])
+def profil_editace():
+   
+    regForm = ProfilUpdateForm()
+    dbUser = DBUser.LoadFromSession('dbUser')
+    if(regForm.validate_on_submit()):
+        dbUser.first_name = regForm.first_name.data
+        dbUser.surname = regForm.surname.data
+        dbUser.telephone = regForm.telephone.data
+        dbUser.street = regForm.street.data
+        dbUser.street_number = regForm.street_number.data
+        dbUser.post_code = regForm.post_code.data
+        dbUser.town = regForm.town.data
+        dbUser.info = regForm.info.data
+
+        address = "{} {} {} {}".format(dbUser.street, dbUser.street_number, dbUser.town, dbUser.post_code)
+        coordinates = GetCoordinates(address)
+        if(coordinates is not None):
+            dbUser.latitude = coordinates[0]
+            dbUser.longitude = coordinates[1]
+        else:
+            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
+            return render_template("profil_editace.html", form = regForm)
+        
+        dbUser.UpdateDB()
+        dbUser.SaveToSession('dbUser')
+
+        if(regForm.soubor.data is not None and regForm.soubor.data != ''):
+            file_name = secure_filename(regForm.soubor.data.filename)
+            path = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+            regForm.soubor.data.save(path)
+            json = UploadImage(path,str(dbUser.id)+'new')
+            version = json['version']
+            newImageUrl = GetImageUrl(str(dbUser.id) + 'new', version = version)
+
+            ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+            token = ts.dumps(dbUser.email, salt='change-photo-key')
+            confirm_url = url_for(
+                'profile_bp.change_photo_confirm',
+                token=token,
+                _external=True)
+            
+            denied_url = url_for(
+                'profile_bp.change_photo_denied',
+                token=token,
+                _external=True)
+            noCacheSufix = '?nocache=<?php echo time(); ?'
+
+            email_text = f'''Uživatel { dbUser.first_name } {dbUser.surname} {dbUser.email} si změnil profilovou fotografii.  <br>\
+                 <img src={GetImageUrl(dbUser.id)+noCacheSufix}>původní foto</img> <br>\
+                 <img src={newImageUrl+noCacheSufix}>nové foto</img> <br>\
+                Link pro schválení fotografie {confirm_url} <br>\
+                Link pro odmítnutí fotografie {denied_url}'''
+
+            SendMail("noreply@seniore.cz",AdminMail['oodoow'],'Seniore.cz - schválení profilové fotografie',email_text)
+            flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
+        return redirect(url_for('profile_bp.profil'))
+   
+    regForm.first_name.data = dbUser.first_name
+    regForm.surname.data = dbUser.surname
+    regForm.telephone.data = dbUser.telephone
+    regForm.street.data = dbUser.street
+    regForm.street_number.data = dbUser.street_number
+    regForm.post_code.data = dbUser.post_code
+    regForm.town.data = dbUser.town
+    regForm.info.data = dbUser.info
+    return render_template("profil_editace.html",form = regForm)
+
+@LoginRequired()
+@blueprint.route("/change_photo_confirm/<token>",methods=["GET", "POST"])
+def change_photo_confirm(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="change-photo-key")
+    except:
+        abort(403)
+    dbUser = DBAccess.GetDBUserByEmail(email)
+    RenameImage(str(dbUser.id)+'new',str(dbUser.id))
+    DeleteImage(str(dbUser.id)+'new')
+
+    SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na seniore.org bylo schváleno a bude nahráno na váš profil.")
+    return render_template('photo_confirmation.html',denied = False, text = f'Nové profilové foto nahráno, informační mail odeslán uživateli {email}')
+
+@LoginRequired()
+@blueprint.route("/change_photo_denied/<token>",methods=["GET", "POST"])
+def change_photo_denied(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        email = ts.loads(token, salt="change-photo-key")
+    except:
+        abort(403)
+
+    form = TextFormular()
+
+    if(form.validate_on_submit()):
+        dbUser = DBAccess.GetDBUserByEmail(email)
+        SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie",f'Vaše nové profilové foto na seniore.org bylo zamístnuto, důvod zamítnutí: <br> {form.comment.data}')
+        DeleteImage(str(dbUser.id)+'new')
+        text = f'Informační email o zamítnutí byl odeslán uživateli {email} a nová fotografie smazána.'
+        return render_template('photo_confirmation.html', denied = False, text = text)
+
+    form.comment.label.text = 'Napište důvod zamítnutí'
+    form.submit.label.text  = 'Odeslat mail'
+    text = f'Nové profilové foto zamítnuto, vyplňte důvod odmítnutí a odešlete informační mail uživateli {email}'
+    return render_template('photo_confirmation.html',denied = True, text = text, form=form)
+
+
+
 
 

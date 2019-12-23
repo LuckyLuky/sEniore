@@ -18,6 +18,7 @@ Services = {
 
 AdminMail = {
   "kacka" : "katacek@seniore.org",
+  "oodoow" : "oodoow@gmail.com",
 }
 
 RequestStatus = {
