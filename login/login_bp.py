@@ -32,7 +32,7 @@ blueprint = Blueprint("login_bp", __name__, template_folder="templates")
 
 class EmailForm(FlaskForm):
     email = StringField( validators=[InputRequired()])
-    submit = SubmitField('Odeslat ověřovací email',render_kw=dict(class_="btn btn-outline-primary btn-block"))
+    submit = SubmitField('Odeslat ověřovací email',render_kw=dict(class_="btn btn-outline-primary"))
 
 class NewPasswordForm(FlaskForm):
     password = PasswordField( validators=[InputRequired()])
@@ -80,19 +80,19 @@ class LoginForm(FlaskForm):
 class FileFormular(FlaskForm):
     soubor = FileField("Vlož obrázek", validators=[FileRequired()])
     submit = SubmitField(
-        "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+        "Odeslat", render_kw=dict(class_="btn btn-outline-primary")
     )
 
 class IDFormular(FlaskForm):
     soubor = FileField("Vlož fotku OP", validators=[FileRequired()])
     submit = SubmitField(
-        "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+        "Odeslat", render_kw=dict(class_="btn btn-outline-primary")
     )
 
 class TextFormular(FlaskForm):
     comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
     submit = SubmitField(
-      "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary btn-block")
+      "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary")
     )
 
 
@@ -310,9 +310,9 @@ def registration_email():
             _external=True)
         email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
         SendMail("noreply@seniore.cz",emailForm.email.data,'Seniore.cz - ověření emailu',email_text)
-        flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
+        #flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
         emailForm.submit.label.text = "Odeslat ověřovací email znovu"
-        return render_template("registrace_email.html", form = emailForm)
+        return render_template("registrace_email2.html", form = emailForm)
     return render_template("registrace_email.html", form = emailForm)
 
 @blueprint.route("/email_confirmation/<token>")

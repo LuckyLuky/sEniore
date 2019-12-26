@@ -143,6 +143,7 @@ def sluzby_update():
             "demand_offer": DictionaryDemandOffer.get(form.demandOffer.data, "unknown"),
             "category": services_checked,
         }
+        # return redirect(url_for("overview_bp.prehled_all"))
         return render_template("sluzby_success.html", **kwargs)
 
     return render_template("sluzby_update.html", form=form)

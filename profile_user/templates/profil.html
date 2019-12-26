@@ -8,8 +8,9 @@
 <div class="profile_row">
     <div class="profile_column">
     
-    <p> <b> {{name}} </b> </p>
+    <p> <b> {{name}} </b> (<a href="/logout"> Odhlásit </a>)  </p>
     <p> <b>O mně:</b> {{info}} </p>
+    <p><sub><a href="/profil_editace">Změna osobních údajů</a></sub></p>
 
     {{ sndmap.html }}
     
@@ -17,16 +18,16 @@
     </div>
     
     <div class="profile_column_non_flex">
-       
+
+        
         <img align="right" class="moje_foto" src="{{ nazev }}" title="popis">
-       
+        
        
      
         
-
+        
         <p> <b>E-mail:</b> {{mail}} </p>
         <p> <b>Telefon:</b> {{phone}} </p>
-        <p><sub><a href="/profil_editace">Změna osobních údajů</a></sub></p>
         <p> <b>Mé zaregistrované služby:</b></p>
 
         <table class="table table-striped">
@@ -38,13 +39,20 @@
             
           </tr>
           </thead>
+
+          {% if users_services == [] %}
+            <tr><td colspan="2"><p >Zatím nic nenabízíte.</p></td></tr>
+          {% endif %} 
+                            
           {% for service in users_services %}
-          <tr> 
+          
+          <tr>
           <td class="sloupec"> {{ service[0] }} </td>
           <td class="sloupec"> {{ service[1] }} </td>
           <td><a href="/remove_service?id={{ service[2] }}"> odebrat službu </a></td>
           
-          </tr> 
+          </tr>
+
           {% endfor %}
           </table>
           <p>Nabídnout novou  <a href="/sluzby"> službu</a>. </p>

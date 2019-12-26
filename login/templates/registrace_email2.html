@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!-- Registration -->
+
+<section class="registrace" id="registrace">
+    
+    <h3><center>Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci. </center></h3>
+        <form method="POST" class="row justify-content-center">
+          {{ form.hidden_tag() }}
+          <table>
+            <!-- <tr><td> {{ form.email }}<td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "1"> <a href="/conditions_1">Souhlasím s podmínkami užívání služby</a></td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "2"> <a href="/conditions_2">Souhlasím s užitím osobních údajů </a> </td></tr> -->
+            <tr><td> {{ form.submit }}<td></tr>
+          </table>
+       </form>
+</section>
+
+{% endblock %}

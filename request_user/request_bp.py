@@ -20,7 +20,7 @@ blueprint = Blueprint("request_bp", __name__, template_folder="templates")
 
 class FeedbackFormular(FlaskForm):
     comment = StringField("Napište krátké ohodnocení:", widget=TextArea(), validators=[DataRequired()])
-    number_evaluation = IntegerField( validators=[InputRequired(), number_range(0, 5)], )
+    number_evaluation = IntegerField( validators=[InputRequired(), number_range(1, 5)], )
     submit = SubmitField(
       "Odeslat hodnocení", render_kw=dict(class_="btn btn-outline-primary btn-block")
     )
