@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<h3>Přidejte prosím svou fotografii.</h3> 
+<h3>Přidejte prosím kopii / fotografii přední strany občanského průkazu. </h3> 
 
 
 
@@ -10,7 +10,7 @@
   {{ form.hidden_tag() }}
   <table>
       <tr><td>{{ form.soubor.label }}:</td><td>{{ form.soubor }}</td></tr>
-      <tr><td></td><td> {{ form.submit }}</td></tr>
+      <tr><td></td><td> {{ form.submit }}<td></tr>
   </table>
 </form>
 <div class="text-center">
@@ -20,8 +20,6 @@
   {% endfor %}
 {% endfor %}
 <hr>
-
-<p>Tipy pro nahrání správné <a href="/goodpracticephoto">fotografie. </a>.</p>
 
 </div>
 

@@ -19,6 +19,7 @@ Services = {
 AdminMail = {
   "kacka" : "katacek@seniore.org",
   "oodoow" : "oodoow@gmail.com",
+  "michal" : "michal.svoboda@gmail.com",
 }
 
 RequestStatus = {
@@ -26,4 +27,5 @@ RequestStatus = {
     "Potvrzeno": "2",
     "Odmítnuto": "3",
     "Proběhlo": "4",
+    "Ohodnoceno": "5",
 }

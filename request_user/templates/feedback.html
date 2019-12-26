@@ -5,13 +5,21 @@
 <form method="POST" class="row justify-content-center">
   <table>
     <tr><td>
-  <h3>Na závěr prosím vypište pár slov o sobě:</h3>
+  <h3>Hodnocení:</h3>
 </td></tr>
+
 {{ form.hidden_tag() }}
 
   <tr><td>
   {{ form.comment(cols="50", rows="10") }}
+  
 </td></tr>
+<tr><td>
+  {{ form.number_evaluation}}
+</td>
+<td>Oznámkujte spolupráci 1-5 (jako ve škole, 1 je nejlepší)</td>
+</tr>
+
 <tr><td>
   {{ form.submit }}
 </td></tr>

@@ -2,35 +2,40 @@
 
 {% block body %}
 
-<h5>Níže je uveden přehled žádostí, ve kterých figuruji: </h5>
+<!-- <h5>Níže je uveden přehled žádostí, ve kterých figuruji: </h5> -->
 
 <img align="right", class="moje_foto" src="{{ nazev }}">
 
-<p>(p) poptávající, (n) nabízející</p>
+<div class="profile_row">
+  <div class="profile_column">
+
+
+<p><b>Přijímám</b></p>
 
     <!-- <table class="table_requests"> -->
             <table class="table table-striped">
                 <thead class="thead-light">
         <tr>
-          <th class="sloupec"> Jméno (p) </th> 
-          <th class="sloupec"> Příjmení (p)</th>
-          <th class="sloupec"> Jméno (n) </th> 
-          <th class="sloupec"> Příjmení (n)</th>
+          <!-- <th class="sloupec"> Jméno (p) </th> 
+          <th class="sloupec"> Příjmení (p)</th> -->
+          <th class="sloupec"> Jméno </th> 
+          <!-- <th class="sloupec"> Příjmení (n)</th> -->
           <th class="sloupec"> Služba</th>
           <th class="sloupec"> Datum a čas setkání</th>
           <th class="sloupec"> Status</th>
+          <th class="sloupec"></th>
           <th class="sloupec"></th> 
           </thead>
         </tr>
         {% for request in requests %}
         <tr> 
-         <td class="sloupec"> {{ request[0] }} </td>
-         <td class="sloupec"> {{ request[1] }} </td>
+         <!-- <td class="sloupec"> {{ request[0] }} </td>
+         <td class="sloupec"> {{ request[1] }} </td> -->
          <!-- <td class="sloupec"> {{ request[2] }} </td>
          <td class="sloupec"> {{ request[3] }} </td>
          <td class="sloupec"> {{ request[4] }} </td> -->
          <td class="sloupec"> {{ request[4] }} </td>
-         <td class="sloupec"> {{ request[5] }} </td>
+         <!-- <td class="sloupec"> {{ request[5] }} </td> -->
          <!-- <td class="sloupec"> {{ request[7] }} </td>
          <td class="sloupec"> {{ request[8] }} </td>
          <td class="sloupec"> {{ request[9] }} </td> -->
@@ -39,9 +44,55 @@
          <!-- <td class="sloupec"> {{ request[12] }} </td>
          <td class="sloupec"> {{ request[13] }} </td> -->
          <td class="sloupec"> {{ request[12] }} </td>
-         <td class="sloupec"> <a href="/requests_detail?id={{ request[13] }}">detail</a> </td>
+         <td class="sloupec"> <a href="/requests_detail?id={{ request[13] }}">Detail</a> </td>
+         {% if request[12] == "proběhlo" %}
+         <td class="sloupec"> <a href="/feedback?id={{ request[13] }}">Hodnocení</a> </td>
+         {% endif %}
          </tr> 
          {% endfor %}
         </table>
+
+      </div>
+    
+      <div class="profile_column">
+
+        <p><b>Pomáhám</b></p>
+
+        <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+              <!-- <th class="sloupec"> Jméno (p) </th> 
+              <th class="sloupec"> Příjmení (p)</th> -->
+              <th class="sloupec"> Jméno </th> 
+              <!-- <th class="sloupec"> Příjmení (n)</th> -->
+              <th class="sloupec"> Služba</th>
+              <th class="sloupec"> Datum a čas setkání</th>
+              <th class="sloupec"> Status</th>
+              <th class="sloupec"></th> 
+              </thead>
+            </tr>
+            {% for request in requests_2 %}
+            <tr> 
+             <!-- <td class="sloupec"> {{ request[0] }} </td>
+             <td class="sloupec"> {{ request[1] }} </td> -->
+             <!-- <td class="sloupec"> {{ request[2] }} </td>
+             <td class="sloupec"> {{ request[3] }} </td>
+             <td class="sloupec"> {{ request[4] }} </td> -->
+             <td class="sloupec"> {{ request[4] }} </td>
+             <!-- <td class="sloupec"> {{ request[5] }} </td> -->
+             <!-- <td class="sloupec"> {{ request[7] }} </td>
+             <td class="sloupec"> {{ request[8] }} </td>
+             <td class="sloupec"> {{ request[9] }} </td> -->
+             <td class="sloupec"> {{ request[8] }} </td>
+             <td class="sloupec"> {{ request[9] }} </td>
+             <!-- <td class="sloupec"> {{ request[12] }} </td>
+             <td class="sloupec"> {{ request[13] }} </td> -->
+             <td class="sloupec"> {{ request[12] }} </td>
+             <td class="sloupec"> <a href="/requests_detail?id={{ request[13] }}">detail</a> </td>
+             </tr> 
+             {% endfor %}
+            </table>
+ </div>
+</div>
 
 {% endblock %}

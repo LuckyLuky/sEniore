@@ -129,6 +129,7 @@ def prehled_all():
         result = []
         flash("Bohužel v systému nejsou zadány žádné služby  dle vašeho filtru.")
 
+
     usersCatDict = {}
     
     for row in result:
@@ -140,6 +141,7 @@ def prehled_all():
             usersCatDict[key].append(value)
         else:
             usersCatDict[key] = [value]
+
 
     demandOfferText = 'nabízené'
     if(int(form.demandOffer.data)==1):

@@ -6,13 +6,14 @@
 
 <section class="registrace" id="registrace">
     
-    <h3><center>Zadejte prosím email/uživatelské jméno</center></h3>
+    <h3><center>Zadejte svůj email. </center></h3>
+    <p>Budou na něj zaslány instrukce k založení účtu.</p>
        <form method="POST" class="row justify-content-center">
           {{ form.hidden_tag() }}
           <table>
             <tr><td> {{ form.email }}<td></tr>
-            <tr><td> <input type="checkbox" name="conditionsAccept" value = "1"> Souhlas s podmínkami  </td></tr>
-            <tr><td> <input type="checkbox" name="conditionsAccept" value = "2"> Souhlas s GDPR  </td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "1"> <a href="/conditions_1">Souhlasím s podmínkami užívání služby</a></td></tr>
+            <tr><td> <input type="checkbox" name="conditionsAccept" value = "2"> <a href="/conditions_2">Souhlasím s užitím osobních údajů </a> </td></tr>
             <tr><td> {{ form.submit }}<td></tr>
           </table>
        </form>
