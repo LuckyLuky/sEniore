@@ -10,15 +10,28 @@
 
 {{ form.hidden_tag() }}
 
-  <tr><td>
-  {{ form.comment(cols="50", rows="10") }}
-  
-</td></tr>
 <tr><td>
+  <div class="form-group">
+    <select class="form-control" name="number_evaluation">
+        {% for number in range_evaluation %}
+        <option value= {{ number }} > {{ number}} </option>
+        {% endfor %}
+      </select>
+</td>
+<td> Oznámkujte spolupráci 1-5 (jako ve škole, 1 je nejlepší)</td>
+</tr>
+<!-- <tr><td>
   {{ form.number_evaluation}}
 </td>
 <td>Oznámkujte spolupráci 1-5 (jako ve škole, 1 je nejlepší)</td>
-</tr>
+</tr> -->
+
+<tr><td>
+  {{ form.comment(cols="50", rows="10") }}
+  
+</td></tr>
+
+
 
 <tr><td>
   {{ form.submit }}

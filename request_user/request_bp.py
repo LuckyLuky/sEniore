@@ -110,6 +110,7 @@ def requests_detail():
 @blueprint.route("/feedback", methods=["GET", "POST"])
 @LoginRequired()
 def feedback():
+  range_evaluation = range(1,6)
   form = FeedbackFormular()
   rid = request.args.get("id", type=int)
   dbUser = DBUser.LoadFromSession('dbUser')
@@ -129,7 +130,7 @@ def feedback():
   
   if form.validate_on_submit():
     comment = form.comment.data
-    number_evaluation = form.number_evaluation.data
+    number_evaluation = request.form["number_evaluation"]
     DBAccess.ExecuteInsert(
       """insert into feedback
          (id_requests, id_user, id_user_review, comment, evaluation)
@@ -143,4 +144,4 @@ def feedback():
   
     return render_template("feedback_thanks.html")
 
-  return render_template("feedback.html", form = form)
+  return render_template("feedback.html", form = form, range_evaluation = range_evaluation)
