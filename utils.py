@@ -147,12 +147,12 @@ class FlashStyle(Enum):
 def flash(text, style):
     flaskFlash(text, style.value)
 
-def LoginRequired(level:int = 1):
+def LoginRequired(level= 1):
     try:
         def LoginRequiredInner(function):
             @wraps(function)
             def decorated_function(*args, **kwargs):
-                dbUser:DBUser = DBUser.LoadFromSession('dbUser')
+                dbUser = DBUser.LoadFromSession('dbUser')
                 if dbUser is None :
                     flash('Nejste přihlášeni, pro přístup je nutné se přihlásit.',FlashStyle.Danger)
                     return redirect(url_for("login_bp.login"))
