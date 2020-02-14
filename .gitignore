@@ -1,4 +1,5 @@
 config.txt
 static/users_images
 *.pyc
-.venv
+.venv/*
+
