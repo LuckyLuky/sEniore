@@ -20,7 +20,8 @@
     <table class = "sluzbyTable">
    
        {% for checkBox in form.checkBoxes %}
-       <tr><td style="padding-right:10px">{{ checkBox }}</td><td align="left">{{ checkBox.label }}</td></tr>
+       <tr><td style="padding-right:10px">{{ checkBox }}</td><td align="left">{{ checkBox.label }}
+         <img src="/static/images/questionMarkIcon.jpg" width=50px data-toggle="popover" data-trigger="hover" data-container="body" data-placement="right" data-content="{{ checkBox.description }}"></td></tr>
        {% endfor %}
     </table>
    

@@ -19,6 +19,7 @@ class RegistrationFormBase(FlaskForm):
     demandOffer = RadioField(
         "Nabídka/Poptávka", choices=[("2", "nabízím"), ("1", "hledám")], default="2"
     )
+
     checkBoxes = []  # adding dynamically, created in relevant fcn
     checkBoxIndexes = []
 
@@ -34,7 +35,7 @@ def regFormBuilder(services):
         setattr(
             RegistrationForm,
             "checkbox%d" % service[1][0],
-            BooleanField(label=service[1][1], id=service[1][0]),
+            BooleanField(label=service[1][1], id=service[1][0], description = service[1][2])
         )  # adding to reg. form checkbox for each service
         # (instead of %d put id_service). In services, I get list
         # with fcn row_id, id_services, services_text,

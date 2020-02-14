@@ -34,6 +34,11 @@ function OnLoad() {
       }
 
   }
+  //popover initialize
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+  
 
 
 }

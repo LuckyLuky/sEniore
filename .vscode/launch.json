@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask2",
+            "name": "Python: Flask",
             "type": "python",
             "request": "launch",
             "module": "flask",
@@ -20,13 +20,8 @@
                 "--no-reload"
             ],
             "jinja": true
-        },
-        {
-            "name": "Python: Flask",
-            "type": "python",
-            "request": "launch",
-            "console": "internalConsole",
-            "module": "flask"
         }
+       
+       
     ]
 }
