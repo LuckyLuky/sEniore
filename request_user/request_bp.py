@@ -3,10 +3,12 @@ from flask import (
     request,
     render_template,
     abort,
+    url_for,
+    redirect
     )
 from dbaccess import DBAccess, DBUser
-from utils import LoginRequired, flash, FlashStyle
-from lookup import RequestStatus
+from utils import LoginRequired, flash, FlashStyle, SendMail
+from lookup import RequestStatus, RequestStatusUser
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -145,3 +147,60 @@ def feedback():
     return render_template("feedback_thanks.html")
 
   return render_template("feedback.html", form = form, range_evaluation = range_evaluation)
+
+@blueprint.route("/requests_detail_user", methods=["GET", "POST"])
+@LoginRequired()
+def requests_detail_user():
+    rid = request.args.get("id", type=int)
+    dbUser = DBUser.LoadFromSession('dbUser')
+    userId = dbUser.id
+         
+    requests = DBAccess.ExecuteSQL(
+        """select s.category,
+            
+            case when 	ud.id = %s
+            then	uo.first_name 
+            else	ud.first_name
+            end,
+            
+            case when 	ud.id = %s
+            then	uo.surname 
+            else	ud.surname
+            end,
+			
+		      	case when 	ud.id = %s
+            then	uo.email 
+            else	ud.email
+            end,
+          
+          r.date_time,
+          r.id,
+          ud.id,
+          uo.id
+        from requests r
+        inner join services s on r.id_services = s.id
+        inner join users ud on r.id_users_demand = ud.id
+        inner join users uo on r.id_users_offer = uo.id
+        inner join requests_status rs on r.id_requests_status = rs.id
+        where r.id =%s""",
+        (userId, userId, userId, rid))
+        
+    if(requests is None):
+         abort(403)
+    requests = requests[0]
+    dbUser = DBUser.LoadFromSession('dbUser')
+    if dbUser.level<2 and dbUser.id != int(requests[6]) and dbUser.id != int(requests[7]):
+        abort(403)
+        
+    if request.method == "POST":
+          # status = request.form["submit_button"]
+          status = RequestStatusUser[request.form["submit_button"]]
+          DBAccess.ExecuteUpdate(
+              "UPDATE requests SET id_requests_status= %s where id= %s", (status, rid)
+          )
+          text = 'potvrzena' if status == '2' else 'zamítnuta'
+          SendMail('noreply@seniore.org', requests[3], 'Seniore.org - změna stavu vaší žádosti', 
+          f'Vaše žádost / nabídka na činnost {requests[0]} dne {requests[4]} byla {text}.')
+          return redirect(url_for("profile_bp.user_request_overview")) 
+
+    return render_template("request_detail_user.html", entries=requests)

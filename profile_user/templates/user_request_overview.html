@@ -24,7 +24,7 @@
       <td class="sloupec"> {{ request[3] }} </td>
       <td class="sloupec"> {{ request[4] }} </td>
       <td class="sloupec"> {{ request[5] }} </td>
-      <td class="sloupec"> <a href="/requests_detail?id={{ request[6] }}">Detail</a> </td>
+      <td class="sloupec"> <a href="/requests_detail_user?id={{ request[6] }}">Detail</a> </td>
       </tr> 
       {% endif %}
       {% endfor %}
@@ -52,7 +52,7 @@
     <td class="sloupec"> {{ request[3] }} </td>
     <td class="sloupec"> {{ request[4] }} </td>
     <td class="sloupec"> {{ request[5] }} </td>
-    <td class="sloupec"> <a href="/requests_detail?id={{ request[6] }}">Detail</a> </td>
+    <td class="sloupec"> <a href="/requests_detail_user?id={{ request[6] }}">Detail</a> </td>
       {% if (request[5] == "proběhlo") and (request[1] == "Přijímám") %}
       <td class="sloupec"> <a href="/feedback?id={{ request[6] }}">Hodnocení</a> </td>
       {% endif %}

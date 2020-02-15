@@ -29,3 +29,8 @@ RequestStatus = {
     "Proběhlo": "4",
     "Ohodnoceno": "5",
 }
+
+RequestStatusUser = {
+    "Potvrdit": "2",
+    "Odmítnout": "3",
+}
