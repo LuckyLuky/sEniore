@@ -263,6 +263,12 @@ figure {
     font-weight: bold; 
   }
 
+  .container-progress-bar { 
+    align-self: center; 
+    padding-top: "500px";
+    margin-top: 50px;
+  }
+
 
 
 

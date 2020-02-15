@@ -90,7 +90,7 @@ class IDFormular(FlaskForm):
     )
 
 class TextFormular(FlaskForm):
-    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
+    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired(),Length(max=500)])
     submit = SubmitField(
       "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary")
     )
