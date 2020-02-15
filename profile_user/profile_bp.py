@@ -111,7 +111,7 @@ def profil():
               uo.email,
               uo.telephone,
               s.category,
-              r.date_time,
+              to_char(r.date_time, 'DD-MM-YYYY HH24:MI'),
               r.add_information,
               r.timestamp,
               rs.status,
@@ -150,7 +150,7 @@ def user_request_overview():
             else	ud.surname
             end,
 
-            r.date_time,
+            to_char(r.date_time, 'DD-MM-YYYY HH24:MI'),
             rs.status,
             r.id
             from requests r
