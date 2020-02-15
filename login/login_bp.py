@@ -90,7 +90,7 @@ class IDFormular(FlaskForm):
     )
 
 class TextFormular(FlaskForm):
-    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
+    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired(),Length(max=500)])
     submit = SubmitField(
       "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary")
     )
@@ -171,7 +171,7 @@ def registrace():
         dbUser = DBUser()
         dbUser.email = form.email.data
         dbUser.password = form.password.data
-        dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
+        dbUser.level = 0
 
     
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
@@ -279,8 +279,19 @@ def comment():
         UploadImage(session['fotoPath'],str(dbUser.id))
         UploadImage(session['idPath'],str(dbUser.id) + 'OP')
         OP_id = str(dbUser.id) + 'OP'
-        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na ověření. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)', FlashStyle.Success)
+
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        token = ts.dumps(dbUser.id, salt='email-confirm-key')
+        confirm_url = url_for(
+            'login_bp.user_confirmation',
+            token=token,
+            _external=True)
+
+
+
+        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
+        SendMail('noreply@seniore.org',dbUser.email,'Registrace na sEniore.org','Děkujeme za vaši registraci na sEniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým sEniore.org')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
 
@@ -324,6 +335,20 @@ def email_confirmation(token):
         abort(403)
     session['confirmed_email'] = email
     return redirect(url_for('login_bp.registrace'),)
+
+@blueprint.route("/user_confirmation/<token>")
+def user_confirmation(token):
+    try:
+        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        user_id = ts.loads(token, salt="email-confirm-key")
+    except:
+        abort(403)
+    dbUser = DBAccess.GetDBUserById(user_id)
+    DBAccess.ExecuteUpdate('update users set level=1 where id=%s', (user_id,))
+    email_text = f'Dobrý den, váš účet byl ověřen a nyní se můžete nalogovat. :-)'
+    SendMail("noreply@seniore.cz",dbUser.email,'Seniore.cz - ověření účtu',email_text)
+        
+    return f'Uživatel {dbUser.first_name} {dbUser.surname} byl nastaven jako schválený a byl mu odeslán informační email.'
 
 
 @blueprint.route("/zapomenute_heslo",methods=["GET", "POST"])

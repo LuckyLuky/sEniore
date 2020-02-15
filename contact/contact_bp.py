@@ -10,6 +10,8 @@ import configparser
 import sendgrid
 from datetime import datetime
 from lookup import AdminMail
+from datetime import date, timedelta
+
 
 blueprint = Blueprint("contact_bp", __name__, template_folder="templates")
 
@@ -28,10 +30,17 @@ def match():
       """,
         (id_users_services,),
     )[0]
+
+    tomorrowStr = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')
+    
+
+
+    
     kwargs = {
         "demand_offer": user_service_requested[0],
         "services": user_service_requested[1],
         "id": id_users_services,
+        "minDateStr":tomorrowStr
     }
     return render_template("/match.html", **kwargs)
 
