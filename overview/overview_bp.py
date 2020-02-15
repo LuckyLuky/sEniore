@@ -146,11 +146,7 @@ def prehled_all():
     demandOfferText = 'nabízené'
     if(int(form.demandOffer.data)==1):
         demandOfferText = 'poptávané'
-
-
-
-    
-    
+   
     dbUser = DBAccess.GetDBUserById(session['id_user'])
 
     # markery pro kazdeho vyhledaneho
