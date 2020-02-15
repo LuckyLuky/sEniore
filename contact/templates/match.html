@@ -13,6 +13,8 @@
     <li><strong>Služba:</strong> {{ services }}</li>
   </ul> -->
 
+  <h2>{{ headerText }}</h2>
+
   <p>Prosím, doplňte bližší informace.</p>
 
   <p>
@@ -23,7 +25,12 @@
         <tr><td> Datum: </td><td><input type="date" min={{ minDateStr }} name="date" placeholder="datum"></td></tr>
         <tr><td> Čas: </td><td><input type="time" name="time" placeholder="Čas"></td></tr>
         <tr><td> Doplňující informace: </td><td> <textarea rows = "3" cols = "60" name="info"></textarea></td></tr>
-        <tr><td></td>  <td><input type="submit" class="btn btn-primary" value="Poslat poptávku"></td></tr>
+        <tr><td></td>  <td><input type="submit" class="btn btn-primary" value= 
+          {% if (id_demand_offer == 2) %} 
+          "Poslat poptávku" 
+          {% else %}  
+          "Poslat nabídku" 
+          {% endif %}></td></tr>
       </table>
       </form>
   </p>
