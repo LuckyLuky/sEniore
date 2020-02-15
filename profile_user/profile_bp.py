@@ -133,29 +133,34 @@ def profil():
 @blueprint.route("/user_request_overview")
 def user_request_overview():
   requests = DBAccess.ExecuteSQL(
-            """select
-              ud.first_name,
-              ud.surname,
-              ud.email,
-              ud.telephone,
-              uo.first_name,
-              uo.surname,
-              uo.email,
-              uo.telephone,
-              s.category,
-              r.date_time,
-              r.add_information,
-              r.timestamp,
-              rs.status,
-              r.id
+            """select s.category,
+
+            case when	ud.id = %s
+            then 	'Přijímám' 
+            else 	'Pomáhám'
+            end,
+
+            case when 	ud.id = %s
+            then	uo.first_name 
+            else	ud.first_name
+            end,
+            
+            case when 	ud.id = %s
+            then	uo.surname 
+            else	ud.surname
+            end,
+
+            r.date_time,
+            rs.status,
+            r.id
             from requests r
             inner join services s on r.id_services = s.id
             inner join users ud on r.id_users_demand = ud.id
             inner join users uo on r.id_users_offer = uo.id
             inner join requests_status rs on r.id_requests_status = rs.id
-            where ud.id = %s order by r.date_time desc""", (session["id_user"], )
+            where ud.id = %s or uo.id = %s  order by r.date_time desc""", (session["id_user"], session["id_user"],session["id_user"],session["id_user"],    session["id_user"])
         )
-
+   
   if requests == None:
      requests = []
 
