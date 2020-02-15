@@ -171,7 +171,7 @@ def registrace():
         dbUser = DBUser()
         dbUser.email = form.email.data
         dbUser.password = form.password.data
-        dbUser.level = 1 # for testing, then set to 0 for manual verification of user's pohoto, ...
+        dbUser.level = 0
 
     
         if DBAccess.ExecuteScalar('select id from users where email=%s',(dbUser.email,)) is not None:
@@ -290,7 +290,8 @@ def comment():
 
 
         SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. Ozveme se Vám telefonicky. POZN: Nyní se lze pro testovací účely přihlásit rovnou ;-)', FlashStyle.Success)
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
+        SendMail('noreply@seniore.org',dbUser.email,'Registrace na sEniore.org','Děkujeme za vaši registraci na sEniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým sEniore.org')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
 
