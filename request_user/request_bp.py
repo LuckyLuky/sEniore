@@ -84,7 +84,7 @@ def requests_detail():
           s.category,
           r.date_time,
           r.add_information,
-          to_char(r.timestamp, 'YYYY-mm-DD HH12:MI:SS'),
+          to_char(r.timestamp, 'YYYY-mm-DD HH12:MI'),
           rs.status,
           r.id,
           ud.id,
