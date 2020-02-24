@@ -156,7 +156,7 @@ def requests_detail_user():
     userId = dbUser.id
          
     requests = DBAccess.ExecuteSQL(
-        """select s.category,
+        """select s.category, 
             
             case when 	ud.id = %s
             then	uo.first_name 
@@ -176,7 +176,8 @@ def requests_detail_user():
           r.date_time,
           r.id,
           ud.id,
-          uo.id
+          uo.id,
+          r.id_users_creator
         from requests r
         inner join services s on r.id_services = s.id
         inner join users ud on r.id_users_demand = ud.id
@@ -184,13 +185,15 @@ def requests_detail_user():
         inner join requests_status rs on r.id_requests_status = rs.id
         where r.id =%s""",
         (userId, userId, userId, rid))
-        
+            
     if(requests is None):
          abort(403)
     requests = requests[0]
     dbUser = DBUser.LoadFromSession('dbUser')
     if dbUser.level<2 and dbUser.id != int(requests[6]) and dbUser.id != int(requests[7]):
         abort(403)
+
+    acceptButtonVisible = (int(requests[8])!=userId)
         
     if request.method == "POST":
           # status = request.form["submit_button"]
@@ -203,4 +206,4 @@ def requests_detail_user():
           f'Vaše žádost / nabídka na činnost {requests[0]} dne {requests[4]} byla {text}.')
           return redirect(url_for("profile_bp.user_request_overview")) 
 
-    return render_template("request_detail_user.html", entries=requests)
+    return render_template("request_detail_user.html", entries=requests, acceptButtonVisible = acceptButtonVisible)
