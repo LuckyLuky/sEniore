@@ -211,7 +211,7 @@ def profil_editace():
         dbUser.UpdateDB()
         dbUser.SaveToSession('dbUser')
 
-        if(regForm.soubor.data is not None and regForm.soubor.data != ''):
+        if(regForm.soubor.data is not None and regForm.soubor.data.filename != ''):
             file_name = secure_filename(regForm.soubor.data.filename)
             path = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
             regForm.soubor.data.save(path)
