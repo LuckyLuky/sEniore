@@ -98,9 +98,9 @@ def email_sent():
     id_request = DBAccess.GetSequencerNextVal("requests_id_seq")
     DBAccess.ExecuteInsert(
         "INSERT INTO requests (id, id_users_demand, id_users_offer, id_services, "
-        "timestamp, date_time, add_information, id_requests_status)"
-        " values (%s, %s,%s,%s,now(),%s,%s,%s)",
-        (id_request, demandingUserId, offeringUserId, services_id, dt, info, 1)
+        "timestamp, date_time, add_information, id_requests_status, id_users_creator)"
+        " values (%s, %s,%s,%s,now(),%s,%s,%s, %s)",
+        (id_request, demandingUserId, offeringUserId, services_id, dt, info, 1, session["id_user"])
     )
 
     message = {
