@@ -9,9 +9,11 @@ from overview import overview_bp
 from contact import contact_bp
 from request_user import request_bp
 
+
 app = Flask("seniore")
 
 GoogleMaps(app, key=getGoogleAPIKey())
+
 
 CloudinaryConfigure()
 
