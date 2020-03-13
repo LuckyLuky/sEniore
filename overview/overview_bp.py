@@ -95,7 +95,7 @@ def prehled_all():
         services
     )  # put all services to form, but I need to display it - by for cycle below
     form.checkBoxes.clear()
-    form.demandOffer.choices = [('2','nabídky'),('1','poptávky')]
+    form.demandOffer.choices = [('2','poskytují pomoc'),('1','potřebují pomoc')]
  
     for index in form.checkBoxIndexes:
         checkbox = getattr(form, "checkbox%d" % index)
@@ -185,5 +185,11 @@ def prehled_all():
     return render_template("prehled_all.html", sndmap=map, form = form)
    
     
+@blueprint.route("/podminky_seniori")
+def podminky_seniori():
+    return render_template("podminky_seniori.html")
 
+@blueprint.route("/podminky_dobrovolnici")
+def podminky_dobrovolnici():
+    return render_template("podminky_dobrovolnici.html")
 

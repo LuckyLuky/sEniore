@@ -63,7 +63,7 @@ class RegistrationFormName(FlaskForm):
 
 class RegistrationFormAddress(FlaskForm):
     street = StringField( validators=[InputRequired()])
-    street_number = StringField( validators=[InputRequired()])
+    # street_number = StringField( validators=[InputRequired()])
     town = StringField( validators=[InputRequired()])
     post_code = StringField( validators=[InputRequired()])
     submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
@@ -244,11 +244,12 @@ def registrace_address():
         dbUser =  DBUser.LoadFromSession('dbUserRegistration')
         dbUser.town = form.town.data
         dbUser.street = form.street.data
-        dbUser.street_number = form.street_number.data
+        # dbUser.street_number = form.street_number.data
         dbUser.post_code = form.post_code.data
             
         kwargs = dbUser.__dict__
-        address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
+        address = "{} {} {}".format(kwargs["street"], kwargs["town"], kwargs["post_code"])
+        # address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
         coordinates = GetCoordinates(address)
         if(coordinates is not None):
             dbUser.latitude = coordinates[0]
@@ -259,7 +260,8 @@ def registrace_address():
 
 
         dbUser.SaveToSession('dbUserRegistration')
-        return redirect(url_for("login_bp.photo"))
+        #return redirect(url_for("login_bp.photo"))
+        return redirect(url_for("login_bp.registrace_idCard"))
     
     return render_template("registrace_address.html", form = form)
 
@@ -294,7 +296,7 @@ def comment():
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
         dbUser.InsertDB()
-        UploadImage(session['fotoPath'],str(dbUser.id))
+        #UploadImage(session['fotoPath'],str(dbUser.id))
         UploadImage(session['idPath'],str(dbUser.id) + 'OP')
         OP_id = str(dbUser.id) + 'OP'
 
@@ -307,8 +309,8 @@ def comment():
 
 
 
-        SendMail('noreply@seniore.org', AdminMail["kacka"],'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
+        SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 2 dny. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
         SendMail('noreply@seniore.org',dbUser.email,'Registrace na sEniore.org','Děkujeme za vaši registraci na sEniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým sEniore.org')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)
@@ -323,7 +325,7 @@ def registration_email():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
-      if request.form.getlist('conditionsAccept')!=['1', '2']:
+      if request.form.getlist('conditionsAccept')!=['2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
       if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is not None:
@@ -338,7 +340,7 @@ def registration_email():
             token=token,
             _external=True)
         email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
-        SendMail("noreply@seniore.cz",emailForm.email.data,'Seniore.cz - ověření emailu',email_text)
+        SendMail("noreply@seniore.org",emailForm.email.data,'Seniore.org - ověření emailu',email_text)
         #flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
         emailForm.submit.label.text = "Odeslat ověřovací email znovu"
         return render_template("registrace_email2.html", form = emailForm)

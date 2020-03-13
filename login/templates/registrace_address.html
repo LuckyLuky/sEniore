@@ -12,6 +12,9 @@
 <section class="registrace" id="registrace">
     
     <!-- <h2>Registrace</h2> -->
+
+<p>Abychom se vzájemně mohli najít, potřebujeme vědět, kde se nacházíte. Kvůli bezpečnosti prosím zadejte pouze ulici a obec.</p>
+
        <form method="POST" class="row justify-content-center">
           <!-- {{ form.hidden_tag() }} -->
           {{ form.csrf_token }}
@@ -24,7 +27,7 @@
             <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>
             <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr> -->
             <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
-            <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr>
+            <!-- <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr> -->
             <tr><td>Město:</td><td> {{ form.town }}<td></tr>
             <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
             <tr><td></td><td> {{ form.submit }}<td></tr>

@@ -10,11 +10,17 @@
 
 <section class="registrace" id="registrace">
     
-    
+  <br>
+  <p>Váš telefon budeme potřebovat k ověření registrace. Je možné, že se Vám ozveme.</p>
+
+  <br>
+  
        <form method="POST" class="row justify-content-center">
           <!-- {{ form.hidden_tag() }} -->
           {{ form.csrf_token }}
       
+        
+
         <table>
             <tr><td>Jméno:</td><td>{{ form.first_name }}</td></tr>
             <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>

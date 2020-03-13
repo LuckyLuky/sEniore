@@ -14,11 +14,11 @@
             <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>
             <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr>
             <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
-            <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr>
+            <!-- <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr> -->
             <tr><td>Město:</td><td> {{ form.town }}<td></tr>
             <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
             <tr><td>Něco o sobě:</td><td> {{ form.info(cols="50", rows="10") }}<td></tr>
-            <tr><td>Změnit photo:</td><td>{{ form.soubor }}</td></tr>
+            <tr><td>Změnit / nahrát svou fotku:</td><td>{{ form.soubor }}</td></tr>
             <tr><td></td><td> {{ form.submit }}<td></tr>
                
        </table>

@@ -6,6 +6,15 @@
 <h3>Vítejte v aplikaci.</h3> 
 
 {% block body %}
+    <br>
+
+
+    <h3> Zatím nejste členy? Registrujte se  <a href="/registrace_email">zde</a>.</h3>
+
+    <br>
+    <br>
+
+
     <form method="POST" class="row justify-content-center">
         {{ form.hidden_tag() }}
 
@@ -17,7 +26,7 @@
     </form>
     <p><sub>Zapomněli jste své heslo? <a href="/zapomenute_heslo">Klikněte zde</a></sub></p>
     <br>
-    <p> Zatím nejste členy? Registrujte se  <a href="/registrace_email">zde</a>.</p>
+    
 
 
     <div class="text-center">
