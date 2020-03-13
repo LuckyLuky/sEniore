@@ -8,8 +8,12 @@ from serviceReg import serviceReg_bp
 from overview import overview_bp
 from contact import contact_bp
 from request_user import request_bp
+from flask import Flask
+from flask_talisman import Talisman
 
 app = Flask("seniore")
+
+Talisman(app)
 
 GoogleMaps(app, key=getGoogleAPIKey())
 
