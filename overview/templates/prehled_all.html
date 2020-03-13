@@ -10,9 +10,7 @@
     <!-- <h3> Filtrovat <a href="/prehled"> nabídku  </a> </h3> 
     <p> Pokud chcete filtrovat dle typu služby / hledat poptávku, stačí kliknout <a href="/prehled"> zde </a>. </p>  -->
     <div class="profile_row">
-      <div class="profile_column">
-          {{ sndmap.html }} 
-      </div>
+      
       <div class="profile_column_non_flex">
           <form method="POST">
               {{ form.csrf_token }}
@@ -31,7 +29,17 @@
              
               <input type="submit" class="btn btn-outline-primary" value="Filtrovat">
 
+              <table>
+                <tr><td><a href="/podminky_seniori">Instrukce senioři </a> </td></tr>
+                <tr><td><a href="/podminky_dobrovolnici">Instrukce dobrovolníci </a> </td></tr>
+              </table>
+
+
+
       </div>
+      <div class="profile_column">
+        {{ sndmap.html }} 
+    </div>
     </div>
       
 

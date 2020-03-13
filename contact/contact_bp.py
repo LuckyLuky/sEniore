@@ -36,18 +36,14 @@ def match():
     tomorrowStr = (date.today() + timedelta(days=1)).strftime('%Y-%m-%d')
 
     dbUser = DBAccess.GetDBUserById(user_service_requested[3])
-    headerText = f'{dbUser.first_name} {dbUser.surname} {demand_offer_text} činnost {user_service_requested[1]}.'
+    headerText = f'{dbUser.first_name} {dbUser.surname} {demand_offer_text} činnost {user_service_requested[1]}'
 
-    
-
-
-    
+      
     kwargs = {
         "demand_offer": user_service_requested[0],
         "id_demand_offer": user_service_requested[2],
         "services": user_service_requested[1],
         "id": id_users_services,
-        "minDateStr": tomorrowStr,
         "headerText" : headerText
     }
     return render_template("/match.html", **kwargs)
@@ -69,10 +65,10 @@ def getEmailAPIKey():
 def email_sent():
     user = session["user"]
     id_users_services = request.form.get("id", type=int)
-    date = request.form.get("date", type=str)
-    time = request.form.get("time", type=str)
-    strDateTime = f"{date} {time}"
-    dt = datetime.strptime(strDateTime, "%Y-%m-%d %H:%M")
+    # date = request.form.get("date", type=str)
+    # time = request.form.get("time", type=str)
+    # strDateTime = f"{date} {time}"
+    # dt = datetime.strptime(strDateTime, "%Y-%m-%d %H:%M")
 
     info = request.form.get("info", type=str)
 
@@ -99,8 +95,8 @@ def email_sent():
     DBAccess.ExecuteInsert(
         "INSERT INTO requests (id, id_users_demand, id_users_offer, id_services, "
         "timestamp, date_time, add_information, id_requests_status, id_users_creator)"
-        " values (%s, %s,%s,%s,now(),%s,%s,%s, %s)",
-        (id_request, demandingUserId, offeringUserId, services_id, dt, info, 1, session["id_user"])
+        " values (%s, %s,%s,%s,now(),now(),%s,%s, %s)",
+        (id_request, demandingUserId, offeringUserId, services_id, info, 1, session["id_user"])
     )
 
     message = {
@@ -111,7 +107,7 @@ def email_sent():
         "content": [
             {
                 "type": "text/plain",
-                "value": f"Uživatel {user} se s chce setkat s {email_user} dne {date} v {time}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
+                "value": f"Uživatel {user} se s chce setkat s {email_user}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
             }
         ],
     }
