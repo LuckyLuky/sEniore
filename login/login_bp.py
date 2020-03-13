@@ -200,7 +200,7 @@ def registrace():
         # md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
         # dbUser.password = md5Pass
         bcrypt = Bcrypt()
-        dbUser.password = bcrypt.generate_password_hash(password).decode('UTF-8')
+        dbUser.password = bcrypt.generate_password_hash(dbUser.password).decode('UTF-8')
 
 
 
