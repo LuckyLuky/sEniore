@@ -242,7 +242,8 @@ def registrace_address():
 
 
         dbUser.SaveToSession('dbUserRegistration')
-        return redirect(url_for("login_bp.photo"))
+        #return redirect(url_for("login_bp.photo"))
+        return redirect(url_for("login_bp.registrace_idCard"))
     
     return render_template("registrace_address.html", form = form)
 
@@ -277,7 +278,7 @@ def comment():
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
         dbUser.InsertDB()
-        UploadImage(session['fotoPath'],str(dbUser.id))
+        #UploadImage(session['fotoPath'],str(dbUser.id))
         UploadImage(session['idPath'],str(dbUser.id) + 'OP')
         OP_id = str(dbUser.id) + 'OP'
 
@@ -291,7 +292,7 @@ def comment():
 
 
         SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
-        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
+        flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 2 dny. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
         SendMail('noreply@seniore.org',dbUser.email,'Registrace na sEniore.org','Děkujeme za vaši registraci na sEniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to zhruba 5 až 7 dní. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým sEniore.org')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)

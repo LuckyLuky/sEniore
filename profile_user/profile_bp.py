@@ -44,7 +44,7 @@ class ProfilUpdateForm(FlaskForm):
     surname = StringField( validators=[DataRequired()])
     telephone = StringField( validators=[DataRequired()])
     street = StringField( validators=[DataRequired()])
-    street_number = StringField( validators=[DataRequired()])
+    # street_number = StringField( validators=[DataRequired()])
     town = StringField( validators=[DataRequired()])
     post_code = StringField( validators=[DataRequired()])
     info = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired()])
@@ -136,8 +136,8 @@ def user_request_overview():
             """select s.category,
 
             case when	ud.id = %s
-            then 	'Přijímám' 
-            else 	'Pomáhám'
+            then 	'Pomůže mi pan/í' 
+            else 	'Pomáhám paní/panu'
             end,
 
             case when 	ud.id = %s
@@ -194,12 +194,12 @@ def profil_editace():
         dbUser.surname = regForm.surname.data
         dbUser.telephone = regForm.telephone.data
         dbUser.street = regForm.street.data
-        dbUser.street_number = regForm.street_number.data
+        # dbUser.street_number = regForm.street_number.data
         dbUser.post_code = regForm.post_code.data
         dbUser.town = regForm.town.data
         dbUser.info = regForm.info.data
 
-        address = "{} {} {} {}".format(dbUser.street, dbUser.street_number, dbUser.town, dbUser.post_code)
+        address = "{} {} {}".format(dbUser.street, dbUser.town, dbUser.post_code)
         coordinates = GetCoordinates(address)
         if(coordinates is not None):
             dbUser.latitude = coordinates[0]
@@ -248,7 +248,7 @@ def profil_editace():
     regForm.surname.data = dbUser.surname
     regForm.telephone.data = dbUser.telephone
     regForm.street.data = dbUser.street
-    regForm.street_number.data = dbUser.street_number
+    # regForm.street_number.data = dbUser.street_number
     regForm.post_code.data = dbUser.post_code
     regForm.town.data = dbUser.town
     regForm.info.data = dbUser.info
