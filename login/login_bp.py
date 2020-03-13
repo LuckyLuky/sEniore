@@ -26,6 +26,8 @@ from flask import current_app as app
 from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail
 from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
+from flask_bcrypt import Bcrypt
+
 
 
 blueprint = Blueprint("login_bp", __name__, template_folder="templates")
@@ -119,10 +121,21 @@ def login():
         def addSalt(passwordArg):
             return passwordArg + salt
 
-        md5Pass = hashlib.md5(addSalt(str(form.password.data)).encode()).hexdigest()
-        if userRow[1] != md5Pass:  # check if second item is equal to hashed password
+        #md5Pass = hashlib.md5(addSalt(str(form.password.data)).encode()).hexdigest()
+
+        bcrypt = Bcrypt()
+        #bcryptHash = bcrypt.generate_password_hash(addSalt(str(form.password.data)))
+
+        # check if second item is equal to hashed password
+        try:
+            if  bcrypt.check_password_hash(userRow[1], form.password.data) == False:
+                flash("Špatné heslo",FlashStyle.Danger)
+                return render_template("login.html", form=form)
+        except:
             flash("Špatné heslo",FlashStyle.Danger)
             return render_template("login.html", form=form)
+
+
 
         if userRow[5] == 0:
             flash(
@@ -184,8 +197,13 @@ def registrace():
         dbUser.salt = salt = DBAccess.ExecuteScalar("select salt()")
         
         #md% tranform password use md5 function on password + salt
-        md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
-        dbUser.password = md5Pass
+        # md5Pass = hashlib.md5((dbUser.password+dbUser.salt).encode()).hexdigest()
+        # dbUser.password = md5Pass
+        bcrypt = Bcrypt()
+        dbUser.password = bcrypt.generate_password_hash(password).decode('UTF-8')
+
+
+
         
         dbUser.SaveToSession('dbUserRegistration')
         return redirect(url_for("login_bp.registrace_name"))
@@ -386,9 +404,11 @@ def new_password(token):
         if(form.password.data!=form.passwordAgain.data):
             flash('Hesla nejsou stejná.',FlashStyle.Danger)
             return render_template('new_password.html',form=form, email=email)
-        salt = DBAccess.ExecuteScalar("select salt()")
-        md5Pass = hashlib.md5((form.password.data+salt).encode()).hexdigest()
-        DBAccess.ExecuteUpdate('update users set password=%s,salt=%s where email like %s',(md5Pass,salt,email))
+        #salt = DBAccess.ExecuteScalar("select salt()")
+        #md5Pass = hashlib.md5((form.password.data+salt).encode()).hexdigest()
+        bcrypt = Bcrypt()
+        bcryptHash = bcrypt.generate_password_hash(form.password.data).decode('UTF -8')
+        DBAccess.ExecuteUpdate('update users set password=%s where email like %s',(bcryptHash,email))
         flash('Nové heslo nastaveno, nyní se zkuste přihlásit.',FlashStyle.Success)
         return redirect(url_for('login_bp.login'),)
     return render_template('new_password.html',form=form, email=email)
