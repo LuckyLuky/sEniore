@@ -11,11 +11,13 @@ from request_user import request_bp
 from flask import Flask
 from flask_talisman import Talisman
 
+
 app = Flask("seniore")
 
 talisman = Talisman(app, content_security_policy=None)
 
 GoogleMaps(app, key=getGoogleAPIKey())
+
 
 CloudinaryConfigure()
 
