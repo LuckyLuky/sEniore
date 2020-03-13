@@ -5,12 +5,13 @@ from flask import (
     render_template,
     session,
     )
-from dbaccess import DBAccess
+from dbaccess import DBAccess, DBUser
 import configparser
 import sendgrid
 from datetime import datetime
 from lookup import AdminMail
 from datetime import date, timedelta
+from utils import SendMail
 
 
 blueprint = Blueprint("contact_bp", __name__, template_folder="templates")
@@ -65,6 +66,8 @@ def getEmailAPIKey():
 def email_sent():
     user = session["user"]
     id_users_services = request.form.get("id", type=int)
+    dbUser = DBUser.LoadFromSession('dbUser')
+    email_komu = dbUser.email
     # date = request.form.get("date", type=str)
     # time = request.form.get("time", type=str)
     # strDateTime = f"{date} {time}"
@@ -99,6 +102,11 @@ def email_sent():
         (id_request, demandingUserId, offeringUserId, services_id, info, 1, session["id_user"])
     )
 
+    dbUser_protistrana = DBAccess.GetDBUserByEmail(email_user)
+    name_protistrana = dbUser_protistrana.first_name
+    surname_protistrana = dbUser_protistrana.surname
+
+
     message = {
         "personalizations": [
             {"to": [{"email": AdminMail["kacka"]}], "subject": "Seniore"}
@@ -114,12 +122,13 @@ def email_sent():
 
     text1 = 'Vaši nabídku' if id_demand_offer == 1 else 'Váš požadavek'
 
-    text2 = 'vaší nabídky' if id_demand_offer == 1 else 'vašeho požadavku'
+    text2 = 'Vaši nabídky' if id_demand_offer == 1 else 'vašeho požadavku'
 
 
     sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
 
     response = sg.send(message)
+    SendMail('noreply@seniore.org', f'{email_komu}' ,'Zaregistrována žádost o spolupráci',f'<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> Kontakt na Vaši protistranu je {name_protistrana} {surname_protistrana}, email: {email_user} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
     print(response.status_code)
     print(response.body)
     print(response.headers)
