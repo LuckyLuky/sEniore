@@ -13,7 +13,7 @@ from flask_talisman import Talisman
 
 app = Flask("seniore")
 
-Talisman(app)
+#Talisman(app)
 
 GoogleMaps(app, key=getGoogleAPIKey())
 
