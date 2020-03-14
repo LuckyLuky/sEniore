@@ -45,20 +45,16 @@ def page_not_authorized(e):
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    #Return JSON instead of HTML for HTTP errors
-    # start with the correct headers and status code from the error
-    response = e.get_response()
-    # replace the body with JSON
-    response.data = json.dumps({
-        "code": e.code,
-        "name": e.name,
-        "description": e.description,
-    })
-    response.content_type = "application/json"
-    text = f'{response.data}'
-    to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
-    SendMail('noreply@seniore.org', to_emails, 'Error on app.seniore.org', text)   
-    return response
+    if isinstance(e, HTTPException):
+        return render_template('error_HTTP.html')
+    else:
+        message = [str(x) for x in e.args]
+        text = f'Error message: {message}'
+        to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
+        SendMail('noreply@seniore.org', to_emails, 'Internal error on app.seniore.org', text)
+        return render_template('error_500.html')
+        
+
 
 
 if __name__ == "__main__":
