@@ -133,8 +133,17 @@ def email_sent():
     sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
 
     response = sg.send(message)
-    SendMail('noreply@seniore.org', f'{email_oslovujici}' ,'Zaregistrována žádost o spolupráci',f'<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> Kontakt na Vaši protistranu je {name_protistrana} {surname_protistrana}, email: {email_user} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
-    SendMail('noreply@seniore.org', f'{email_user}' ,'Zaregistrována žádost o spolupráci',f'<html> Pan / paní {name_oslovujici} {surname_oslovujici} by se s Vámi ráda spojila ohledně možné pomoci. Kontaktní email je: {email_oslovujici} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
+    SendMail('noreply@seniore.org', f'{email_oslovujici}', 'Zaregistrována žádost o spolupráci', f'''<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> 
+    Váš kontakt je {name_protistrana} {surname_protistrana}, email: {email_user} <br>
+    Prosíme, spojte se, abyste se mohli domluvit na podrobnostech. Nezapomeňte dodržovat pravidla: <a href="https://app.seniore.org/podminky_dobrovolnici"> dobrovolníci</a> / <a href="https://app.seniore.org/podminky_seniori"> senioři</a><br>
+    V případě potíží, nebo nejasností nám neváhejte napsat na contact@seniore.org. <br>
+    Děkujeme, Váš tým Seniore</html>''')
+    SendMail('noreply@seniore.org', f'{email_user}', 'Zaregistrována žádost o spolupráci', f'''
+    <html> Pan / paní {name_oslovujici} {surname_oslovujici} by se s Vámi rád/a spojil/a ohledně možné pomoci. 
+    Kontaktní email je: {email_oslovujici} <br> 
+    Prosíme, spojte se, abyste se mohli domluvit na podrobnostech. Nezapomeňte dodržovat pravidla: <a href="https://app.seniore.org/podminky_dobrovolnici"> dobrovolníci</a> / <a href="https://app.seniore.org/podminky_seniori"> senioři</a><br>
+    V případě potíží, nebo nejasností nám neváhejte napsat na contact@seniore.org. <br>
+    Děkujeme, Váš tým Seniore</html>''')
     print(response.status_code)
     print(response.body)
     print(response.headers)
