@@ -57,7 +57,7 @@ def prehled_filtr():
         # markery pro kazdeho vyhledaneho
         markers = []
         marker = {}
-        marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
+        marker["icon"] = "https://maps.google.com/mapfiles/kml/pal2/icon10.png"
         marker["lat"] = str(dbUser.latitude)
         marker["lng"] =  str(dbUser.longitude)
         marker["infobox"] = f'<b>{dbUser.first_name} </b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
@@ -66,7 +66,7 @@ def prehled_filtr():
         for user in vysledekselectu:
             pictureUrl = GetImageUrl(user[8])
             marker = {}
-            marker["icon"] = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            marker["icon"] = "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
             marker["lat"] = str(user[6])
             marker["lng"] =  str(user[7])
             marker["infobox"] = f'<b>{user[0]} {user[1]}</b><br>{user[9]}<img class=img_mapa src= {pictureUrl} /> <a href="/match?id={user[5]}">Kontaktovat</a>'
@@ -152,7 +152,7 @@ def prehled_all():
     # markery pro kazdeho vyhledaneho
     markers = []
     marker = {}
-    marker["icon"] = "http://maps.google.com/mapfiles/kml/pal2/icon10.png"
+    marker["icon"] = "https://maps.google.com/mapfiles/kml/pal2/icon10.png"
     marker["lat"] = str(dbUser.latitude)
     marker["lng"] =  str(dbUser.longitude)
     marker["infobox"] = f'<b>{dbUser.first_name} </b><br>{dbUser.info}<img class=img_mapa src= {GetImageUrl(dbUser.id)} />'
@@ -166,7 +166,7 @@ def prehled_all():
 
         pictureUrl = GetImageUrl(user[0])
         marker = {}
-        marker["icon"] = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+        marker["icon"] = "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
         marker["lat"] = str(user[5])
         marker["lng"] =  str(user[6])
         marker["infobox"] = f'''<b>{user[1]} {user[2]}</b><p>{user[3]}</p>\
