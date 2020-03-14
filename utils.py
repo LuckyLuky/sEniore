@@ -8,12 +8,13 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from dbaccess import DBUser
 from flask import redirect,url_for, flash as flaskFlash, current_app as app, abort
-from enum  import Enum
+from enum import Enum
 import traceback, sys
 from functools import wraps
 import time
 from datetime import datetime
 import inspect
+
 
 def getSecretKey():
     SECRET_KEY = os.environ.get("SECRET_KEY")
