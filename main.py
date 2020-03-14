@@ -14,6 +14,8 @@ from flask import json
 from werkzeug.exceptions import HTTPException
 from utils import SendMail
 from lookup import AdminMail
+import sys
+import traceback
 
 
 app = Flask("seniore")
@@ -48,6 +50,9 @@ def handle_exception(e):
     if isinstance(e, HTTPException):
         return render_template('error_HTTP.html')
     else:
+        etype, value, tb = sys.exc_info()
+        exceptionString = '<br>'.join(traceback.format_exception(etype, value, tb))
+        text = f'Error message:<br> {exceptionString}'
         message = [str(x) for x in e.args]
         text = f'Error message: {message}'
         to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
