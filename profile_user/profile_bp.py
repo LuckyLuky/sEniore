@@ -92,7 +92,7 @@ def profil():
             clickpos_uri="/clickpost/",
             markers=[
                 {
-                    "icon": "http://maps.google.com/mapfiles/kml/pal2/icon10.png",
+                    "icon": "https://maps.google.com/mapfiles/kml/pal2/icon10.png",
                     "lat": latitude,
                     "lng": longitude,
                     "infobox": f"<b>{username}</b><img class=img_mapa src= {imgCloudUrl} />"
