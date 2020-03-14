@@ -117,7 +117,10 @@ def DeleteImage(public_id):
 
 
 def GetImageUrl(userId, version=None):
-    return Cloud.CloudinaryImage(str(userId),version = version).url   
+    #return Cloud.CloudinaryImage(str(userId),version = version).url
+    httpUrl =  Cloud.CloudinaryImage(str(userId),version = version).url
+    httpsUrl = httpUrl.replace('http','https')
+    return httpsUrl   
 
 def getEmailAPIKey():
     API_Key = os.environ.get("SENDGRID_API_KEY")
