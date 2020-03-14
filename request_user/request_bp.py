@@ -54,6 +54,8 @@ def requests():
         inner join users uo on r.id_users_offer = uo.id
         inner join requests_status rs on r.id_requests_status = rs.id"""
     )
+    if(requests == None):
+      requests = []
     return render_template("requests.html", entries=requests)
 
 
