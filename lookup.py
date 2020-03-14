@@ -1,6 +1,6 @@
 DictionaryDemandOffer = {
-    "1": "Poptávám",
-    "2": "Nabízím",
+    "1": "Potřebuji pomoc",
+    "2": "Poskytnu pomoc",
 }
 
 Services = {
