@@ -15,6 +15,18 @@ import time
 from datetime import datetime
 import inspect
 
+def getSecretKey():
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    if not SECRET_KEY:
+        configParser = configparser.RawConfigParser()
+        configFilePath = r"config.txt"
+        configParser.read(configFilePath)
+        SECRET_KEY = configParser.get("my-config", "SECRET_KEY")
+    if not SECRET_KEY:
+        raise Exception("Could not find SECRET_KEY value.")
+    return SECRET_KEY
+
+
 def GetCoordinates(address):
     api_key = getGoogleAPIKey()
     api_response = requests.get(

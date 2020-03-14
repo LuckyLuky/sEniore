@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 from flask_googlemaps import GoogleMaps
-from utils import getGoogleAPIKey, CloudinaryConfigure
+from utils import getGoogleAPIKey, CloudinaryConfigure, getSecretKey
 from login import login_bp
 from profile_user import profile_bp
 from serviceReg import serviceReg_bp
@@ -21,7 +21,7 @@ GoogleMaps(app, key=getGoogleAPIKey())
 
 CloudinaryConfigure()
 
-app.config["SECRET_KEY"] = "super tajny klic"
+app.config["SECRET_KEY"] = getSecretKey()
 
 UPLOAD_FOLDER = app.static_folder + "/users_images/"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
