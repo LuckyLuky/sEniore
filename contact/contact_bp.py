@@ -64,10 +64,14 @@ def getEmailAPIKey():
 
 @blueprint.route("/email_sent/", methods=["POST"])
 def email_sent():
+
+    # kdo oslovuje
     user = session["user"]
     id_users_services = request.form.get("id", type=int)
     dbUser = DBUser.LoadFromSession('dbUser')
-    email_komu = dbUser.email
+    email_oslovujici = dbUser.email
+    name_oslovujici = dbUser.first_name
+    surname_oslovujici = dbUser.surname
     # date = request.form.get("date", type=str)
     # time = request.form.get("time", type=str)
     # strDateTime = f"{date} {time}"
@@ -102,6 +106,7 @@ def email_sent():
         (id_request, demandingUserId, offeringUserId, services_id, info, 1, session["id_user"])
     )
 
+    # protistrana, kdo je osloven - email_user
     dbUser_protistrana = DBAccess.GetDBUserByEmail(email_user)
     name_protistrana = dbUser_protistrana.first_name
     surname_protistrana = dbUser_protistrana.surname
@@ -128,7 +133,8 @@ def email_sent():
     sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
 
     response = sg.send(message)
-    SendMail('noreply@seniore.org', f'{email_komu}' ,'Zaregistrována žádost o spolupráci',f'<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> Kontakt na Vaši protistranu je {name_protistrana} {surname_protistrana}, email: {email_user} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
+    SendMail('noreply@seniore.org', f'{email_oslovujici}' ,'Zaregistrována žádost o spolupráci',f'<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> Kontakt na Vaši protistranu je {name_protistrana} {surname_protistrana}, email: {email_user} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
+    SendMail('noreply@seniore.org', f'{email_user}' ,'Zaregistrována žádost o spolupráci',f'<html> Pan / paní {name_oslovujici} {surname_oslovujici} by se s Vámi ráda spojila ohledně možné pomoci. Kontaktní email je: {email_oslovujici} <br> Prosím, spojte se pro domluvení podrobností. <br> V případě jakýchkoliv potíží či nejasnotí se, prosím, neváhejte obrátit na nás na adrese contact@seniore.org')
     print(response.status_code)
     print(response.body)
     print(response.headers)
