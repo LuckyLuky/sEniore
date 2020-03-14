@@ -308,7 +308,7 @@ def comment():
             _external=True)
 
 
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal'])]
+        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka'])]
         SendMail('noreply@seniore.org', to_emails,'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
