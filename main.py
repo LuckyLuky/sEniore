@@ -53,8 +53,6 @@ def handle_exception(e):
         etype, value, tb = sys.exc_info()
         exceptionString = '<br>'.join(traceback.format_exception(etype, value, tb))
         text = f'Error message:<br> {exceptionString}'
-        message = [str(x) for x in e.args]
-        text = f'Error message: {message}'
         to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
         SendMail('noreply@seniore.org', to_emails, 'Internal error on app.seniore.org', text)
         return render_template('error_500.html')
