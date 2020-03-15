@@ -327,7 +327,7 @@ def registration_email():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
-      if request.form.getlist('conditionsAccept')!=['2']:
+      if request.form.getlist('conditionsAccept')!=['1', '2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
       if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is not None:
