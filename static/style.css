@@ -70,6 +70,12 @@ p {
   margin-left: 30px;
 }
 
+.textLeft {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: left;
+  margin-left: 30px;
+}
+
 .hlavicka {
   background-image: url(images/background-1.png);
   background-repeat: no-repeat;
