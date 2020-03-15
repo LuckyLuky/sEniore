@@ -97,8 +97,8 @@ def CloudinaryConfigure():
 def UploadImage(filePath, public_id,):
     return Cloud.uploader.upload(
       filePath,
-      width=150,
-      height=150,
+      width=450,
+      height=450,
       crop="limit",
       public_id=public_id,
       invalidate=True)
