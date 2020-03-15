@@ -42,17 +42,26 @@ app.register_blueprint(request_bp.blueprint)
 
 @app.errorhandler(403)
 def page_not_authorized(e):
-    # note that we set the 404 status explicitly
     return render_template('403bat.html'), 403
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error_HTTP.html'), 404
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    if isinstance(e, HTTPException):
-        return render_template('error_HTTP.html')
-    else:
+        text = ''
+        dbUser = DBUser.LoadFromSession('dbUser')
+        if(dbUser != None):
+            text+=f'Uzivatel:<br>{dbUser.__dict__}<br>'
+        else:
+            dbUserReg = DBUser.LoadFromSession('dbUserRegistration')
+            if(dbUserReg != None):
+                text+=f'Uzivatel registrace:<br>{dbUserReg.__dict__}<br>'
+
         etype, value, tb = sys.exc_info()
         exceptionString = '<br>'.join(traceback.format_exception(etype, value, tb))
-        text = f'Error message:<br> {exceptionString}'
+        text += f'Error message:<br> {exceptionString}'
         to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
         SendMail('noreply@seniore.org', to_emails, 'Internal error on app.seniore.org', text)
         return render_template('error_500.html')
