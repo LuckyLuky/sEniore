@@ -357,7 +357,7 @@ def registration_email():
             'login_bp.email_confirmation',
             token=token,
             _external=True)
-        email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
+        email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url} <br> Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.'
         SendMail("noreply@seniore.org",emailForm.email.data,'Seniore.org - ověření emailu',email_text)
         #flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
         emailForm.submit.label.text = "Odeslat ověřovací email znovu"
@@ -383,7 +383,9 @@ def user_confirmation(token):
         abort(403)
     dbUser = DBAccess.GetDBUserById(user_id)
     DBAccess.ExecuteUpdate('update users set level=1 where id=%s', (user_id,))
-    email_text = f'''<html> Dobrý den, <br> Váš účet byl ověřen a nyní se můžete <a href="https://app.seniore.org/login/">přihlásit </a>. <br> 
+    email_text = f'''<html> Dobrý den, 
+    <br> Váš účet byl ověřen a nyní se můžete <a href="https://app.seniore.org/login/">přihlásit </a>. (Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.)<br> 
+    <br> 
     Věnujte prosím chviličku instrukcím, jak aplikaci používat. <br> 
     1. Na mapce uvidíte svojí polohu. V blízkosti se zobrazí lidé, kteří mohou pomoci, nebo pomoc potřebují. <br>
     Je možné, že se ve Vaší lokalitě zatím nikdo nepřihlásil. Kontaktujte prosím kohokoliv, kdo by se mohl zapojit. <br>
