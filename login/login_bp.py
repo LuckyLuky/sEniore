@@ -384,6 +384,7 @@ def user_confirmation(token):
     dbUser = DBAccess.GetDBUserById(user_id)
     DBAccess.ExecuteUpdate('update users set level=1 where id=%s', (user_id,))
     email_text = f'''<html> Dobrý den, 
+    <br>
     <br> Váš účet byl ověřen a nyní se můžete <a href="https://app.seniore.org/login/">přihlásit </a>. (Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.)<br> 
     <br> 
     Věnujte prosím chviličku instrukcím, jak aplikaci používat. <br> 
@@ -392,8 +393,10 @@ def user_confirmation(token):
     2. Pro ostatní uživatele jste zatím neviditení! Abyste se i vy zobrazil jiným uživatelům, je potřeba kliknout na tlačítko “Zobrazit mě na mapě” na kartě "Vyhledat".<br>
     V následujícím kroku vyplníte, zda pomoc potřebujete, nebo jí můžete poskytnout.<br>
     3. Kliknutím na Pin (znaménko v mapě) u jiného uživatele jej můžete kontaktovat. Přijde Vám i jí/jemu mail, který Vás vzájemně propojí. Domluvíte se potom už sami.<br>
+    <br>
     Budete-li mít jakékoliv dotazy, pište na contact@seniore.org.<br>
     Pojďme společně obnovit svět, kde si sousedé pomáhají.<br>
+    <br>
     Váš tým Seniore
     </html>'''
     
