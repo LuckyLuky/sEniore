@@ -308,7 +308,7 @@ def comment():
             _external=True)
 
 
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka'])]
+        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
         SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={GetImageUrl(OP_id)}>OP</img> 
