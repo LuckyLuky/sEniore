@@ -252,8 +252,31 @@ def registrace_address():
         # address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
         coordinates = GetCoordinates(address)
         if(coordinates is not None):
-            dbUser.latitude = coordinates[0]
-            dbUser.longitude = coordinates[1]
+            # dbUser.latitude = coordinates[0]
+            # dbUser.longitude = coordinates[1]
+            dbUser.latitude = round(coordinates[0],5)
+            dbUser.longitude = round(coordinates[1],5)
+
+            x = 1
+            y = 1
+            difference = 0.00001
+            originalLatitude =  dbUser.latitude
+            originalLongitue = dbUser.longitude
+             #check if same coordinates already exists
+            while DBAccess.ExecuteScalar('select id from users where latitude=%s and longitude=%s',(dbUser.latitude, dbUser.longitude,)) is not None:
+                #if exists add difference and try again and again..
+                dbUser.latitude=originalLatitude + x *difference
+                dbUser.longitude= originalLongitue +y * difference
+                if x!=-1:
+                    x-=1
+                elif y!=-1:
+                    y-=1
+                else:
+                    x=1
+                    y=1
+                    difference+=0.00001
+
+
         else:
             flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
             return render_template("registrace_address.html", form = form)

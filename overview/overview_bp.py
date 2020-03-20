@@ -144,8 +144,10 @@ def prehled_all():
 
 
     demandOfferText = 'nabízené'
+    mapIconUrl = "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
     if(int(form.demandOffer.data)==1):
         demandOfferText = 'poptávané'
+        mapIconUrl = "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
    
     dbUser = DBAccess.GetDBUserById(session['id_user'])
 
@@ -166,7 +168,7 @@ def prehled_all():
 
         pictureUrl = GetImageUrl(user[0])
         marker = {}
-        marker["icon"] = "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+        marker["icon"] = mapIconUrl
         marker["lat"] = str(user[5])
         marker["lng"] =  str(user[6])
         marker["infobox"] = f'''<b>{user[1]} </b><p>{user[3]}</p>\
