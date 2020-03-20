@@ -341,7 +341,7 @@ def comment():
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info} 
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
-        SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+        SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={GetImageUrl(OP_id)}>OP</img> 
          <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
