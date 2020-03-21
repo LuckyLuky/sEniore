@@ -217,31 +217,37 @@ def profil_editace():
             regForm.soubor.data.save(path)
             json = UploadImage(path,str(dbUser.id)+'new')
             version = json['version']
-            newImageUrl = GetImageUrl(str(dbUser.id) + 'new', version = version)
-
-            ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-            token = ts.dumps(dbUser.email, salt='change-photo-key')
-            confirm_url = url_for(
-                'profile_bp.change_photo_confirm',
-                token=token,
-                _external=True)
             
-            denied_url = url_for(
-                'profile_bp.change_photo_denied',
-                token=token,
-                _external=True)
-            noCacheSufix = '?nocache=<?php echo time(); ?'
+            newImageUrl = GetImageUrl(str(dbUser.id) + 'new', version = version)
+            RenameImage(str(dbUser.id)+'new',str(dbUser.id))
+            DeleteImage(str(dbUser.id) + 'new')
 
-            email_text = f'''Uživatel { dbUser.first_name } {dbUser.surname} {dbUser.email} si změnil profilovou fotografii.  <br>\
-                 <img src={GetImageUrl(dbUser.id)+noCacheSufix}>původní foto</img> <br>\
-                 <img src={newImageUrl+noCacheSufix}>nové foto</img> <br>\
-                Link pro schválení fotografie {confirm_url} <br>\
-                Link pro odmítnutí fotografie {denied_url}'''
 
-            to_emails = [(AdminMail['kacka']), (AdminMail['oodoow']), (AdminMail['michal'])]
+            SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na app.seniore.org bude nahráno na váš profil. Může to chvilku zabrat, mějte, prosím, strpení.")
 
-            SendMail("noreply@seniore.cz",to_emails,'Seniore.cz - schválení profilové fotografie',email_text)
-            flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
+            # ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+            # token = ts.dumps(dbUser.email, salt='change-photo-key')
+            # confirm_url = url_for(
+            #     'profile_bp.change_photo_confirm',
+            #     token=token,
+            #     _external=True)
+            
+            # denied_url = url_for(
+            #     'profile_bp.change_photo_denied',
+            #     token=token,
+            #     _external=True)
+            # noCacheSufix = '?nocache=<?php echo time(); ?'
+
+            # email_text = f'''Uživatel { dbUser.first_name } {dbUser.surname} {dbUser.email} si změnil profilovou fotografii.  <br>\
+            #      <img src={GetImageUrl(dbUser.id)+noCacheSufix}>původní foto</img> <br>\
+            #      <img src={newImageUrl+noCacheSufix}>nové foto</img> <br>\
+            #     Link pro schválení fotografie {confirm_url} <br>\
+            #     Link pro odmítnutí fotografie {denied_url}'''
+
+            # to_emails = [(AdminMail['kacka']), (AdminMail['oodoow']), (AdminMail['michal'])]
+
+            # SendMail("noreply@seniore.cz",to_emails,'Seniore.cz - schválení profilové fotografie',email_text)
+            # flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
         return redirect(url_for('profile_bp.profil'))
    
     regForm.first_name.data = dbUser.first_name
@@ -254,43 +260,43 @@ def profil_editace():
     regForm.info.data = dbUser.info
     return render_template("profil_editace.html",form = regForm)
 
-@LoginRequired()
-@blueprint.route("/change_photo_confirm/<token>",methods=["GET", "POST"])
-def change_photo_confirm(token):
-    try:
-        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-        email = ts.loads(token, salt="change-photo-key")
-    except:
-        abort(403)
-    dbUser = DBAccess.GetDBUserByEmail(email)
-    RenameImage(str(dbUser.id)+'new',str(dbUser.id))
-    DeleteImage(str(dbUser.id)+'new')
+# @LoginRequired()
+# @blueprint.route("/change_photo_confirm/<token>",methods=["GET", "POST"])
+# def change_photo_confirm(token):
+#     try:
+#         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+#         email = ts.loads(token, salt="change-photo-key")
+#     except:
+#         abort(403)
+#     dbUser = DBAccess.GetDBUserByEmail(email)
+#     RenameImage(str(dbUser.id)+'new',str(dbUser.id))
+#     DeleteImage(str(dbUser.id)+'new')
 
-    SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na seniore.org bylo schváleno a bude nahráno na váš profil.")
-    return render_template('photo_confirmation.html',denied = False, text = f'Nové profilové foto nahráno, informační mail odeslán uživateli {email}')
+#     SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na seniore.org bylo schváleno a bude nahráno na váš profil.")
+#     return render_template('photo_confirmation.html',denied = False, text = f'Nové profilové foto nahráno, informační mail odeslán uživateli {email}')
 
-@LoginRequired()
-@blueprint.route("/change_photo_denied/<token>",methods=["GET", "POST"])
-def change_photo_denied(token):
-    try:
-        ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-        email = ts.loads(token, salt="change-photo-key")
-    except:
-        abort(403)
+# @LoginRequired()
+# @blueprint.route("/change_photo_denied/<token>",methods=["GET", "POST"])
+# def change_photo_denied(token):
+#     try:
+#         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+#         email = ts.loads(token, salt="change-photo-key")
+#     except:
+#         abort(403)
 
-    form = TextFormular()
+#     form = TextFormular()
 
-    if(form.validate_on_submit()):
-        dbUser = DBAccess.GetDBUserByEmail(email)
-        SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie",f'Vaše nové profilové foto na seniore.org bylo zamístnuto, důvod zamítnutí: <br> {form.comment.data}')
-        DeleteImage(str(dbUser.id)+'new')
-        text = f'Informační email o zamítnutí byl odeslán uživateli {email} a nová fotografie smazána.'
-        return render_template('photo_confirmation.html', denied = False, text = text)
+#     if(form.validate_on_submit()):
+#         dbUser = DBAccess.GetDBUserByEmail(email)
+#         SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie",f'Vaše nové profilové foto na seniore.org bylo zamístnuto, důvod zamítnutí: <br> {form.comment.data}')
+#         DeleteImage(str(dbUser.id)+'new')
+#         text = f'Informační email o zamítnutí byl odeslán uživateli {email} a nová fotografie smazána.'
+#         return render_template('photo_confirmation.html', denied = False, text = text)
 
-    form.comment.label.text = 'Napište důvod zamítnutí'
-    form.submit.label.text  = 'Odeslat mail'
-    text = f'Nové profilové foto zamítnuto, vyplňte důvod odmítnutí a odešlete informační mail uživateli {email}'
-    return render_template('photo_confirmation.html',denied = True, text = text, form=form)
+#     form.comment.label.text = 'Napište důvod zamítnutí'
+#     form.submit.label.text  = 'Odeslat mail'
+#     text = f'Nové profilové foto zamítnuto, vyplňte důvod odmítnutí a odešlete informační mail uživateli {email}'
+#     return render_template('photo_confirmation.html',denied = True, text = text, form=form)
 
 
 
