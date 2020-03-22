@@ -252,8 +252,31 @@ def registrace_address():
         # address = "{} {} {} {}".format(kwargs["street"], kwargs["street_number"], kwargs["town"], kwargs["post_code"])
         coordinates = GetCoordinates(address)
         if(coordinates is not None):
-            dbUser.latitude = coordinates[0]
-            dbUser.longitude = coordinates[1]
+            # dbUser.latitude = coordinates[0]
+            # dbUser.longitude = coordinates[1]
+            dbUser.latitude = round(coordinates[0],5)
+            dbUser.longitude = round(coordinates[1],5)
+
+            x = 1
+            y = 1
+            difference = 0.00001
+            originalLatitude =  dbUser.latitude
+            originalLongitue = dbUser.longitude
+             #check if same coordinates already exists
+            while DBAccess.ExecuteScalar('select id from users where latitude=%s and longitude=%s',(dbUser.latitude, dbUser.longitude,)) is not None:
+                #if exists add difference and try again and again..
+                dbUser.latitude=originalLatitude + x *difference
+                dbUser.longitude= originalLongitue +y * difference
+                if x!=-1:
+                    x-=1
+                elif y!=-1:
+                    y-=1
+                else:
+                    x=1
+                    y=1
+                    difference+=0.00001
+
+
         else:
             flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
             return render_template("registrace_address.html", form = form)
@@ -308,9 +331,26 @@ def comment():
             _external=True)
 
 
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka'])]
-        SendMail('noreply@seniore.org', to_emails,'Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
-        SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
+        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
+        SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+         <img src={GetImageUrl(dbUser.id)}>foto</img> 
+         <br> <img src={GetImageUrl(OP_id)}>OP</img> 
+         <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
+         <br> email: {dbUser.email}
+         <br> telefon: {dbUser.telephone}
+         <br> adresa: {dbUser.street}, {dbUser.town}
+         <br> info: {dbUser.info} 
+         <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
+        SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+         <img src={GetImageUrl(dbUser.id)}>foto</img> 
+         <br> <img src={GetImageUrl(OP_id)}>OP</img> 
+         <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
+         <br> email: {dbUser.email}
+         <br> telefon: {dbUser.telephone}
+         <br> adresa: {dbUser.street}, {dbUser.town}
+         <br> info: {dbUser.info} 
+         <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
+        #SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
         SendMail('noreply@seniore.org',dbUser.email,'Registrace na Seniore.org','Děkujeme za vaši registraci na Seniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým Seniore.org')
         return redirect(url_for("login_bp.login"))
@@ -326,7 +366,7 @@ def registration_email():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
-      if request.form.getlist('conditionsAccept')!=['2']:
+      if request.form.getlist('conditionsAccept')!=['1', '2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
       if DBAccess.ExecuteScalar('select id from users where email ilike %s',(emailForm.email.data,)) is not None:
@@ -340,7 +380,7 @@ def registration_email():
             'login_bp.email_confirmation',
             token=token,
             _external=True)
-        email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
+        email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url} <br> Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.'
         SendMail("noreply@seniore.org",emailForm.email.data,'Seniore.org - ověření emailu',email_text)
         #flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
         emailForm.submit.label.text = "Odeslat ověřovací email znovu"
@@ -366,15 +406,20 @@ def user_confirmation(token):
         abort(403)
     dbUser = DBAccess.GetDBUserById(user_id)
     DBAccess.ExecuteUpdate('update users set level=1 where id=%s', (user_id,))
-    email_text = f'''<html> Dobrý den, <br> Váš účet byl ověřen a nyní se můžete <a href="https://app.seniore.org/login/">přihlásit </a>. <br> 
+    email_text = f'''<html> Dobrý den, 
+    <br>
+    <br> Váš účet byl ověřen a nyní se můžete <a href="https://app.seniore.org/login/">přihlásit </a>. (Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.)<br> 
+    <br> 
     Věnujte prosím chviličku instrukcím, jak aplikaci používat. <br> 
     1. Na mapce uvidíte svojí polohu. V blízkosti se zobrazí lidé, kteří mohou pomoci, nebo pomoc potřebují. <br>
     Je možné, že se ve Vaší lokalitě zatím nikdo nepřihlásil. Kontaktujte prosím kohokoliv, kdo by se mohl zapojit. <br>
     2. Pro ostatní uživatele jste zatím neviditení! Abyste se i vy zobrazil jiným uživatelům, je potřeba kliknout na tlačítko “Zobrazit mě na mapě” na kartě "Vyhledat".<br>
     V následujícím kroku vyplníte, zda pomoc potřebujete, nebo jí můžete poskytnout.<br>
     3. Kliknutím na Pin (znaménko v mapě) u jiného uživatele jej můžete kontaktovat. Přijde Vám i jí/jemu mail, který Vás vzájemně propojí. Domluvíte se potom už sami.<br>
+    <br>
     Budete-li mít jakékoliv dotazy, pište na contact@seniore.org.<br>
     Pojďme společně obnovit svět, kde si sousedé pomáhají.<br>
+    <br>
     Váš tým Seniore
     </html>'''
     
