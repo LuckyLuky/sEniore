@@ -105,7 +105,7 @@ def login():
         user = form.user.data
         userRow = DBAccess.ExecuteSQL(
             "select email, password, first_name, surname, id, level,salt from "
-            "users where email like %s",
+            "users where email ilike %s",
             (user,),
         )
 
@@ -170,7 +170,7 @@ def index():
 
 @blueprint.route("/registrace", methods=["GET", "POST"])
 def registrace():
-        
+           
     form = RegistrationForm()
         
     if form.validate_on_submit():
@@ -237,7 +237,7 @@ def registrace_name():
 
 @blueprint.route("/registrace_address", methods=["GET", "POST"])
 def registrace_address():
-        
+            
     form = RegistrationFormAddress()
         
     if form.validate_on_submit():
@@ -329,7 +329,7 @@ def registration_email():
       if request.form.getlist('conditionsAccept')!=['2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
-      if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is not None:
+      if DBAccess.ExecuteScalar('select id from users where email ilike %s',(emailForm.email.data,)) is not None:
           flash(f'Uživatel {emailForm.email.data} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
           emailForm.email.data = None
           return render_template("registrace_email.html", form = emailForm)
@@ -388,7 +388,7 @@ def lost_password():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
-        if DBAccess.ExecuteScalar('select id from users where email=%s',(emailForm.email.data,)) is None:
+        if DBAccess.ExecuteScalar('select id from users where email ilike %s',(emailForm.email.data,)) is None:
           flash(f'Uživatel {emailForm.email.data} nebyl nalezen, zvolte jiný email.',FlashStyle.Danger)
           emailForm.email.data = None
           return render_template("registrace_email.html", form = emailForm)
