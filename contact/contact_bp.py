@@ -111,40 +111,48 @@ def email_sent():
     name_protistrana = dbUser_protistrana.first_name
     surname_protistrana = dbUser_protistrana.surname
 
+    
 
-    message = {
-        "personalizations": [
-            {"to": [{"email": AdminMail["kacka"]}], "subject": "Seniore"}
-        ],
-        "from": {"email": "noreply@seniore.org"},
-        "content": [
-            {
-                "type": "text/plain",
-                "value": f"Uživatel {user} se s chce setkat s {email_user}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
-            }
-        ],
-    }
+    # message = {
+    #     "personalizations": [
+    #         {"to": [{"email": AdminMail["kacka"]}], "subject": "Seniore"}
+    #     ],
+    #     "from": {"email": "noreply@seniore.org"},
+    #     "content": [
+    #         {
+    #             "type": "text/plain",
+    #             "value": f"Uživatel {user} se s chce setkat s {email_user}.Doplňující informace: {info}. Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.",
+    #         }
+    #     ],
+    # }
 
     text1 = 'Vaši nabídku' if id_demand_offer == 1 else 'Váš požadavek'
 
     text2 = 'Vaši nabídky' if id_demand_offer == 1 else 'vašeho požadavku'
 
+    # sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
 
-    sg = sendgrid.SendGridAPIClient(getEmailAPIKey())
-
-    response = sg.send(message)
+    # response = sg.send(message)
+    # mail to person who click on "contact"
     SendMail('noreply@seniore.org', f'{email_oslovujici}', 'Zaregistrována žádost o spolupráci', f'''<html>Úspěšně jsme zaregistrovali Vaší žádost o spolupráci. <br> 
     Váš kontakt je {name_protistrana},  email: {email_user} <br>
     Prosíme, spojte se, abyste se mohli domluvit na podrobnostech. Nezapomeňte dodržovat pravidla: <a href="https://app.seniore.org/podminky_dobrovolnici"> dobrovolníci</a> / <a href="https://app.seniore.org/podminky_seniori"> senioři</a><br>
     V případě potíží, nebo nejasností nám neváhejte napsat na contact@seniore.org. <br>
     Děkujeme, Váš tým Seniore</html>''')
+    # mail to person who is being contacted
     SendMail('noreply@seniore.org', f'{email_user}', 'Zaregistrována žádost o spolupráci', f'''
     <html> Pan / paní {name_oslovujici} by se s Vámi rád/a spojil/a ohledně možné pomoci. 
     Kontaktní email je: {email_oslovujici} <br> 
     Prosíme, spojte se, abyste se mohli domluvit na podrobnostech. Nezapomeňte dodržovat pravidla: <a href="https://app.seniore.org/podminky_dobrovolnici"> dobrovolníci</a> / <a href="https://app.seniore.org/podminky_seniori"> senioři</a><br>
     V případě potíží, nebo nejasností nám neváhejte napsat na contact@seniore.org. <br>
-    Děkujeme, Váš tým Seniore</html>''')
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
+    Děkujeme, Váš tým Seniore < / html > ''')
+    # mail to admins
+    to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
+    SendMail('noreply@seniore.org', to_emails, 'Seniore - zažádáno o spolupráci',
+    f'''Uživatel {user} se s chce setkat s {email_user}! :-D <br>
+    Doplňující informace: {info}. <br>
+    Prosím, zkontrolujte žádost v http://seniore.herokuapp.com/requests_detail?id={id_request}.''')
+    # print(response.status_code)
+    # print(response.body)
+    # print(response.headers)
     return render_template("email_sent.html", text1=text1, text2 =text2)

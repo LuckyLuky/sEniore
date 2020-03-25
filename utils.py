@@ -95,6 +95,8 @@ def CloudinaryConfigure():
 
 
 def UploadImageNoId(filePath):
+    # Cloud.uploader.upload() uploads the file to cloudinary under generated id
+    # UploadImageNoId(filePath) - on input gets the path to filename, on output returns img Cloudinary generated id (use for img url source)
     response = Cloud.uploader.upload(
 
     filePath,
