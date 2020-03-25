@@ -94,17 +94,16 @@ def CloudinaryConfigure():
       )
 
 
-def UploadImageNoId(filePath):
-    # Cloud.uploader.upload() uploads the file to cloudinary under generated id
-    # UploadImageNoId(filePath) - on input gets the path to filename, on output returns img Cloudinary generated id (use for img url source)
+def UploadImagePrivate(filePath,public_id):
     response = Cloud.uploader.upload(
-
     filePath,
     width=450,
     height=450,
     crop="limit",
-    invalidate=True)
-    return  response['public_id']
+    invalidate=True,
+    type='private',
+    public_id=public_id)
+    return response['url']
 
 
 def UploadImage(filePath, public_id,):
@@ -127,6 +126,14 @@ def DeleteImage(public_id):
     return Cloud.uploader.destroy(
       public_id,
       invalidate=True)
+
+def SetImagePrivate(public_id):
+    try:
+        response = Cloud.uploader.rename(public_id,public_id,to_type='private')
+        return response['type']
+    except Exception as identifier:
+        return identifier.args[0]
+    
 
 
 def GetImageUrl(userId, version=None):
