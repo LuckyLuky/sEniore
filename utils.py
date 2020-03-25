@@ -94,6 +94,17 @@ def CloudinaryConfigure():
       )
 
 
+def UploadImageNoId(filePath):
+    response = Cloud.uploader.upload(
+
+    filePath,
+    width=450,
+    height=450,
+    crop="limit",
+    invalidate=True)
+    return  response['public_id']
+
+
 def UploadImage(filePath, public_id,):
     return Cloud.uploader.upload(
       filePath,
@@ -111,7 +122,7 @@ def RenameImage(oldId, newId):
       overwrite = True)
 
 def DeleteImage(public_id):
-    Cloud.uploader.destroy(
+    return Cloud.uploader.destroy(
       public_id,
       invalidate=True)
 

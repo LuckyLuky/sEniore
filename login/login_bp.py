@@ -23,7 +23,7 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail
+from utils import GetCoordinates, UploadImage,UploadImageNoId, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, DeleteImage
 from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
 from flask_bcrypt import Bcrypt
@@ -315,13 +315,15 @@ def registrace_idCard():
 def comment():
     form = TextFormular()
     if form.validate_on_submit():
+        
+        OP_id = UploadImageNoId(session['idPath'])
         dbUser = DBUser.LoadFromSession('dbUserRegistration')
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
         dbUser.InsertDB()
         #UploadImage(session['fotoPath'],str(dbUser.id))
-        UploadImage(session['idPath'],str(dbUser.id) + 'OP')
-        OP_id = str(dbUser.id) + 'OP'
+        
+        
 
         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
         token = ts.dumps(dbUser.id, salt='email-confirm-key')
@@ -331,8 +333,8 @@ def comment():
             _external=True)
 
 
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
-        SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+        to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
+        SendMail('noreplyTest@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={GetImageUrl(OP_id)}>OP</img> 
          <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
@@ -479,4 +481,15 @@ def conditions_1():
 @blueprint.route("/conditions_2")
 def conditions_2():
     return render_template("conditions_2.html")
+
+
+@blueprint.route("/deleteOP")
+def deleteOP():
+    ids = DBAccess.ExecuteSQL('select id from users order by id')
+    result = ""
+    for id in ids:
+        opId = str(id[0])+'OP'
+        response = DeleteImage(opId)
+        result +=opId + ': ' + response['result']+'<br>'
+    return result
 
