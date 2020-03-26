@@ -23,7 +23,7 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage,UploadImageNoId, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, DeleteImage
+from utils import GetCoordinates, UploadImage,UploadImagePrivate, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, SetImagePrivate
 from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
 from flask_bcrypt import Bcrypt
@@ -316,14 +316,13 @@ def registrace_idCard():
 def comment():
     form = TextFormular()
     if form.validate_on_submit():
-        
-        OP_id = UploadImageNoId(session['idPath'])
         dbUser = DBUser.LoadFromSession('dbUserRegistration')
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
         telephoneSecondary = form.telephone.data
         dbUser.InsertDB()
-        #UploadImage(session['fotoPath'],str(dbUser.id))
+        imageUrl = UploadImagePrivate(session['idPath'],(str(dbUser.id)+'OP'))
+   
         
         
 
@@ -339,7 +338,7 @@ def comment():
         to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
         SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
-         <br> <img src={GetImageUrl(OP_id)}>OP</img> 
+         <br> <img src={imageUrl}>OP</img> 
          <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
          <br> email: {dbUser.email}
          <br> telefon: {dbUser.telephone}
@@ -347,15 +346,15 @@ def comment():
          <br> info: {dbUser.info} 
          <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary}
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
-        # SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
-        #  <img src={GetImageUrl(dbUser.id)}>foto</img> 
-        #  <br> <img src={GetImageUrl(OP_id)}>OP</img> 
-        #  <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
-        #  <br> email: {dbUser.email}
-        #  <br> telefon: {dbUser.telephone}
-        #  <br> adresa: {dbUser.street}, {dbUser.town}
-        #  <br> info: {dbUser.info} 
-        #  <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
+        SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+         <img src={GetImageUrl(dbUser.id)}>foto</img> 
+         <br> <img src={imageUrl}>OP</img> 
+         <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
+         <br> email: {dbUser.email}
+         <br> telefon: {dbUser.telephone}
+         <br> adresa: {dbUser.street}, {dbUser.town}
+         <br> info: {dbUser.info} 
+         <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
         #SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
         SendMail('noreply@seniore.org',dbUser.email,'Registrace na Seniore.org','Děkujeme za vaši registraci na Seniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým Seniore.org')
@@ -486,14 +485,15 @@ def conditions_1():
 def conditions_2():
     return render_template("conditions_2.html")
 
-
-@blueprint.route("/deleteOP")
-def deleteOP():
+@blueprint.route("/setImagePrivate")
+@LoginRequired(2)
+def setImagePrivate():
+    
     ids = DBAccess.ExecuteSQL('select id from users order by id')
     result = ""
     for id in ids:
         opId = str(id[0])+'OP'
-        response = DeleteImage(opId)
-        result +=opId + ': ' + response['result']+'<br>'
+        response = SetImagePrivate(opId)
+        result +=opId + ': ' + response+'<br>'
     return result
 
