@@ -16,7 +16,7 @@ from utils import SendMail
 from lookup import AdminMail
 import sys
 import traceback
-from dbacces import DBUser
+from dbaccess import DBUser
 
 
 app = Flask("seniore")
