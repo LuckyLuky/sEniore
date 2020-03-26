@@ -76,6 +76,17 @@ p {
   margin-left: 30px;
 }
 
+.loginText{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-align: center;
+  margin-left: 30px;
+  font-size: small;
+}
+
+.linkaSenior{
+ color: red;
+}
+
 .hlavicka {
   background-image: url(images/background-1.png);
   background-repeat: no-repeat;

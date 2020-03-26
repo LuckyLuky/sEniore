@@ -92,7 +92,8 @@ class IDFormular(FlaskForm):
     )
 
 class TextFormular(FlaskForm):
-    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired(),Length(max=500)])
+    comment = StringField(u'Napište krátký komentář:', widget=TextArea(), validators=[DataRequired(), Length(max=500)])
+    telephone = StringField( validators=[Length(min=9, max=9)], )
     submit = SubmitField(
       "Dokončit registraci", render_kw=dict(class_="btn btn-outline-primary")
     )
@@ -320,6 +321,7 @@ def comment():
         dbUser = DBUser.LoadFromSession('dbUserRegistration')
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
+        telephoneSecondary = form.telephone.data
         dbUser.InsertDB()
         #UploadImage(session['fotoPath'],str(dbUser.id))
         
@@ -333,7 +335,8 @@ def comment():
             _external=True)
 
 
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
+        #to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
+        to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
         SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={GetImageUrl(OP_id)}>OP</img> 
@@ -342,16 +345,17 @@ def comment():
          <br> telefon: {dbUser.telephone}
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info} 
+         <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary}
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
-        SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
-         <img src={GetImageUrl(dbUser.id)}>foto</img> 
-         <br> <img src={GetImageUrl(OP_id)}>OP</img> 
-         <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
-         <br> email: {dbUser.email}
-         <br> telefon: {dbUser.telephone}
-         <br> adresa: {dbUser.street}, {dbUser.town}
-         <br> info: {dbUser.info} 
-         <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
+        # SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+        #  <img src={GetImageUrl(dbUser.id)}>foto</img> 
+        #  <br> <img src={GetImageUrl(OP_id)}>OP</img> 
+        #  <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
+        #  <br> email: {dbUser.email}
+        #  <br> telefon: {dbUser.telephone}
+        #  <br> adresa: {dbUser.street}, {dbUser.town}
+        #  <br> info: {dbUser.info} 
+        #  <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
         #SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={GetImageUrl(OP_id)}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
         SendMail('noreply@seniore.org',dbUser.email,'Registrace na Seniore.org','Děkujeme za vaši registraci na Seniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým Seniore.org')
