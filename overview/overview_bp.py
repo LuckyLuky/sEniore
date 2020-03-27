@@ -11,6 +11,7 @@ from dbaccess import DBAccess, DBUser
 from flask_googlemaps import Map
 from utils import GetImageUrl
 from serviceReg.serviceReg_bp import regFormBuilder
+from utils import LoginRequired
 
 
 blueprint = Blueprint("overview_bp", __name__, template_folder="templates")
@@ -23,6 +24,7 @@ class OverviewFormBase(FlaskForm):
 
 
 @blueprint.route("/prehled", methods=["POST", "GET"])
+@LoginRequired()
 def prehled_filtr():
     form = OverviewFormBase()
     services = DBAccess.ExecuteSQL("select * from services")
@@ -83,7 +85,8 @@ def prehled_filtr():
         return render_template("prehled_success.html", entries=vysledekselectu, sndmap=map)
 
 
-@blueprint.route("/prehled_all", methods=["POST","GET"])
+@blueprint.route("/prehled_all", methods=["POST", "GET"])
+@LoginRequired()
 def prehled_all():
 
     services = DBAccess.ExecuteSQL("select * from services")
@@ -188,10 +191,12 @@ def prehled_all():
    
     
 @blueprint.route("/podminky_seniori")
+@LoginRequired()
 def podminky_seniori():
     return render_template("podminky_seniori.html")
 
 @blueprint.route("/podminky_dobrovolnici")
+@LoginRequired()
 def podminky_dobrovolnici():
     return render_template("podminky_dobrovolnici.html")
 

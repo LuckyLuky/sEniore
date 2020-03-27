@@ -131,6 +131,7 @@ def profil():
     )
 
 @blueprint.route("/user_request_overview")
+@LoginRequired()
 def user_request_overview():
   requests = DBAccess.ExecuteSQL(
             """select s.category,
@@ -166,8 +167,8 @@ def user_request_overview():
 
   return render_template("user_request_overview.html", requests = requests)
 
-@LoginRequired()
 @blueprint.route("/remove_service")
+@LoginRequired()
 def remove_service():
     id = request.args.get("id", type=int)
     #check if there was argument
@@ -183,8 +184,8 @@ def remove_service():
     DBAccess.ExecuteUpdate("delete from users_services where id=%s", (id,))
     return redirect(url_for("profile_bp.profil"))
 
+@blueprint.route("/profil_editace", methods=["GET", "POST"])
 @LoginRequired()
-@blueprint.route("/profil_editace",methods=["GET", "POST"])
 def profil_editace():
    
     regForm = ProfilUpdateForm()

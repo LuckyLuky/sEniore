@@ -10,7 +10,7 @@ from wtforms import (
 from wtforms import RadioField
 from dbaccess import DBAccess
 from lookup import DictionaryDemandOffer
-from utils import flash, FlashStyle
+from utils import flash, FlashStyle, LoginRequired
 
 blueprint = Blueprint("serviceReg_bp", __name__, template_folder="templates")
 
@@ -49,6 +49,7 @@ def regFormBuilder(services):
 
 
 @blueprint.route("/sluzby", methods=["POST", "GET"])
+@LoginRequired()
 def sluzby_upload():
     services = DBAccess.ExecuteSQL("select * from services")
     form = regFormBuilder(
@@ -96,6 +97,7 @@ def sluzby_upload():
 
 
 @blueprint.route("/sluzby_update", methods=["POST", "GET"])
+@LoginRequired()
 def sluzby_update():
     services = DBAccess.ExecuteSQL("select * from services")
     form = regFormBuilder(

@@ -11,13 +11,14 @@ import sendgrid
 from datetime import datetime
 from lookup import AdminMail
 from datetime import date, timedelta
-from utils import SendMail
+from utils import SendMail, LoginRequired, getEmailAPIKey
 
 
 blueprint = Blueprint("contact_bp", __name__, template_folder="templates")
 
 
 @blueprint.route("/match/", methods=["GET"])
+@LoginRequired()
 def match():
     id_users_services = request.args.get("id", type=int)
     user_service_requested = DBAccess.ExecuteSQL(
@@ -50,19 +51,8 @@ def match():
     return render_template("/match.html", **kwargs)
 
 
-def getEmailAPIKey():
-    API_Key = os.environ.get("SENDGRID_API_KEY")
-    if not API_Key:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        API_Key = configParser.get("my-config", "sendgrid_api_key")
-    if not API_Key:
-        raise Exception("Could not find API_Key value.")
-    return API_Key
-
-
 @blueprint.route("/email_sent/", methods=["POST"])
+@LoginRequired()
 def email_sent():
 
     # kdo oslovuje
