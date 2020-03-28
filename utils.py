@@ -129,7 +129,7 @@ def DeleteImage(public_id):
 
 def SetImagePrivate(public_id):
     try:
-        response = Cloud.uploader.rename(public_id,public_id,to_type='private')
+        response = Cloud.uploader.rename(public_id,public_id,to_type='private', overwrite= True, invalidate=True)
         return response['type']
     except Exception as identifier:
         return identifier.args[0]
