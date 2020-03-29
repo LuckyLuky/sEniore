@@ -58,6 +58,16 @@ def requests():
       requests = []
     return render_template("requests.html", entries=requests)
 
+@blueprint.route("/admin_overview", methods=["GET", "POST"])
+@LoginRequired(2)
+def admin_overview():
+    users = DBAccess.ExecuteSQL(
+        """select surname, first_name, email, telephone, town from users order by surname"""
+    )
+    if(users == None):
+      users = []
+    return render_template("admin_overview.html", users=users)
+
 
 @blueprint.route("/requests_detail", methods=["GET", "POST"])
 @LoginRequired()
