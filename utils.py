@@ -16,6 +16,19 @@ from datetime import datetime
 import inspect
 
 
+
+def GetConfigValue(value):
+    result = os.environ.get(value)
+    if not result:
+        configParser = configparser.RawConfigParser()
+        configFilePath = r"config.txt"
+        configParser.read(configFilePath)
+        result = configParser.get("my-config", value)
+    if not result:
+        raise Exception(f"Could not find {value} key in enviroment/config file.")
+    return result
+
+
 def getSecretKey():
     SECRET_KEY = os.environ.get("SECRET_KEY")
     if not SECRET_KEY:
@@ -105,6 +118,14 @@ def UploadImagePrivate(filePath,public_id):
     public_id=public_id)
     return response['url']
 
+def UploadImageRandom(filePath):
+    return Cloud.uploader.upload(
+      filePath,
+      width=450,
+      height=450,
+      crop="limit",
+      invalidate=True)
+
 
 def UploadImage(filePath, public_id,):
     return Cloud.uploader.upload(
@@ -121,6 +142,15 @@ def RenameImage(oldId, newId):
       newId,
       invalidate=True,
       overwrite = True)
+
+def RenameImageToPrivate(oldId, newId):
+    response  = Cloud.uploader.rename(
+      oldId,
+      newId,
+      invalidate=True,
+      overwrite = True,
+      to_type='private')
+    return response
 
 def DeleteImage(public_id):
     return Cloud.uploader.destroy(
@@ -152,6 +182,21 @@ def getEmailAPIKey():
     if not API_Key:
         raise Exception("Could not find API_Key value.")
     return API_Key
+
+def GetEmail(configKey):
+    emailString = GetConfigValue(configKey)
+    array = emailString.split(';')
+    if len(array)==1:
+        return array[0]
+    else:
+        return array
+    
+
+
+
+    
+
+
 
 def SendMail(_from, _to, _subject, _text):
     gmailDontCacheHeader = '''<?php

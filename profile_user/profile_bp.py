@@ -26,7 +26,7 @@ from werkzeug.utils import secure_filename
 
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
+from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle, GetEmail
 from dbaccess import DBAccess,DBUser
 from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
@@ -224,7 +224,7 @@ def profil_editace():
             DeleteImage(str(dbUser.id) + 'new')
 
 
-            SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na app.seniore.org bude nahráno na váš profil. Může to chvilku zabrat, mějte, prosím, strpení.")
+            SendMail(GetEmail('noreplyMail'),dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na app.seniore.org bude nahráno na váš profil. Může to chvilku zabrat, mějte, prosím, strpení.")
 
             # ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
             # token = ts.dumps(dbUser.email, salt='change-photo-key')
