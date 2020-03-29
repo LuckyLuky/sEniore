@@ -89,7 +89,7 @@ def prehled_filtr():
 @LoginRequired()
 def prehled_all():
 
-    services = DBAccess.ExecuteSQL("select * from services")
+    services = DBAccess.ExecuteSQL("select * from services order by pageorder")
     checked_services_id_list = []
     for service in services:
         checked_services_id_list.append(service[0])
