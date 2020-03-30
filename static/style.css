@@ -1,6 +1,5 @@
 head {
   width: 150px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .logo{ 
@@ -10,77 +9,77 @@ head {
 }
 
 body {
-  color: #282425;
-  background-color: whitesmoke;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 20px;
+  color: #555555;
+  background-color: #fff;
+  font-family: 'Muli', Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1.3rem;
   line-height: 1.5;
   position: relative;
   margin: auto;
-  }
+}
+
+button, button.btn, .btn {
+  font-size: 1.6rem;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Playfair Display', serif;
+  color: #6f99ed;
+  font-weight: bold;
+}
+
+a {
+  font-family: 'Amiko', sans-serif;
+}
 
 h1{
-  font-size: 80px;
+  font-size: 5rem;
   text-align: center;
   color: white;
   margin: 0px;
   text-shadow:0 3px 10px rgba(0, 0, 0, 0.7);
-  font-family: Verdana, Geneva, Tahoma, sans-serif; 
-  font-style: italic;
   line-height: 3;
 }
 
 h2{
-  font-size: 48px;
+  font-size: 3rem;
   text-align: center;
   margin-top: 20px;
-  color:  #2B1B17;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-style: italic; 
 }
 
 h3 {
-  font-size: 30px;
+  font-size: 2.5rem;
   text-align: center;
-  margin-top: 30px;
-  margin-left: 30px;
-  color:  #2B1B17;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin: 30px;
 }
 
 h4 {
-  font-size: 25px;
+  font-size: 2rem;
   text-align: center;
-  color: black;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-style: italic; 
-  margin-left: 30px;
-
+  margin: 30px;
 }
 
 h5 {
+  font-size: 1.6rem;
   font-weight: bold;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  margin-left: 30px;
 }
 
 p {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: center;
-  margin-left: 30px;
+}
+
+.separator {
+  border-top-style: double;
+  border-top-width: 5px;
+  border-top-color: #6ec1e4;
 }
 
 .textLeft {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: left;
-  margin-left: 30px;
 }
 
 .loginText{
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-align: center;
-  margin-left: 30px;
-  font-size: small;
 }
 
 .linkaSenior{
@@ -88,9 +87,9 @@ p {
 }
 
 .hlavicka {
-  background-image: url(images/background-1.png);
+  background-image: url(images/background-2.jpg);
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center 30%;
   background-size: cover;
   position: relative;
   min-height: 200px;
@@ -115,7 +114,6 @@ p {
   padding: 14px 16px;
   text-decoration: none;
   font-size: 20px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;;
 }
 
 .topnav a:hover {
@@ -178,7 +176,6 @@ p {
 
 table {
   text-align: left;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
   border-spacing: 0;
 }
 
@@ -286,33 +283,20 @@ figure {
     margin-top: 50px;
   }
 
-  ol {
-    list-style-type: none;
-    counter-reset: item;
-    margin: 0;
-    padding: 0;
-  }
-  
-  ol > li {
-    display: table;
-    counter-increment: item;
-    margin-bottom: 0.6em;
-  }
-  
-  ol > li:before {
-    content: counters(item, ".") ". ";
-    display: table-cell;
-    padding-right: 0.6em;    
-  }
-  
-  li ol > li {
-    margin: 0;
-  }
-  
-  li ol > li:before {
-    content: counters(item, ".") " ";
-  }
+.login-form {
+  max-width: 90%;
+  margin-top: 30px;
+}
 
+.login-form .form-control {
+  width: 300px;
+  max-width: 100%;
+}
 
+.login-form-submit-btn {
+  width: 60%;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
 
 

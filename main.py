@@ -17,9 +17,14 @@ from lookup import AdminMail
 import sys
 import traceback
 from dbaccess import DBUser
+from flask_cachebuster import CacheBuster
 
 
 app = Flask("seniore")
+
+config = { 'extensions': ['.js', '.css', '.csv'], 'hash_size': 5 }
+cache_buster = CacheBuster(config=config)
+cache_buster.init_app(app)
 
 talisman = Talisman(app, content_security_policy=None)
 
