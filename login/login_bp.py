@@ -335,14 +335,11 @@ def comment():
         dbUser = DBUser.LoadFromSession('dbUserRegistration')
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
-        telephoneSecondary = form.telephone.data
+        dbUser.telephone2 = form.telephone.data
         dbUser.InsertDB()
         response = RenameImageToPrivate(session['cloudinaryId'],(str(dbUser.id)+'OP'))
         imageUrl = response['url']
    
-        
-        
-
         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
         token = ts.dumps(dbUser.id, salt='email-confirm-key')
         confirm_url = url_for(
@@ -361,7 +358,7 @@ def comment():
          <br> telefon: {dbUser.telephone}
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info} 
-         <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary}
+         <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {dbUser.telephone2}
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
         SendMail(GetEmail('noreplyMail'), 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
@@ -371,7 +368,7 @@ def comment():
          <br> telefon: {dbUser.telephone}
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info},
-          <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary},
+          <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {dbUser.telephone2},
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
         SendMail(GetEmail('noreplyMail'), 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={imageUrl}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
