@@ -16,8 +16,12 @@
               {{ form.csrf_token }}
             
             
-            
-             <p  class="btn btn-primary" > <a href="/sluzby" style="color: rgb(245, 245, 245)"> Zobrazit mě ostatním</a> <p>
+            {% if onMap == False %}
+             <p  class="btn btn-primary" > <a href="/sluzby" style="color: rgb(245, 245, 245)">Zobrazit mě ostatním</a> <p>
+
+            {% else %}
+            <p  class="btn btn-primary" > <a href="/sluzby_delete" style="color: rgb(245, 245, 245)">Nezobrazovat mě na mapě</a> <p></p>
+            {% endif %}
 
             <table>
               {% for subfield in form.demandOffer %}

@@ -1,7 +1,7 @@
 from flask import (
     Blueprint,
     render_template,
-    session,
+    session, redirect,url_for
 )
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -46,6 +46,16 @@ def regFormBuilder(services):
     setattr(RegistrationForm, "checkBoxIndexes", checkBoxIndexes)
 
     return RegistrationForm()
+
+@blueprint.route("/sluzby_delete", methods=["GET"])
+@LoginRequired()
+def sluzby_delete():
+    DBAccess.ExecuteUpdate('delete from users_services where id_users = %s',(session['id_user'],))
+    flash('''Byly smazány všechny vaše poskytované/poptávané služby a proto budete skryti na mapě dobrovolníků/seniorů.
+    Pro znovuzobrazení na mapě stačí kliknout na "Zobrazit mě ostatním" a přidat nějakou službu.''',FlashStyle.Success)
+    return redirect(url_for("overview_bp.prehled_all"))
+
+
 
 
 @blueprint.route("/sluzby", methods=["POST", "GET"])
