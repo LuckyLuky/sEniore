@@ -1,4 +1,13 @@
 {% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v6.0"></script>
+<script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script async defer src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+{% endblock %}
+
 {% block header %}
 {{ super() }} <!-- V hlavní šabloně se bude vypisovat aktuální uživatel, proto vyrenderujeme její header -->
 {% endblock %}
@@ -6,6 +15,8 @@
 <h2>Vítejte v aplikaci.</h2> 
 
 {% block body %}
+    <div id="fb-root"></div>
+
     <br>
 
 
@@ -42,16 +53,16 @@
         {{ form.hidden_tag() }}
 
 
-        <div class="form-group form-row">
-            {{ form.user.label(class="col-md-6 form-label") }}
-            <div class="col-md-6">
+        <div class="form-group row">
+            {{ form.user.label(class="col-md-6 text-center text-md-left") }}
+            <div class="col-md-6 d-flex justify-content-center">
                 {{ form.user(placeholder="Email zadaný při registraci") }}
             </div>
         </div>
 
-        <div class="form-group form-row">
-            {{ form.password.label(class="col-md-6") }}
-            <div class="col-md-6">
+        <div class="form-group row">
+            {{ form.password.label(class="col-md-6 text-center text-md-left") }}
+            <div class="col-md-6 d-flex justify-content-center">
                 {{ form.password }}
             </div>
         </div>
@@ -61,7 +72,17 @@
     <p><a href="/zapomenute_heslo"><sub>Zapomněli jste své heslo?</a></p>
     <br>
     
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="fb-share-button d-flex" data-href="https://app.seniore.org/" data-layout="button" data-size="small">
+            <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fapp.seniore.org%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Sdílet</a>
+        </div>
+        
+        <div class="px-2 d-flex justify-content-center align-items-center">
+            <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=Sv%C4%9Bt%2C%20kde%20si%20lid%C3%A9%20pom%C3%A1haj%C3%AD&url=https://app.seniore.org/" data-show-count="false">Tweet</a>
+        </div>
 
+        <script type="IN/Share" data-url="https://app.seniore.org/"></script>
+    </div>
 
     <div class="text-center">
     {% for field, errors in form.errors.items() %}

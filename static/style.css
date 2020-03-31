@@ -288,6 +288,10 @@ figure {
   margin-top: 30px;
 }
 
+.login-form .form-group {
+  width: 100%;
+}
+
 .login-form .form-control {
   width: 300px;
   max-width: 100%;
@@ -298,5 +302,3 @@ figure {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-
-
