@@ -87,7 +87,7 @@ class FileFormular(FlaskForm):
     )
 
 class IDFormular(FlaskForm):
-    soubor = FileField("Vlož fotku OP", validators=[FileRequired()])
+    soubor = FileField("Vlož fotku OP (formát jpg nebo png)", validators=[FileRequired()])
     submit = SubmitField(
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary")
     )
@@ -307,16 +307,21 @@ def photo():
 def registrace_idCard():
     form = IDFormular()
     if form.validate_on_submit():
-        file_name = secure_filename(form.soubor.data.filename)
-        session['idPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
-        form.soubor.data.save(session['idPath'])
         try:
+
+            if not form.soubor.data.filename.rsplit('.',1)[1].lower() in ['jpg','png']:
+                raise Exception
+
+            file_name = secure_filename(form.soubor.data.filename)
+            session['idPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+            form.soubor.data.save(session['idPath'])
+        
             response = UploadImageRandom(session['idPath'])
             session['cloudinaryId'] = response['public_id']
 
             
         except Exception as error:
-            flash("Nepodařilo se nahrát foto, zkontrolujte prosím zda jde o soubor s obrázkem a zkuste znovu, v případě přetrvávajícíh potíží kontaktujte administrátora.", FlashStyle.Danger)
+            flash("Nepodařilo se nahrát foto, zkontrolujte prosím zda jde o soubor s obrázkem jpg/png a zkuste znovu, v případě přetrvávajícíh potíží kontaktujte administrátora.", FlashStyle.Danger)
             return render_template("/registrace_idCard.html", form=form)
             
 
