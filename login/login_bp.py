@@ -77,7 +77,7 @@ class LoginForm(FlaskForm):
         "Heslo", validators=[InputRequired()], render_kw=dict(class_="form-control")
     )  # Heslo
     submit = SubmitField(
-        "Odeslat", render_kw=dict(class_="btn btn-outline-success login-form-submit-btn")
+        "Odeslat", render_kw=dict(class_="btn btn-outline-primary login-form-submit-btn")
     )
 
 class FileFormular(FlaskForm):
