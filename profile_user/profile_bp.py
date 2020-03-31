@@ -80,8 +80,11 @@ def profil():
             " left join demand_offer d on d.id = us.id_demand_offer where u.id = %s",
             (session["id_user"],)
         )
+
+        addServiceText = 'Přidat službu'
         if(users_services is None):
             users_services = []
+            addServiceText = 'Zobrazit mě na mapě'
 
         sndmap = Map(
             identifier="sndmap",
@@ -127,7 +130,8 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone,
+        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail,
+         phone = phone, addServiceText = addServiceText
     )
 
 @blueprint.route("/user_request_overview")
