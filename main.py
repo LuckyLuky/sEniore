@@ -13,7 +13,7 @@ from flask_talisman import Talisman
 from flask import json
 from werkzeug.exceptions import HTTPException
 from utils import SendMail,GetEmail
-from lookup import AdminMail
+
 import sys
 import traceback
 from dbaccess import DBUser
@@ -68,7 +68,6 @@ def handle_exception(e):
         etype, value, tb = sys.exc_info()
         exceptionString = '<br>'.join(traceback.format_exception(etype, value, tb))
         text += f'Error message:<br> {exceptionString}'
-        to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
         SendMail(GetEmail('noreplyMail'), GetEmail('errorMail'), 'Internal error on app.seniore.org', text)
         return render_template('error_500.html')
         

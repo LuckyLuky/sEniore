@@ -25,7 +25,6 @@ import hashlib
 from flask import current_app as app
 from utils import (GetCoordinates, UploadImage,UploadImagePrivate,UploadImageRandom, RenameImageToPrivate,
      SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, SetImagePrivate, GetEmail)
-from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
 from flask_bcrypt import Bcrypt
 
@@ -351,10 +350,7 @@ def comment():
             'login_bp.user_confirmation',
             token=token,
             _external=True)
-
-
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
-        #to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
+       
         SendMail(GetEmail('noreplyMail'), GetEmail('adminMail'), 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={imageUrl}>OP</img> 

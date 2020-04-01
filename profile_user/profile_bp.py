@@ -28,7 +28,6 @@ from dbaccess import DBAccess
 from flask_googlemaps import Map
 from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle, GetEmail
 from dbaccess import DBAccess,DBUser
-from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
 from login.login_bp import TextFormular
 
@@ -249,8 +248,7 @@ def profil_editace():
             #     Link pro schválení fotografie {confirm_url} <br>\
             #     Link pro odmítnutí fotografie {denied_url}'''
 
-            # to_emails = [(AdminMail['kacka']), (AdminMail['oodoow']), (AdminMail['michal'])]
-
+            
             # SendMail("noreply@seniore.cz",to_emails,'Seniore.cz - schválení profilové fotografie',email_text)
             # flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
         return redirect(url_for('profile_bp.profil'))
