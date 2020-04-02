@@ -62,7 +62,7 @@ def requests():
 @LoginRequired(2)
 def admin_overview():
     users = DBAccess.ExecuteSQL(
-        """select surname, first_name, email, telephone, town, street, telephone2 from users order by surname"""
+        """select surname, first_name, email, telephone, town, street, telephone2, info from users order by surname"""
     )
     if(users == None):
       users = []
