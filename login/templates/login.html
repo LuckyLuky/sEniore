@@ -2,6 +2,7 @@
 
 {% block head %}
 {{ super() }}
+<script src="{{url_for('static', filename='loginInfoModal.js')}}"></script>
 
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v6.0"></script>
 <script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -94,4 +95,24 @@
     {% endfor %}
     <hr>
     </div>
+
+    <div class="modal fade" id="login-info-modal" tabindex="-1" role="dialog" aria-label="Informační dialog o zobrazování seniorů v aplikaci" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Pro Vaši informaci:</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Senioři se v aplikaci zobrazují jen po dobu, kdy hledají dobrovolníka.
+                </div>
+                <div class="modal-footer">
+                    Děkujeme za Vaši pomoc!
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
