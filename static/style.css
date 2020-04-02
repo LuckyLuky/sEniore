@@ -302,3 +302,10 @@ figure {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+
+.share-button {
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
