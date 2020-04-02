@@ -211,7 +211,7 @@ def registrace():
         return redirect(url_for("login_bp.registrace_name"))
     
     #email = session.pop('confirmed_email',None)
-    email = session['confirmed_email']
+    email = session.get('confirmed_email')
 
     if(email is None):
         abort(403)
