@@ -309,3 +309,23 @@ figure {
   justify-content: center;
   align-items: center;
 }
+
+.password-section {
+  position: relative;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  padding: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 0;
+  background-color: transparent;
+  right: 20px;
+  bottom: 4px;
+  outline: none;
+}
+
+#btn-hide-password {
+  display: none;
+}
