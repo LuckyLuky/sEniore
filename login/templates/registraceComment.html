@@ -13,7 +13,6 @@
 
 <section>
 <p>Pokud potřebujete pomoct, napište s čím. Například “Potřebuji dovézt nákup.” Stejně tak, pokud pomoc můžete poskytnout, například “Auto sice nemám, ale ve vzdálenosti 4km mohu dovézt nákup nebo léky na kole”.</p>
-<p>Pokud registrujete svou blízkou osobu a přejete si uvést i kontakt na sebe, můžete v poli "Telefon". </p>
 </section>
 
 <form method="POST" class="row justify-content-center">
@@ -26,9 +25,11 @@
 <tr><td> Komentář </td> <td>
   {{ form.comment(cols="50", rows="3") }}
 </td></tr>
-
-<tr><td>Telefon: +420 / +421 </td><td> {{ form.telephone }}<td></tr>
-<tr><td>
+<tr>
+  <td colspan="2" class="pt-5"><i>Pokud registrujete svou blízkou osobu a přejete si uvést i kontakt na sebe, můžete v poli "Telefon".</i></td>
+</tr>
+<tr><td>Telefon: +420 / +421 </td><td> {{ form.telephone(placeholder="Nepovinné") }}<td></tr>
+<tr><td class="pt-5">
   {{ form.submit }}
 </td></tr>
 
