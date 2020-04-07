@@ -390,7 +390,8 @@ def registration_email():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
-      if request.form.getlist('conditionsAccept')!=['1', '2']:
+      sleep(3)
+      if request.form.getlist('conditionsAccept') != ['1', '2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
       if DBAccess.ExecuteScalar('select id from users where trim(email) ilike %s',(emailForm.email.data.strip(),)) is not None:
@@ -457,6 +458,7 @@ def lost_password():
     emailForm = EmailForm()
     
     if emailForm.validate_on_submit():
+        sleep(3)
         if DBAccess.ExecuteScalar('select id from users where email ilike %s',(emailForm.email.data,)) is None:
           flash(f'Uživatel {emailForm.email.data} nebyl nalezen, zvolte jiný email.',FlashStyle.Danger)
           emailForm.email.data = None
