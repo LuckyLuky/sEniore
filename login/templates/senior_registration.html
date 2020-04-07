@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container-progress-bar" style="width:50%">
+  
+</div>
+<!-- Registration -->
+
+<section class="registrace" id="registrace">
+    
+    <!-- <h2>Registrace</h2> -->
+       <form method="POST" class="row justify-content-center">
+          <!-- {{ form.hidden_tag() }} -->
+          {{ form.csrf_token }}
+      
+        <table>
+            <tr><td>Email (uživatelské jméno):</td><td> {{ form.email }}<td></tr>
+            <tr><td>Zadejte prosím heslo:</td><td> {{ form.password }}<td></tr>
+            <tr><td>Zadejte heslo pro kontrolu znovu:</td><td> {{ form.passwordAgain }}<td></tr>
+            <tr></tr>
+            <tr><td>Jméno:</td><td>{{ form.first_name }}</td></tr>
+            <tr><td>Příjmení: </td><td>{{ form.surname }}</td></tr>
+            <tr><td>Telefon:</td><td> {{ form.telephone }}<td></tr>
+            <tr><td>Ulice:</td><td> {{ form.street }}<td></tr>
+            <tr><td>Číslo popisné:</td><td> {{ form.street_number }}<td></tr>
+            <tr><td>Město:</td><td> {{ form.town }}<td></tr>
+            <tr><td>PSČ:</td><td> {{ form.post_code }}<td></tr>
+            <tr><td>Komentář:</td><td>  {{ form.comment(cols="50", rows="3") }}<td></tr>
+            <tr><td>Telefon2:</td><td> {{ form.telephone2 }}<td></tr>
+            <tr><td></td><td> {{ form.submit }}<td></tr>
+       </table>
+       {% if form.errors %}
+          {{ form.errors }}
+        {% endif %}
+
+
+      </form>
+
+  </p>
+</section>
+
+{% endblock %}

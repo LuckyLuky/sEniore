@@ -55,7 +55,23 @@ class RegistrationForm(FlaskForm):
     # post_code = StringField( validators=[InputRequired()])
     password = PasswordField( validators=[InputRequired()])
     passwordAgain = PasswordField( validators=[InputRequired()])
-    submit = SubmitField('Pokračovat dále',render_kw=dict(class_="btn btn-outline-primary btn-block"))
+    submit = SubmitField('Pokračovat dále', render_kw=dict(class_="btn btn-outline-primary btn-block"))
+    
+
+class SeniorRegistrationForm(FlaskForm):
+    first_name = StringField( validators=[InputRequired()])
+    surname = StringField( validators=[InputRequired()])
+    email = StringField(  validators=[InputRequired()])
+    telephone = StringField(validators=[InputRequired()])
+    telephone2 = StringField(validators=[InputRequired()])
+    comment = StringField( widget=TextArea(), validators=[DataRequired(), Length(max=500)])
+    street = StringField( validators=[InputRequired()])
+    street_number = StringField( validators=[InputRequired()])
+    town = StringField( validators=[InputRequired()])
+    post_code = StringField( validators=[InputRequired()])
+    password = PasswordField( validators=[InputRequired()])
+    passwordAgain = PasswordField( validators=[InputRequired()])
+    submit = SubmitField('Registrovat seniora',render_kw=dict(class_="btn btn-outline-primary btn-block"))
 
 class RegistrationFormName(FlaskForm):
     first_name = StringField( validators=[InputRequired()])
@@ -517,4 +533,77 @@ def setImagePrivate():
         response = SetImagePrivate(opId)
         result +=opId + ': ' + response+'<br>'
     return result
+
+@blueprint.route("/senior_registration",methods=["GET", "POST"])
+@LoginRequired(2)
+def senior_registration():
+    form = SeniorRegistrationForm()
+    
+
+    if (form.validate_on_submit()):
+        if form.password.data != form.passwordAgain.data:
+            flash('Hesla nejsou totožná!', FlashStyle.Danger)
+            return render_template('senior_registration.html', form=form)
+        if DBAccess.ExecuteScalar('select id from users where trim(email) ilike %s',(form.email.data.strip(),)) is not None:
+          flash(f'Uživatel {form.email.data} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
+          form.email.data = None
+          return render_template('senior_registration.html', form = form)
+        
+        dbUser = DBUser()
+        dbUser.first_name = form.first_name.data
+        dbUser.surname = form.surname.data
+        dbUser.email = form.email.data
+        dbUser.telephone = form.telephone.data
+        dbUser.telephone2 = form.telephone2.data
+        dbUser.comment = form.comment.data
+        dbUser.street = form.street.data
+        dbUser.street_number = form.street_number.data
+        dbUser.town = form.town.data
+        dbUser.post_code = form.post_code.data
+        dbUser.password = form.password.data
+        bcrypt = Bcrypt()
+        dbUser.password = bcrypt.generate_password_hash(dbUser.password).decode('UTF-8')
+        dbUser.level = 1
+        
+
+        address = '{} {} {}'.format(dbUser.street, dbUser.town, dbUser.post_code)
+        
+        coordinates = GetCoordinates(address)
+        if(coordinates is not None):
+            dbUser.latitude = round(coordinates[0],5)
+            dbUser.longitude = round(coordinates[1],5)
+            x = 1
+            y = 1
+            difference = 0.00001
+            originalLatitude =  dbUser.latitude
+            originalLongitue = dbUser.longitude
+             #check if same coordinates already exists
+            while DBAccess.ExecuteScalar('select id from users where latitude=%s and longitude=%s',(dbUser.latitude, dbUser.longitude,)) is not None:
+                #if exists add difference and try again and again..
+                dbUser.latitude=originalLatitude + x *difference
+                dbUser.longitude= originalLongitue +y * difference
+                if x!=-1:
+                    x-=1
+                elif y!=-1:
+                    y-=1
+                else:
+                    x=1
+                    y=1
+                    difference+=0.00001
+        else:
+            flash('Nenalezeny souřadnice pro vaši adresu',FlashStyle.Danger)
+            return render_template('senior_registration.html', form = form)
+
+        dbUser.salt = salt = DBAccess.ExecuteScalar("select salt()")
+        dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
+        dbUser.InsertDB()
+        flash(f'Senior {dbUser.first_name} {dbUser.surname} email: {dbUser.email} vložen do databáze a nastaven jako ověřený.', FlashStyle.Success)
+        return redirect(url_for("login_bp.login"))
+
+    return render_template('senior_registration.html', form = form)
+
+
+        
+
+
 
