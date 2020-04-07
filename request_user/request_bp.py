@@ -43,7 +43,7 @@ def requests():
           uo.email,
           uo.telephone,
           s.category,
-          r.date_time,
+          date_trunc('minute',r.date_time),
           r.add_information,
           r.timestamp,
           rs.status,
