@@ -15,6 +15,9 @@
           <th class="sloupec"> Email </th> 
           <th class="sloupec"> Telefon </th>
           <th class="sloupec"> Město</th>
+          <th class="sloupec"> Ulice</th>
+          <th class="sloupec"> Telefon2</th>
+          <th class="sloupec"> Info</th>
         </tr>
         </thead>
         {% for user in users %}
@@ -23,7 +26,10 @@
          <td class="sloupec"> {{ user[1] }} </td>
          <td class="sloupec"> {{ user[2] }} </td>
          <td class="sloupec"> {{ user[3] }} </td>
-         <td class="sloupec"> {{ user[4] }} </td>       
+         <td class="sloupec"> {{ user[4] }} </td>
+         <td class="sloupec"> {{ user[5] }} </td>       
+         <td class="sloupec"> {{ user[6] }} </td> 
+         <td class="sloupec"> {{ user[7] }} </td> 
          </tr> 
          {% endfor %}
         </table>

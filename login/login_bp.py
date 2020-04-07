@@ -25,8 +25,8 @@ from werkzeug.utils import secure_filename
 from dbaccess import DBAccess,DBUser
 import hashlib
 from flask import current_app as app
-from utils import GetCoordinates, UploadImage,UploadImagePrivate, SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, SetImagePrivate
-from lookup import AdminMail
+from utils import (GetCoordinates, UploadImage,UploadImagePrivate,UploadImageRandom, RenameImageToPrivate,
+     SendMail, GetImageUrl, LoginRequired, FlashStyle,flash, SendMail, SetImagePrivate, GetEmail)
 from itsdangerous import URLSafeTimedSerializer
 from flask_bcrypt import Bcrypt
 
@@ -78,7 +78,7 @@ class LoginForm(FlaskForm):
         "Heslo", validators=[InputRequired()], render_kw=dict(class_="form-control")
     )  # Heslo
     submit = SubmitField(
-        "Odeslat", render_kw=dict(class_="btn btn-outline-primary btn-block")
+        "Odeslat", render_kw=dict(class_="btn btn-outline-primary login-form-submit-btn")
     )
 
 class FileFormular(FlaskForm):
@@ -88,7 +88,7 @@ class FileFormular(FlaskForm):
     )
 
 class IDFormular(FlaskForm):
-    soubor = FileField("Vlož fotku OP", validators=[FileRequired()])
+    soubor = FileField("Vlož fotku OP (formát jpg nebo png)", validators=[FileRequired()])
     submit = SubmitField(
         "Odeslat", render_kw=dict(class_="btn btn-outline-primary")
     )
@@ -107,10 +107,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         sleep(3)
-        user = form.user.data
+        user = form.user.data.strip()
         userRow = DBAccess.ExecuteSQL(
             "select email, password, first_name, surname, id, level,salt from "
-            "users where email ilike %s",
+            "users where trim(email) ilike %s",
             (user,),
         )
 
@@ -214,7 +214,7 @@ def registrace():
         return redirect(url_for("login_bp.registrace_name"))
     
     #email = session.pop('confirmed_email',None)
-    email = session['confirmed_email']
+    email = session.get('confirmed_email')
 
     if(email is None):
         abort(403)
@@ -309,9 +309,28 @@ def photo():
 def registrace_idCard():
     form = IDFormular()
     if form.validate_on_submit():
-        file_name = secure_filename(form.soubor.data.filename)
-        session['idPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
-        form.soubor.data.save(session['idPath'])
+        try:
+
+            if not form.soubor.data.filename.rsplit('.',1)[1].lower() in ['jpg','png']:
+                raise Exception
+
+            file_name = secure_filename(form.soubor.data.filename)
+            session['idPath'] = os.path.join(app.config["UPLOAD_FOLDER"],file_name)
+            form.soubor.data.save(session['idPath'])
+        
+            response = UploadImageRandom(session['idPath'])
+            session['cloudinaryId'] = response['public_id']
+
+            
+        except Exception as error:
+            flash("Nepodařilo se nahrát foto, zkontrolujte prosím zda jde o soubor s obrázkem jpg/png a zkuste znovu, v případě přetrvávajícíh potíží kontaktujte administrátora.", FlashStyle.Danger)
+            return render_template("/registrace_idCard.html", form=form)
+            
+
+        
+            
+        
+
         # flash("Foto nahráno, jsme u posledního kroku registrace :-) ", FlashStyle.Success)
         return redirect(url_for("login_bp.comment"))
     return render_template("/registrace_idCard.html", form=form)
@@ -323,24 +342,19 @@ def comment():
         dbUser = DBUser.LoadFromSession('dbUserRegistration')
         dbUser.info = form.comment.data
         dbUser.id = DBAccess.GetSequencerNextVal('users_id_seq')
-        telephoneSecondary = form.telephone.data
+        dbUser.telephone2 = form.telephone.data
         dbUser.InsertDB()
-        imageUrl = UploadImagePrivate(session['idPath'],(str(dbUser.id)+'OP'))
+        response = RenameImageToPrivate(session['cloudinaryId'],(str(dbUser.id)+'OP'))
+        imageUrl = response['url']
    
-        
-        
-
         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
         token = ts.dumps(dbUser.id, salt='email-confirm-key')
         confirm_url = url_for(
             'login_bp.user_confirmation',
             token=token,
             _external=True)
-
-
-        to_emails = [(AdminMail['kacka']), (AdminMail['michal']), (AdminMail['jirka']), (AdminMail['oodoow'])]
-        #to_emails = [(AdminMail['kacka']), (AdminMail['oodoow'])]
-        SendMail('noreply@seniore.org', to_emails, 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+       
+        SendMail(GetEmail('noreplyMail'), GetEmail('adminMail'), 'Zaregistrován nový uživatel', f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={imageUrl}>OP</img> 
          <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
@@ -348,9 +362,9 @@ def comment():
          <br> telefon: {dbUser.telephone}
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info} 
-         <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary}
+         <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {dbUser.telephone2}
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
-        SendMail('noreply@seniore.org', 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
+        SendMail(GetEmail('noreplyMail'), 'seniore.analytics@gmail.com','Zaregistrován nový uživatel',f'''<html>Nový uživatel zaregistrovan, čeká na schválení. <br>
          <img src={GetImageUrl(dbUser.id)}>foto</img> 
          <br> <img src={imageUrl}>OP</img> 
          <br> jméno a příjmení: {dbUser.first_name} {dbUser.surname}
@@ -358,11 +372,11 @@ def comment():
          <br> telefon: {dbUser.telephone}
          <br> adresa: {dbUser.street}, {dbUser.town}
          <br> info: {dbUser.info},
-          <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {telephoneSecondary},
+          <br> telefon na kontaktní osobu (seniora registruje někdo jiný): {dbUser.telephone2},
          <br> Pro schválení uživatele klikněte na následující link {confirm_url} </html>''')
-        SendMail('noreply@seniore.org', 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={imageUrl}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
+        SendMail(GetEmail('noreplyMail'), 'dobrovolnici@seniore.org','Zaregistrován nový uživatel',f'<html>Nový uživatel zaregistrovan, čeká na schválení. <br> <img src={GetImageUrl(dbUser.id)}>foto</img> <br> <img src={imageUrl}>OP</img> <br> údaje: {dbUser.__dict__} <br> Pro schválení uživatele klikněte na následující link {confirm_url}')
         flash(f'Registrace uživatele {dbUser.first_name} {dbUser.surname} úspěšně dokončena. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem.', FlashStyle.Success)
-        SendMail('noreply@seniore.org',dbUser.email,'Registrace na Seniore.org','Děkujeme za vaši registraci na Seniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým Seniore.org')
+        SendMail(GetEmail('noreplyMail'),dbUser.email,'Registrace na Seniore.org','Děkujeme za vaši registraci na Seniore.org. Váš profil nyní musíme zkontrolovat. Zabere nám to maximálně 48 hodin. Prosíme, mějte strpení. Ruční ověřování považujeme za nezbytnost kvůli bezpečnosti. O schválení vás budeme informovat emailem. Děkujeme, tým Seniore.org')
         return redirect(url_for("login_bp.login"))
     return render_template("/registraceComment.html", form=form)    
 
@@ -379,19 +393,19 @@ def registration_email():
       if request.form.getlist('conditionsAccept')!=['1', '2']:
         flash(f'Je potřeba souhlasit s podmínkami.',FlashStyle.Danger)
         return render_template("registrace_email.html", form = emailForm)
-      if DBAccess.ExecuteScalar('select id from users where email ilike %s',(emailForm.email.data,)) is not None:
+      if DBAccess.ExecuteScalar('select id from users where trim(email) ilike %s',(emailForm.email.data.strip(),)) is not None:
           flash(f'Uživatel {emailForm.email.data} je již zaregistrován, zvolte jiný email.',FlashStyle.Danger)
           emailForm.email.data = None
           return render_template("registrace_email.html", form = emailForm)
       else:
         ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-        token = ts.dumps(emailForm.email.data, salt='email-confirm-key')
+        token = ts.dumps(emailForm.email.data.strip(), salt='email-confirm-key')
         confirm_url = url_for(
             'login_bp.email_confirmation',
             token=token,
             _external=True)
         email_text = f'Prosím klikněte na následující odkaz pro ověření vašeho emailu a pokračování v registraci.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url} <br> Pokud odkaz nefunguje, prosíme, je nutné ho zkopírovat a celý vložit do vašeho prohlížeče.'
-        SendMail("noreply@seniore.org",emailForm.email.data,'Seniore.org - ověření emailu',email_text)
+        SendMail(GetEmail('noreplyMail'),emailForm.email.data.strip(),'Seniore.org - ověření emailu',email_text)
         #flash("Na zadanou adresu byl odeslán email s odkazem na pokračování v registraci.",FlashStyle.Success)
         emailForm.submit.label.text = "Odeslat ověřovací email znovu"
         return render_template("registrace_email2.html", form = emailForm)
@@ -433,7 +447,7 @@ def user_confirmation(token):
     Váš tým Seniore
     </html>'''
     
-    SendMail("noreply@seniore.cz",dbUser.email,'Seniore.org - ověření účtu',email_text)
+    SendMail(GetEmail('noreplyMail'),dbUser.email,'Seniore.org - ověření účtu',email_text)
         
     return f'Uživatel {dbUser.first_name} {dbUser.surname} byl nastaven jako schválený a byl mu odeslán informační email.'
 
@@ -455,7 +469,7 @@ def lost_password():
                 token=token,
                 _external=True)
             email_text = f'Prosím klikněte na následující odkaz pro zadání nového hesla.<br>Tento odkaz bude platný následujících 24 hodin.<br>{confirm_url}'
-            SendMail("noreply@seniore.cz",emailForm.email.data,'Seniore.cz - obnova zapomenutého hesla',email_text)
+            SendMail(GetEmail('noreplyMail'),emailForm.email.data,'Seniore.cz - obnova zapomenutého hesla',email_text)
             flash("Na zadanou adresu byl odeslán email s odkazem na obnovu hesla.",FlashStyle.Success)
             emailForm.submit.label.text = "Odeslat email znovu"
             return render_template("lost_password.html", form = emailForm)

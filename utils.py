@@ -16,18 +16,21 @@ from datetime import datetime
 import inspect
 
 
-def getSecretKey():
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    if not SECRET_KEY:
+
+def GetConfigValue(value):
+    result = os.environ.get(value)
+    if not result:
         configParser = configparser.RawConfigParser()
         configFilePath = r"config.txt"
         configParser.read(configFilePath)
-        SECRET_KEY = configParser.get("my-config", "SECRET_KEY")
-    if not SECRET_KEY:
-        raise Exception("Could not find SECRET_KEY value.")
-    return SECRET_KEY
+        result = configParser.get("my-config", value)
+    if not result:
+        raise Exception(f"Could not find {value} key in enviroment/config file.")
+    return result
 
-
+def getSecretKey():
+    return GetConfigValue("SECRET_KEY")
+    
 def GetCoordinates(address):
     api_key = getGoogleAPIKey()
     api_response = requests.get(
@@ -44,55 +47,19 @@ def GetCoordinates(address):
     except:
         return None
 
-
-
 def getGoogleAPIKey():
-    API_Key = os.environ.get("GOOGLE_API_KEY")
-    if not API_Key:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        API_Key = configParser.get("my-config", "google_api_key")
-    if not API_Key:
-        raise Exception("Could not find API_Key value.")
-    return API_Key
-
-
+    return GetConfigValue("GOOGLE_API_KEY")
+    
 def CloudinaryConfigure():
-
-    cloudName = os.environ.get("CLOUDINARY_CLOUD_NAME")
-    if not cloudName:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        cloudName = configParser.get("my-config", "CLOUDINARY_CLOUD_NAME")
-    if not cloudName:
-        raise Exception("Could not find CLOUDINARY_CLOUD_NAME value.")
-
-    apiKey = os.environ.get("CLOUDINARY_API_KEY")
-    if not apiKey:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        apiKey = configParser.get("my-config", "CLOUDINARY_API_KEY")
-    if not apiKey:
-        raise Exception("Could not find CLOUDINARY_API_KEY value.")
-
-    apiSecret = os.environ.get("CLOUDINARY_API_SECRET")
-    if not apiSecret:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        apiSecret = configParser.get("my-config", "CLOUDINARY_API_SECRET")
-    if not apiSecret:
-        raise Exception("Could not find CLOUDINARY_API_SECRET value.")
-
+    cloudName = GetConfigValue("CLOUDINARY_CLOUD_NAME")
+    apiKey =  GetConfigValue("CLOUDINARY_API_KEY")
+    apiSecret = GetConfigValue("CLOUDINARY_API_SECRET")
+    
     Cloud.config(
       cloud_name=cloudName,
       api_key=apiKey,
       api_secret=apiSecret
       )
-
 
 def UploadImagePrivate(filePath,public_id):
     response = Cloud.uploader.upload(
@@ -105,6 +72,13 @@ def UploadImagePrivate(filePath,public_id):
     public_id=public_id)
     return response['url']
 
+def UploadImageRandom(filePath):
+    return Cloud.uploader.upload(
+      filePath,
+      width=450,
+      height=450,
+      crop="limit",
+      invalidate=True)
 
 def UploadImage(filePath, public_id,):
     return Cloud.uploader.upload(
@@ -122,6 +96,15 @@ def RenameImage(oldId, newId):
       invalidate=True,
       overwrite = True)
 
+def RenameImageToPrivate(oldId, newId):
+    response  = Cloud.uploader.rename(
+      oldId,
+      newId,
+      invalidate=True,
+      overwrite = True,
+      to_type='private')
+    return response
+
 def DeleteImage(public_id):
     return Cloud.uploader.destroy(
       public_id,
@@ -133,9 +116,7 @@ def SetImagePrivate(public_id):
         return response['type']
     except Exception as identifier:
         return identifier.args[0]
-    
-
-
+ 
 def GetImageUrl(userId, version=None):
     #return Cloud.CloudinaryImage(str(userId),version = version).url
     httpUrl =  Cloud.CloudinaryImage(str(userId),version = version).url
@@ -143,16 +124,16 @@ def GetImageUrl(userId, version=None):
     return httpsUrl   
 
 def getEmailAPIKey():
-    API_Key = os.environ.get("SENDGRID_API_KEY")
-    if not API_Key:
-        configParser = configparser.RawConfigParser()
-        configFilePath = r"config.txt"
-        configParser.read(configFilePath)
-        API_Key = configParser.get("my-config", "sendgrid_api_key")
-    if not API_Key:
-        raise Exception("Could not find API_Key value.")
-    return API_Key
+     return GetConfigValue("SENDGRID_API_KEY")
 
+def GetEmail(configKey):
+    emailString = GetConfigValue(configKey)
+    array = emailString.split(';')
+    if len(array)==1:
+        return array[0]
+    else:
+        return array
+ 
 def SendMail(_from, _to, _subject, _text):
     gmailDontCacheHeader = '''<?php
                               header('Content-Type: image/jpeg');
@@ -197,14 +178,7 @@ def LoginRequired(level= 1):
                 return function(*args, **kwargs)
             return decorated_function
         return LoginRequiredInner
-            
-                
-          
     except RuntimeError:
         (t, v, tb) = sys.exc_info()
         tracebacks = "".join(traceback.format_exception(t, v, tb))
         return lambda :  tracebacks
-
-
-
-    

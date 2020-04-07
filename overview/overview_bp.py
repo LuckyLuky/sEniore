@@ -90,6 +90,7 @@ def prehled_filtr():
 def prehled_all():
 
     services = DBAccess.ExecuteSQL("select * from services order by pageorder")
+    onMap = DBAccess.ExecuteScalar('select 1 from users_services where id_users = %s',(session['id_user'],)) != None
     checked_services_id_list = []
     for service in services:
         checked_services_id_list.append(service[0])
@@ -187,7 +188,7 @@ def prehled_all():
                 markers=markers
                 )  # get map, zoom on location of actual user, insert markers from select, ie users who provide specific required service
 
-    return render_template("prehled_all.html", sndmap=map, form = form)
+    return render_template("prehled_all.html", sndmap=map, form = form, onMap = onMap)
    
     
 @blueprint.route("/podminky_seniori")

@@ -7,7 +7,7 @@ from flask import (
     redirect
     )
 from dbaccess import DBAccess, DBUser
-from utils import LoginRequired, flash, FlashStyle, SendMail
+from utils import LoginRequired, flash, FlashStyle, SendMail, GetEmail
 from lookup import RequestStatus, RequestStatusUser
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -62,7 +62,7 @@ def requests():
 @LoginRequired(2)
 def admin_overview():
     users = DBAccess.ExecuteSQL(
-        """select surname, first_name, email, telephone, town from users order by surname"""
+        """select surname, first_name, email, telephone, town, street, telephone2, info from users order by surname"""
     )
     if(users == None):
       users = []
@@ -214,7 +214,7 @@ def requests_detail_user():
               "UPDATE requests SET id_requests_status= %s where id= %s", (status, rid)
           )
           text = 'potvrzena' if status == '2' else 'zamítnuta'
-          SendMail('noreply@seniore.org', requests[3], 'Seniore.org - změna stavu vaší žádosti', 
+          SendMail(GetEmail('noreplyMail'), requests[3], 'Seniore.org - změna stavu vaší žádosti', 
           f'Vaše žádost / nabídka na činnost {requests[0]} dne {requests[4]} byla {text}.')
           return redirect(url_for("profile_bp.user_request_overview")) 
 

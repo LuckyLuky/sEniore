@@ -20,6 +20,7 @@ class DBUser():
     latitude = None
     longitude  = None
     level = None
+    telephone2 = None
     
     def SaveToSession(self, sessionKey):
         session[sessionKey] = encode(self)
@@ -34,8 +35,8 @@ class DBUser():
         DBAccess.ExecuteInsert(
         """insert into users (id, first_name, surname, email, street,
         streetNumber, town, postCode, telephone, password, salt,
-        level, latitude,longitude, info)
-     values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s,%s,%s, %s, %s, %s)""",
+        level, latitude,longitude, info, telephone2  )
+     values (%s, %s, %s, %s, %s, %s,%s, %s, %s,%s,%s,%s, %s, %s, %s, %s)""",
         (
             self.id,
             self.first_name,
@@ -51,7 +52,8 @@ class DBUser():
             self.level,
             self.latitude,
             self.longitude,
-            self.info
+            self.info,
+            self.telephone2
         )
     )
 

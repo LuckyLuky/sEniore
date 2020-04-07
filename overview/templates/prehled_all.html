@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 
+{% block head %}
+{{ super() }}
+
+<script src="{{url_for('static', filename='appInfoModal.js')}}"></script>
+{% endblock %}
+
 {% block body %}
 
 {{ sndmap.js }}   
@@ -16,8 +22,12 @@
               {{ form.csrf_token }}
             
             
-            
-             <p  class="btn btn-primary" > <a href="/sluzby" style="color: rgb(245, 245, 245)"> Zobrazit mě ostatním</a> <p>
+            {% if onMap == False %}
+             <p  class="btn btn-primary" > <a href="/sluzby" style="color: rgb(245, 245, 245)">Zobrazit mě ostatním</a> <p>
+
+            {% else %}
+            <p  class="btn btn-primary" > <a href="/sluzby_delete" style="color: rgb(245, 245, 245)">Nezobrazovat mě na mapě</a> <p></p>
+            {% endif %}
 
             <table>
               {% for subfield in form.demandOffer %}
@@ -45,6 +55,25 @@
         {{ sndmap.html }} 
     </div>
     </div>
+
+  <div class="modal fade" id="login-info-modal" tabindex="-1" role="dialog" aria-label="Informační dialog o zobrazování seniorů v aplikaci" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Pro Vaši informaci:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Senioři se v aplikaci zobrazují jen po dobu, kdy hledají dobrovolníka.
+            </div>
+            <div class="modal-footer">
+                Děkujeme za Vaši pomoc!
+            </div>
+        </div>
+    </div>
+  </div>
       
 
 {% endblock %}

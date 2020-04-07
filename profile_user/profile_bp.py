@@ -26,9 +26,8 @@ from werkzeug.utils import secure_filename
 
 from dbaccess import DBAccess
 from flask_googlemaps import Map
-from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle
+from utils import GetImageUrl, RenameImage, UploadImage, DeleteImage, LoginRequired, GetCoordinates,  SendMail, flash, FlashStyle, GetEmail
 from dbaccess import DBAccess,DBUser
-from lookup import AdminMail
 from itsdangerous import URLSafeTimedSerializer
 from login.login_bp import TextFormular
 
@@ -80,8 +79,11 @@ def profil():
             " left join demand_offer d on d.id = us.id_demand_offer where u.id = %s",
             (session["id_user"],)
         )
+
+        addServiceText = 'Přidat službu'
         if(users_services is None):
             users_services = []
+            addServiceText = 'Zobrazit mě na mapě'
 
         sndmap = Map(
             identifier="sndmap",
@@ -127,7 +129,8 @@ def profil():
           requests = []
     
     return render_template(
-        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail, phone = phone,
+        "profil.html", users_services=users_services, nazev=imgCloudUrl, sndmap=sndmap, requests = requests, name = name, info = info, mail = mail,
+         phone = phone, addServiceText = addServiceText
     )
 
 @blueprint.route("/user_request_overview")
@@ -224,7 +227,7 @@ def profil_editace():
             DeleteImage(str(dbUser.id) + 'new')
 
 
-            SendMail('noreply@seniore.org',dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na app.seniore.org bude nahráno na váš profil. Může to chvilku zabrat, mějte, prosím, strpení.")
+            SendMail(GetEmail('noreplyMail'),dbUser.email,"Seniore.org - schválení profilové fotografie","Vaše nové profilové foto na app.seniore.org bude nahráno na váš profil. Může to chvilku zabrat, mějte, prosím, strpení.")
 
             # ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
             # token = ts.dumps(dbUser.email, salt='change-photo-key')
@@ -245,8 +248,7 @@ def profil_editace():
             #     Link pro schválení fotografie {confirm_url} <br>\
             #     Link pro odmítnutí fotografie {denied_url}'''
 
-            # to_emails = [(AdminMail['kacka']), (AdminMail['oodoow']), (AdminMail['michal'])]
-
+            
             # SendMail("noreply@seniore.cz",to_emails,'Seniore.cz - schválení profilové fotografie',email_text)
             # flash("Nová profilová fotografie byla odeslána administrátorovi ke schválení, o výsledku budete informováni emailem.",FlashStyle.Success)
         return redirect(url_for('profile_bp.profil'))
