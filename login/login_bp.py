@@ -9,6 +9,8 @@ from flask import (
     abort
     
 )
+
+from time import sleep
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -104,6 +106,7 @@ class TextFormular(FlaskForm):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        sleep(3)
         user = form.user.data
         userRow = DBAccess.ExecuteSQL(
             "select email, password, first_name, surname, id, level,salt from "
