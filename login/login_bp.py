@@ -63,10 +63,10 @@ class SeniorRegistrationForm(FlaskForm):
     surname = StringField( validators=[InputRequired()])
     email = StringField(  validators=[InputRequired()])
     telephone = StringField(validators=[InputRequired()])
-    telephone2 = StringField(validators=[InputRequired()])
+    telephone2 = StringField()
     comment = StringField( widget=TextArea(), validators=[DataRequired(), Length(max=500)])
     street = StringField( validators=[InputRequired()])
-    street_number = StringField( validators=[InputRequired()])
+    street_number = StringField()
     town = StringField( validators=[InputRequired()])
     post_code = StringField( validators=[InputRequired()])
     password = PasswordField( validators=[InputRequired()])
@@ -558,6 +558,8 @@ def senior_registration():
         dbUser.comment = form.comment.data
         dbUser.street = form.street.data
         dbUser.street_number = form.street_number.data
+        if (form.street_number.data == ''):
+            dbUser.street_number = 1
         dbUser.town = form.town.data
         dbUser.post_code = form.post_code.data
         dbUser.password = form.password.data
